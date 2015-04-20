@@ -1,0 +1,88 @@
+#include "capture/USBCamera.h"
+
+namespace kerberos
+{
+    void USBCamera::setup(kerberos::StringMap &settings)
+    {
+        int width = std::atoi(settings.at("captures.USBCamera.frameWidth").c_str());
+        int height = std::atoi(settings.at("captures.USBCamera.frameHeight").c_str());
+        
+        // Save width and height in settings
+        Capture::setup(settings, width, height);
+        setImageSize(width, height);
+        
+        // Initialize executor (update the usb camera at specific times).
+        tryToUpdateCapture.setAction(this, &USBCamera::update);
+        tryToUpdateCapture.setInterval("thrice in 10 functions calls");
+    }
+    
+    USBCamera::USBCamera(int width, int height)
+    {
+        try
+        {
+            m_camera = cvCaptureFromCAM(CV_CAP_ANY);
+            setImageSize(width, height);
+        }
+        catch(cv::Exception & ex)
+        {
+            throw OpenCVException(ex.msg.c_str());
+        }
+    };
+    
+    Image * USBCamera::takeImage()
+    {
+        // Update camera, call executor's functor.
+        tryToUpdateCapture();
+        
+        // Take image
+        try
+        {
+            Image * image = new Image();
+            cvGrabFrame(m_camera);
+            cvGrabFrame(m_camera);
+            cvGrabFrame(m_camera);
+            cvGrabFrame(m_camera);
+            cvGrabFrame(m_camera); // workaround for buffering
+            image->setImage(cvRetrieveFrame(m_camera));
+            
+            return image;
+        }
+        catch(cv::Exception & ex)
+        {
+            throw OpenCVException(ex.msg.c_str());
+        }
+    }
+    
+    void USBCamera::setImageSize(int width, int height)
+    {
+        Capture::setImageSize(width, height);
+        try
+        {
+            cvSetCaptureProperty(m_camera, CV_CAP_PROP_FRAME_WIDTH, m_frameWidth);
+            cvSetCaptureProperty(m_camera, CV_CAP_PROP_FRAME_HEIGHT, m_frameHeight);
+        }
+        catch(cv::Exception & ex)
+        {
+            throw OpenCVException(ex.msg.c_str());
+        }
+    }
+    
+    void USBCamera::open(){}
+    
+    void USBCamera::close()
+    {
+        try
+        {
+            cvReleaseCapture(&m_camera);
+        }
+        catch(cv::Exception & ex)
+        {
+            throw OpenCVException(ex.msg.c_str());
+        }
+    }
+    
+    void USBCamera::update()
+    {
+
+    }
+}

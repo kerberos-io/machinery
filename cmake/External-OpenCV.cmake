@@ -1,0 +1,57 @@
+message("External project: OpenCV")
+
+ExternalProject_Add(opencv
+  GIT_REPOSITORY ${git_protocol}://github.com/Itseez/opencv
+  GIT_TAG 2.4
+  SOURCE_DIR opencv
+  BINARY_DIR opencv-build
+  UPDATE_COMMAND ""
+  PATCH_COMMAND ""
+  CMAKE_GENERATOR ${gen}
+  CMAKE_ARGS
+    ${ep_common_args}
+    -DBUILD_DOCS:BOOL=OFF
+    -DBUILD_EXAMPLES:BOOL=OFF
+    -DBUILD_NEW_PYTHON_SUPPORT:BOOL=OFF
+    -DBUILD_WITH_DEBUG_INFO=OFF
+    -DBUILD_PACKAGE:BOOL=OFF
+    -DBUILD_opencv_core=ON
+    -DBUILD_opencv_imgproc=ON
+    -DBUILD_opencv_highgui=ON
+    -DBUILD_opencv_video=OFF
+    -DBUILD_opencv_apps=OFF
+    -DBUILD_opencv_flann=OFF
+    -DBUILD_opencv_gpu=OFF
+    -DBUILD_opencv_ml=OFF
+    -DBUILD_opencv_legacy=OFF
+    -DBUILD_opencv_calib3d=OFF
+    -DBUILD_opencv_features2d=OFF
+    -DBUILD_opencv_java=OFF
+    -DBUILD_opencv_objdetect=OFF
+    -DBUILD_opencv_photo=OFF
+    -DBUILD_opencv_nonfree=OFF
+    -DBUILD_opencv_ocl=OFF
+    -DBUILD_opencv_stitching=OFF
+    -DBUILD_opencv_superres=OFF
+    -DBUILD_opencv_ts=OFF
+    -DBUILD_opencv_videostab=OFF
+    -DBUILD_SHARED_LIBS:BOOL=ON
+    -DBUILD_TESTS:BOOL=OFF
+    -DBUILD_PERF_TESTS:BOOL=OFF
+    -DCMAKE_BUILD_TYPE:STRING=Release
+    -DWITH_FFMPEG:BOOL=OFF
+    -DBUILD_FAT_JAVA_LIB=OFF
+    -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_BINARY_DIR}/thirdparty
+)
+
+set(OPENCV_INCLUDE_DIR ${CMAKE_BINARY_DIR}/thirdparty/include/)
+if(NOT WIN32)
+  set(OPENCV_LIBRARY_DIR ${CMAKE_BINARY_DIR}/thirdparty/lib/)
+else()
+  set(OPENCV_LIBRARY_DIR ${CMAKE_BINARY_DIR}/thirdparty/x86/vc12/lib)
+endif()
+
+set(OPENCV_LIBRARIES opencv_core opencv_highgui opencv_imgproc)
+
+include_directories(${OPENCV_INCLUDE_DIR})
+link_directories(${OPENCV_LIBRARY_DIR})

@@ -1,0 +1,377 @@
+<?xml version="1.0"?>
+<timezones>
+
+    <Africa-Abidjan>
+        <coordinates>
+            <lat type="number">34.5285</lat>
+            <long type="number">69.1717</long>
+        </coordinates>
+    </Africa-Abidjan>
+    <Africa-Accra>
+        <coordinates>
+            <lat type="number">34.5285</lat>
+            <long type="number">69.1717</long>
+        </coordinates>
+    </Africa-Accra>
+    <Africa-Lome>
+        <coordinates>
+            <lat type="number">34.5285</lat>
+            <long type="number">69.1717</long>
+        </coordinates>
+    </Africa-Lome>
+    <Africa-Luanda>
+        <coordinates>
+            <lat type="number">34.5285</lat>
+            <long type="number">69.1717</long>
+        </coordinates>
+    </Africa-Luanda>
+    <America-Adak>
+        <coordinates>
+            <lat type="number">34.5285</lat>
+            <long type="number">69.1717</long>
+        </coordinates>
+    </America-Adak>
+    <America-Anchorage>
+        <coordinates>
+            <lat type="number">34.5285</lat>
+            <long type="number">69.1717</long>
+        </coordinates>
+    </America-Anchorage>
+    <America-Anguilla>
+        <coordinates>
+            <lat type="number">34.5285</lat>
+            <long type="number">69.1717</long>
+        </coordinates>
+    </America-Anguilla>
+    <America-Antigua>
+        <coordinates>
+            <lat type="number">34.5285</lat>
+            <long type="number">69.1717</long>
+        </coordinates>
+    </America-Antigua>
+    <America-Araguaina>
+        <coordinates>
+            <lat type="number">34.5285</lat>
+            <long type="number">69.1717</long>
+        </coordinates>
+    </America-Araguaina>
+    <America-Argentina-Buenos_Aires>
+        <coordinates>
+            <lat type="number">34.5285</lat>
+            <long type="number">69.1717</long>
+        </coordinates>
+    </America-Argentina-Buenos_Aires>
+    <America-Argentina-Catamarca>
+        <coordinates>
+            <lat type="number">34.5285</lat>
+            <long type="number">69.1717</long>
+        </coordinates>
+    </America-Argentina-Catamarca>
+    <America-Argentina-ComodRivadavia>
+        <coordinates>
+            <lat type="number">34.5285</lat>
+            <long type="number">69.1717</long>
+        </coordinates>
+    </America-Argentina-ComodRivadavia>
+    <America-Argentina-Cordoba>
+        <coordinates>
+            <lat type="number">34.5285</lat>
+            <long type="number">69.1717</long>
+        </coordinates>
+    </America-Argentina-Cordoba>
+    <America-Argentina-Jujuy>
+        <coordinates>
+            <lat type="number">34.5285</lat>
+            <long type="number">69.1717</long>
+        </coordinates>
+    </America-Argentina-Jujuy>
+    <America-Argentina-La_Rioja>
+        <coordinates>
+            <lat type="number">34.5285</lat>
+            <long type="number">69.1717</long>
+        </coordinates>
+    </America-Argentina-La_Rioja>
+    <America-Argentina-Mendoza>
+        <coordinates>
+            <lat type="number">34.5285</lat>
+            <long type="number">69.1717</long>
+        </coordinates>
+    </America-Argentina-Mendoza>
+    <America-Argentina-Rio_Gallegos>
+        <coordinates>
+            <lat type="number">34.5285</lat>
+            <long type="number">69.1717</long>
+        </coordinates>
+    </America-Argentina-Rio_Gallegos>
+    <America-Argentina-Salta>
+        <coordinates>
+            <lat type="number">34.5285</lat>
+            <long type="number">69.1717</long>
+        </coordinates>
+    </America-Argentina-Salta>
+    <Antarctica-Casey>
+        <coordinates>
+            <lat type="number">34.5285</lat>
+            <long type="number">69.1717</long>
+        </coordinates>
+    </Antarctica-Casey>
+    <Antarctica-Davis>
+        <coordinates>
+            <lat type="number">34.5285</lat>
+            <long type="number">69.1717</long>
+        </coordinates>
+    </Antarctica-Davis>
+    <Arctic-Longyearbyen>
+        <coordinates>
+            <lat type="number">34.5285</lat>
+            <long type="number">69.1717</long>
+        </coordinates>
+    </Arctic-Longyearbyen>
+    <Asia-Aden>
+        <coordinates>
+            <lat type="number">34.5285</lat>
+            <long type="number">69.1717</long>
+        </coordinates>
+    </Asia-Aden>
+    <Asia-Almaty>
+        <coordinates>
+            <lat type="number">34.5285</lat>
+            <long type="number">69.1717</long>
+        </coordinates>
+    </Asia-Almaty>
+    <Asia-Amman>
+        <coordinates>
+            <lat type="number">34.5285</lat>
+            <long type="number">69.1717</long>
+        </coordinates>
+    </Asia-Amman>
+    <Asia-Anadyr>
+        <coordinates>
+            <lat type="number">34.5285</lat>
+            <long type="number">69.1717</long>
+        </coordinates>
+    </Asia-Anadyr>
+    <Asia-Aqtau>
+        <coordinates>
+            <lat type="number">34.5285</lat>
+            <long type="number">69.1717</long>
+        </coordinates>
+    </Asia-Aqtau>
+    <Asia-Aqtobe>
+        <coordinates>
+            <lat type="number">34.5285</lat>
+            <long type="number">69.1717</long>
+        </coordinates>
+    </Asia-Aqtobe>
+    <Atlantic-Azores>
+        <coordinates>
+            <lat type="number">34.5285</lat>
+            <long type="number">69.1717</long>
+        </coordinates>
+    </Atlantic-Azores>
+    <Australia-South>
+        <coordinates>
+            <lat type="number">34.5285</lat>
+            <long type="number">69.1717</long>
+        </coordinates>
+    </Australia-South>
+    <Australia-Sydney>
+        <coordinates>
+            <lat type="number">34.5285</lat>
+            <long type="number">69.1717</long>
+        </coordinates>
+    </Australia-Sydney>
+    <Australia-Tasmania>
+        <coordinates>
+            <lat type="number">34.5285</lat>
+            <long type="number">69.1717</long>
+        </coordinates>
+    </Australia-Tasmania>
+    <Australia-Victoria>
+        <coordinates>
+            <lat type="number">34.5285</lat>
+            <long type="number">69.1717</long>
+        </coordinates>
+    </Australia-Victoria>
+    <Australia-West>
+        <coordinates>
+            <lat type="number">34.5285</lat>
+            <long type="number">69.1717</long>
+        </coordinates>
+    </Australia-West>
+    <Australia-Yancowinna>
+        <coordinates>
+            <lat type="number">34.5285</lat>
+            <long type="number">69.1717</long>
+        </coordinates>
+    </Australia-Yancowinna>
+    <Brazil-Acre>
+        <coordinates>
+            <lat type="number">34.5285</lat>
+            <long type="number">69.1717</long>
+        </coordinates>
+    </Brazil-Acre>
+    <Brazil-DeNoronha>
+        <coordinates>
+            <lat type="number">34.5285</lat>
+            <long type="number">69.1717</long>
+        </coordinates>
+    </Brazil-DeNoronha>
+    <Brazil-East>
+        <coordinates>
+            <lat type="number">34.5285</lat>
+            <long type="number">69.1717</long>
+        </coordinates>
+    </Brazil-East>
+    <Brazil-West>
+        <coordinates>
+            <lat type="number">34.5285</lat>
+            <long type="number">69.1717</long>
+        </coordinates>
+    </Brazil-West>
+    <Canada-Pacific>
+        <coordinates>
+            <lat type="number">34.5285</lat>
+            <long type="number">69.1717</long>
+        </coordinates>
+    </Canada-Pacific>
+    <Canada-Saskatchewan>
+        <coordinates>
+            <lat type="number">34.5285</lat>
+            <long type="number">69.1717</long>
+        </coordinates>
+    </Canada-Saskatchewan>
+    <Canada-Yukon>
+        <coordinates>
+            <lat type="number">34.5285</lat>
+            <long type="number">69.1717</long>
+        </coordinates>
+    </Canada-Yukon>
+    <Chile-Continental>
+        <coordinates>
+            <lat type="number">34.5285</lat>
+            <long type="number">69.1717</long>
+        </coordinates>
+    </Chile-Continental>
+    <Chile-EasterIsland>
+        <coordinates>
+            <lat type="number">34.5285</lat>
+            <long type="number">69.1717</long>
+        </coordinates>
+    </Chile-EasterIsland>
+    <Cuba>
+        <coordinates>
+            <lat type="number">34.5285</lat>
+            <long type="number">69.1717</long>
+        </coordinates>
+    </Cuba>
+    <Egypt>
+        <coordinates>
+            <lat type="number">34.5285</lat>
+            <long type="number">69.1717</long>
+        </coordinates>
+    </Egypt>
+    <Eire>
+        <coordinates>
+            <lat type="number">34.5285</lat>
+            <long type="number">69.1717</long>
+        </coordinates>
+    </Eire>
+    <Europe-Brussels>
+        <coordinates>
+            <lat type="number">34.5285</lat>
+            <long type="number">69.1717</long>
+        </coordinates>
+    </Europe-Brussels>
+    <Europe-Amsterdam>
+        <coordinates>
+            <lat type="number">34.5285</lat>
+            <long type="number">69.1717</long>
+        </coordinates>
+    </Europe-Amsterdam>
+    <Europe-Andorra>
+        <coordinates>
+            <lat type="number">34.5285</lat>
+            <long type="number">69.1717</long>
+        </coordinates>
+    </Europe-Andorra>
+    <Europe-Athens>
+        <coordinates>
+            <lat type="number">34.5285</lat>
+            <long type="number">69.1717</long>
+        </coordinates>
+    </Europe-Athens>
+    <Europe-Zurich>
+        <coordinates>
+            <lat type="number">34.5285</lat>
+            <long type="number">69.1717</long>
+        </coordinates>
+    </Europe-Zurich>
+    <Factory>
+        <coordinates>
+            <lat type="number">34.5285</lat>
+            <long type="number">69.1717</long>
+        </coordinates>
+    </Factory>
+    <GB>
+        <coordinates>
+            <lat type="number">34.5285</lat>
+            <long type="number">69.1717</long>
+        </coordinates>
+    </GB>
+    <GB-Eire>
+        <coordinates>
+            <lat type="number">34.5285</lat>
+            <long type="number">69.1717</long>
+        </coordinates>
+    </GB-Eire>
+    <Hongkong>
+        <coordinates>
+            <lat type="number">34.5285</lat>
+            <long type="number">69.1717</long>
+        </coordinates>
+    </Hongkong>
+    <Iceland>
+        <coordinates>
+            <lat type="number">34.5285</lat>
+            <long type="number">69.1717</long>
+        </coordinates>
+    </Iceland>
+    <Iran>
+        <coordinates>
+            <lat type="number">34.5285</lat>
+            <long type="number">69.1717</long>
+        </coordinates>
+    </Iran>
+    <Israel>
+        <coordinates>
+            <lat type="number">34.5285</lat>
+            <long type="number">69.1717</long>
+        </coordinates>
+    </Israel>
+    <Jamaica>
+        <coordinates>
+            <lat type="number">34.5285</lat>
+            <long type="number">69.1717</long>
+        </coordinates>
+    </Jamaica>
+    <Japan>
+        <coordinates>
+            <lat type="number">34.5285</lat>
+            <long type="number">69.1717</long>
+        </coordinates>
+    </Japan>
+    <Kwajalein>
+        <coordinates>
+            <lat type="number">34.5285</lat>
+            <long type="number">69.1717</long>
+        </coordinates>
+    </Kwajalein>
+    <Libya>
+        <coordinates>
+            <lat type="number">34.5285</lat>
+            <long type="number">69.1717</long>
+        </coordinates>
+    </Libya>
+    
+</timezones>

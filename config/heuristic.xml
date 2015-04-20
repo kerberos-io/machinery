@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<heuristics>
+
+	<Sequence>
+	    <minimumChanges type="number">20</minimumChanges>
+	    <minimumDuration type="number">2</minimumDuration>
+        <noMotionDelayTime type="number">1000</noMotionDelayTime>
+	</Sequence>
+
+</heuristics>

@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<captures>
+
+	<USBCamera>
+    	<frameWidth type="number">800</frameWidth>
+    	<frameHeight type="number">640</frameHeight>
+    </USBCamera>
+    
+    <RaspiCamera>
+        <frameWidth type="number">800</frameWidth>
+        <frameHeight type="number">640</frameHeight>
+        <night type="number">0</night>
+        <day type="number">0</day>
+    </RaspiCamera>
+
+</captures>

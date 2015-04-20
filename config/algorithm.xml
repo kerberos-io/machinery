@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<algorithms>
+
+	<DifferentialCollins>
+		<erode type="number">5</erode>
+    	<threshold type="number">15</threshold>
+    </DifferentialCollins>
+    
+</algorithms>

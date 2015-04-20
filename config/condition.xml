@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<conditions>
+
+    <Time>
+        <times type="timeselection">0:01,23:59-0:01,23:59-0:01,23:59-0:01,23:59-0:01,23:59-0:01,23:59-0:01,23:59</times>
+        <delay type="number">10000</delay>
+    </Time>
+    <Enabled>
+    	<active type="bool">true</active>
+        <delay type="number">5000</delay>
+    </Enabled>
+    
+</conditions>

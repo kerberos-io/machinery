@@ -1,0 +1,7 @@
+# @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+# Build library
+add_library(EXECUTOR_LIBRARY 
+    Executor.cpp)
+
+set(KERBEROS_DEPENDENCIES ${KERBEROS_DEPENDENCIES} EXECUTOR_LIBRARY PARENT_SCOPE)
+set(KERBEROS_LIBRARIES ${KERBEROS_LIBRARIES} EXECUTOR_LIBRARY PARENT_SCOPE)

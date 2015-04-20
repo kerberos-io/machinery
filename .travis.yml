@@ -1,0 +1,29 @@
+sudo:
+    - false
+    
+language: 
+    - cpp
+
+compiler:
+    - gcc
+
+before_install:
+
+script: 
+    mkdir build && cd build && cmake .. && make && make check
+
+branches:
+    only:
+        - master
+
+notifications:
+    recipients:
+        - hello@cedric.ws
+    irc: "chat.freenode.net#kerberos.io"
+    email:
+        on_success: always
+        on_failure: always
+
+os:
+    - linux
+    - osx

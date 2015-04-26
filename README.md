@@ -26,7 +26,7 @@ The machinery is mainly built for the Raspberry PI, but it also works on OSX and
 To built the source, you will need to have a C++ compiler and cmake installed and that's it..
 
 
-    git clone https://github.com/cedricve/kerberos-io/ .
+    git clone https://github.com/kerberos-io/machinery kerberos-io
     cd kerberos-io
     mkdir build && cd build && cmake .. && make && make check
 

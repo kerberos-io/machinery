@@ -6,12 +6,12 @@
 		    <x1 type="number">0</x1>
 		    <y1 type="number">0</y1>
 		    <x2 type="number">800</x2>
-		    <y2 type="number">640</y2>
+		    <y2 type="number">600</y2>
 		 </region>
 	</Rectangle>
 
 	<Hull>
-	    <region type="hullselection">0,0|0,640|800,640|800,0</region>
+	    <region type="hullselection">0,0|0,600|800,600|800,0</region>
 	</Hull>
 
 </expositors>

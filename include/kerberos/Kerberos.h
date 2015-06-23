@@ -29,7 +29,6 @@ namespace kerberos
             Capture * capture;
             Machinery * machinery;
             ImageVector images;
-            JSON m_data;
             int m_captureDelayTime;
 
             Kerberos(){};

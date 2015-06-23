@@ -80,14 +80,6 @@ namespace kerberos
     bool Machinery::detect(ImageVector & images, JSON & data)
     {
         // -------------
-        // Cleanup data
-
-        if(data.MemberBegin() != data.MemberEnd())
-        {
-            data.EraseMember(data.MemberBegin(), data.MemberEnd());
-        }
-
-        // -------------
         // Detect motion
 
         return detectMotion(images, data);

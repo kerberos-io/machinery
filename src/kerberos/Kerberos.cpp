@@ -21,17 +21,19 @@ namespace kerberos
         
         guard->onChange(&Kerberos::reconfigure);
         guard->start();
-
-        // -------------------
-        // Initialize data
-        
-        m_data.SetObject();
         
         // --------------------------
         // This should be forever...
 
         while(true)
         {
+            // -------------------
+            // Initialize data
+
+            JSON m_data;
+            m_data.SetObject();
+
+
             // ------------------------------------
             // Guard look if the configuration has
             // been changed...
@@ -77,10 +79,25 @@ namespace kerberos
         // ---------------------------
         // Initialize capture device
         
-        if(capture != 0) capture->close();
+        if(capture != 0)
+        {
+            capture->close();
+            delete capture;
+        }
         capture = Factory<Capture>::getInstance()->create(settings.at("capture"));
         capture->setup(settings);
         setCaptureDelayTime(std::atoi(settings.at("captureDelayTime").c_str()));
+
+        // -------------------
+        // Take first images
+
+        for(ImageVector::iterator it = images.begin(); it != images.end(); it++)
+        {
+            delete *it;
+        }
+
+        images.clear();
+        images = capture->takeImages(3);
         
         // --------------------
         // Initialize machinery
@@ -88,11 +105,6 @@ namespace kerberos
         if(machinery != 0) delete machinery;
         machinery = new Machinery();
         machinery->setup(settings);
-
-        // -------------------
-        // Take first images
-        images.clear();
-        images = capture->takeImages(3);
         machinery->initialize(images);
     }
 }

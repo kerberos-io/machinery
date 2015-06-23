@@ -49,13 +49,11 @@ namespace kerberos
     {
         // -------------------------
         // Create filename and directories if not exist
-        unsigned long _found = 0, found = path.find("/");
+        unsigned long found = path.find("/");
         while(found != -1)
         {
             std::string subDirectory = path.substr(0, found);
             createDirectoryIfNotExists(subDirectory);
-            
-            _found = found;
             found = path.find("/",found+1);
         }
         // -------------------------

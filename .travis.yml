@@ -12,10 +12,6 @@ before_install:
 script: 
     mkdir build && cd build && cmake .. && make && make check
 
-branches:
-    only:
-        - master
-
 notifications:
     recipients:
         - hello@cedric.ws

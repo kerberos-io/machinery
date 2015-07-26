@@ -8,6 +8,8 @@ compiler:
     - gcc
 
 before_install:
+    - sudo apt-get update
+    - sudo apt-get install ffmpeg
 
 script: 
     mkdir build && cd build && cmake .. && make && make check

@@ -115,6 +115,14 @@ namespace kerberos
 
         pathToImage = buildPath(pathToImage);
         
+        // -------------------------------------------------------
+        // Add path to JSON object, so other IO devices can use it
+        
+        JSONValue path;
+        JSON::AllocatorType& allocator = data.GetAllocator();
+        path.SetString(pathToImage.c_str(), allocator);
+        data.AddMember("pathToImage", path, allocator);
+        
         // ---------------------------------------------------------------------
         // Save original version & generate unique timestamp for current image
 

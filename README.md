@@ -1,7 +1,7 @@
 #KERBEROS.**IO**
 
 
-[![Build Status](https://travis-ci.org/kerberos-io/machinery.svg)](https://travis-ci.org/kerberos-io/machinery) [![Stories in Ready](https://badge.waffle.io/kerberos-io/machinery.svg?label=ready&title=Ready)](http://waffle.io/kerberos-io/machinery)
+[![Build Status](https://travis-ci.org/kerberos-io/machinery.svg)](https://travis-ci.org/kerberos-io/machinery) [![Stories in Ready](https://badge.waffle.io/kerberos-io/machinery.svg?label=ready&title=Ready)](http://waffle.io/kerberos-io/machinery)  [![Join the chat at https://gitter.im/kerberos-io/hades](https://img.shields.io/badge/GITTER-join chat-green.svg)](https://gitter.im/kerberos-io/hades?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 ## Introduction
 
@@ -31,7 +31,7 @@ To built the source, you will need to have a C++ compiler and cmake installed an
     mkdir build && cd build && cmake .. && make && make check
 
 
-This will download all the dependencies and link the executables. Notice that this can take some time, on tavis-ci it takes about 5 min.
+This will download all the dependencies and link the executables. Notice that this can take some time, on travis-ci it takes about 5 min.
 
 ##Contribute
 

@@ -12,8 +12,7 @@ ExternalProject_Add(restclient
 )
 
 set(RESTCLIENT_INCLUDE_DIR ${CMAKE_BINARY_DIR}/restclient/include/)
-set(RESTCLIENT_LIBRARY_DIR ${CMAKE_BINARY_DIR}/restclient/.libs/)
-
+set(RESTCLIENT_LIBRARY_DIR ${CMAKE_BINARY_DIR}/thirdparty/lib/)
 
 include_directories(${RESTCLIENT_INCLUDE_DIR})
 link_directories(${RESTCLIENT_LIBRARY_DIR})

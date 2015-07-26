@@ -26,6 +26,7 @@
 
     set(KERBEROS_FACTORY_ENTITIES
         capture/USBCamera.cpp
+        capture/IPCamera.cpp
         machinery/condition/Time.cpp
         machinery/condition/Enabled.cpp
         machinery/algorithm/DifferentialCollins.cpp
@@ -34,6 +35,7 @@
         machinery/heuristic/Sequence.cpp
         machinery/io/IoDisk.cpp
         machinery/io/IoTCP.cpp
+        machinery/io/IoWebhook.cpp
     )
 
     set(KERBEROS_DEPENDENCIES ${KERBEROS_DEPENDENCIES} opencv)

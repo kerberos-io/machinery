@@ -7,7 +7,7 @@ ExternalProject_Add(restclient
   UPDATE_COMMAND ""
   PATCH_COMMAND ""
   CONFIGURE_COMMAND ./autogen.sh && ./configure
-  BUILD_COMMAND make && ln -s .libs/librestclient-cpp.so ../thirdparty/lib/librestclient-cpp.so
+  BUILD_COMMAND make && cp .libs/librestclient-cpp.0.dylib ../thirdparty/lib/
   INSTALL_COMMAND ""
 )
 

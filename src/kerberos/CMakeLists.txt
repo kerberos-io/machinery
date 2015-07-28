@@ -38,8 +38,8 @@
         machinery/io/IoWebhook.cpp
     )
 
-    set(KERBEROS_DEPENDENCIES ${KERBEROS_DEPENDENCIES} opencv)
-    set(KERBEROS_LIBRARIES ${KERBEROS_LIBRARIES} ${OPENCV_LIBRARIES})
+    set(KERBEROS_DEPENDENCIES ${KERBEROS_DEPENDENCIES} opencv restclient)
+    set(KERBEROS_LIBRARIES ${KERBEROS_LIBRARIES} ${OPENCV_LIBRARIES} ${RESTCLIENT_LIBRARIES})
 
 
 # -------------------------------------------

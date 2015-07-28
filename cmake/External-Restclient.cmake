@@ -7,14 +7,14 @@ ExternalProject_Add(restclient
   UPDATE_COMMAND ""
   PATCH_COMMAND ""
   CONFIGURE_COMMAND ./autogen.sh && ./configure
-  BUILD_COMMAND make && cp .libs/librestclient-cpp.0.dylib ../thirdparty/lib/
+  BUILD_COMMAND make && cp .libs/librestclient-cpp.a ../thirdparty/lib/
   INSTALL_COMMAND ""
 )
 
 set(RESTCLIENT_INCLUDE_DIR ${CMAKE_BINARY_DIR}/restclient/include/)
 set(RESTCLIENT_LIBRARY_DIR ${CMAKE_BINARY_DIR}/thirdparty/lib/)
 
-set(RESTCLIENT_LIBRARIES restclient-cpp)
+set(RESTCLIENT_LIBRARIES restclient-cpp curl)
 
 include_directories(${RESTCLIENT_INCLUDE_DIR})
 link_directories(${RESTCLIENT_LIBRARY_DIR})

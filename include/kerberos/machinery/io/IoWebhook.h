@@ -17,7 +17,7 @@
 
 #include "machinery/io/Io.h"
 #include "document.h"
-#include "Writer.h"
+#include "writer.h"
 #include "restclient-cpp/restclient.h"
 
 namespace kerberos

@@ -41,7 +41,7 @@ namespace kerberos
         // -------------------
         // Send a post to URL
         
-        RestClient::response r = RestClient::post(getUrl(), "text/json", buffer.GetString());
+        RestClient::response r = RestClient::post(getUrl(), "application/json", buffer.GetString());
         
         if(r.code == 200)
         {

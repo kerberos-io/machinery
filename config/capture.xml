@@ -2,7 +2,7 @@
 <captures>
 
     <IPCamera>
-        <url type="text">http://ipcamera/image.jpg</url>
+        <url type="text">http://username:password@ipaddress/image.jpg</url>
         <frameWidth type="number">800</frameWidth>
         <frameHeight type="number">640</frameHeight>
     </IPCamera>

@@ -21,4 +21,4 @@ set(GOOGLETEST_LIBRARY_DIR ${CMAKE_BINARY_DIR}/)
 include_directories(${GOOGLETEST_INCLUDE_DIR})
 link_directories(${GOOGLETEST_LIBRARY_DIR})
 
-set(GOOGLETEST_LIBRARIES "${GOOGLETEST_LIBRARY_DIR}/googletest/libgtest.a" "${GOOGLETEST_LIBRARY_DIR}/googletest/libgtest_main.a")
+set(GOOGLETEST_LIBRARIES "${GOOGLETEST_LIBRARY_DIR}googletest/libgtest.a" "${GOOGLETEST_LIBRARY_DIR}googletest/libgtest_main.a")

@@ -20,4 +20,4 @@ set(GOOGLEMOCK_LIBRARY_DIR ${CMAKE_BINARY_DIR}/)
 include_directories(${GOOGLEMOCK_INCLUDE_DIR})
 link_directories(${GOOGLEMOCK_LIBRARY_DIR})
 
-set(GOOGLEMOCK_LIBRARIES "${GOOGLEMOCK_LIBRARY_DIR}/googlemock/libgmock.a" "${GOOGLEMOCK_LIBRARY_DIR}/googlemock/libgmock_main.a")
+set(GOOGLEMOCK_LIBRARIES "${GOOGLEMOCK_LIBRARY_DIR}googlemock/libgmock.a" "${GOOGLEMOCK_LIBRARY_DIR}googlemock/libgmock_main.a")

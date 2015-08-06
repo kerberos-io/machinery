@@ -36,7 +36,7 @@ namespace kerberos
         Image * image = grab();
         
         // Check if need to rotate the image
-        image->rotate(m_angle)
+        image->rotate(m_angle);
                 
         return image;
     }

@@ -6,7 +6,6 @@
         <name type="text">frontdoor</name>
         <timezone file="timezone.xml">Europe-Brussels</timezone>
         <capture file="capture.xml">RaspiCamera</capture>
-        <captureDelayTime type="number">0</captureDelayTime>
         <condition file="condition.xml" type="multiple">Enabled</condition>
         <algorithm file="algorithm.xml">DifferentialCollins</algorithm>
         <expositor file="expositor.xml">Hull</expositor>

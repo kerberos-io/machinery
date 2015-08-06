@@ -46,7 +46,8 @@ namespace kerberos
             void setup(StringMap & settings);
             void setImageSize(int width, int height);
             void setUrl(std::string url){m_url=url;}
-            std::string getUrl(){return m_url;}
+            void setRotation(int angle);
+            void setDelay(int msec);
         
             Image * takeImage();
         

@@ -27,7 +27,6 @@ namespace kerberos
         private:
             raspicam::RaspiCam_Cv * m_camera;
             Executor<RaspiCamera> tryToUpdateCapture;
-            struct{ bool isNight; int night; int day; } m_toggle;
         
         public:
             RaspiCamera()
@@ -36,6 +35,9 @@ namespace kerberos
             }
             void setup(StringMap & settings);
             void setImageSize(int width, int height);
+            void setRotation(int angle);
+            void setDelay(int msec);
+        
             Image * takeImage();
             Image * grab();
         
@@ -43,10 +45,6 @@ namespace kerberos
             void close();
         
             void update();
-            bool isNight(Image * image);
-            void toggleDayOrNight();
-            void setNightMode();
-            void setDayMode();
     };
 }
 

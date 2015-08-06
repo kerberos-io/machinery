@@ -64,7 +64,7 @@ namespace kerberos
 
             // -------------
             // Shift images
-            usleep(m_captureDelayTime*1000);
+            
             images = capture->shiftImage();
         }
     }
@@ -86,7 +86,6 @@ namespace kerberos
         }
         capture = Factory<Capture>::getInstance()->create(settings.at("capture"));
         capture->setup(settings);
-        setCaptureDelayTime(std::atoi(settings.at("captureDelayTime").c_str()));
 
         // -------------------
         // Take first images

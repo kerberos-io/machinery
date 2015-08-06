@@ -7,10 +7,14 @@ namespace kerberos
         std::string url = settings.at("captures.IPCamera.url");
         int width = std::atoi(settings.at("captures.IPCamera.frameWidth").c_str());
         int height = std::atoi(settings.at("captures.IPCamera.frameHeight").c_str());
+        int angle = std::atoi(settings.at("captures.IPCamera.angle").c_str());
+        int delay = std::atoi(settings.at("captures.IPCamera.delay").c_str());
         
         // Save width and height in settings
         Capture::setup(settings, width, height);
         setImageSize(width, height);
+        setRotation(angle);
+        setDelay(delay);
         
         // Initialize URL to IP Camera
         setUrl(url);
@@ -40,13 +44,19 @@ namespace kerberos
         // Take image
         try
         {
-            open(getUrl().c_str());
+            // Delay camera for some time..
+            usleep(m_delay*1000);
+            
+            open(m_url.c_str());
             cv::Mat img;
             m_camera->read(img);
             close();
             
             Image * image = new Image();
             image->setImage(img);
+            
+            // Check if need to rotate the image
+            image->rotate(m_angle);
             
             return image;
         }
@@ -59,6 +69,16 @@ namespace kerberos
     void IPCamera::setImageSize(int width, int height)
     {
         Capture::setImageSize(width, height);
+    }
+    
+    void IPCamera::setRotation(int angle)
+    {
+        Capture::setRotation(angle);
+    }
+    
+    void IPCamera::setDelay(int msec)
+    {
+        Capture::setDelay(msec);
     }
     
     void IPCamera::open(){}

@@ -50,6 +50,33 @@ namespace kerberos
         }
 	}
     
+    void Image::rotate(int angle)
+	{
+        try
+        {
+            switch (angle % 360)
+            {
+                case 0:
+                    break;
+                case 90:         
+                    cv::flip(m_image.t(), m_image, 1);
+                    break;
+                case 180:
+                    cv::flip(m_image, m_image, -1);
+                    break;
+                case 270:
+                    cv::flip(m_image.t(), m_image, 0);
+                    break;
+                default:
+                    break;
+            }
+        }
+        catch(cv::Exception & ex)
+        {
+            throw OpenCVException(ex.msg.c_str());
+        }
+	}
+    
     Image Image::scaleToSmall()
 	{
         try

@@ -28,12 +28,16 @@ namespace kerberos
         
         public:
             int m_frameWidth, m_frameHeight;
+            int m_angle; // 90, 180, 270
+            int m_delay; // msec
         
             Capture(){};
             virtual ~Capture(){};
             virtual void setup(kerberos::StringMap & settings) = 0;
             void setup(kerberos::StringMap & settings, int width, int height);
             virtual void setImageSize(int width, int height);
+            virtual void setRotation(int angle);
+            virtual void setDelay(int msec);
             virtual Image * takeImage() = 0;
             ImageVector & takeImages(int numberOfImages);
             ImageVector & shiftImage();

@@ -39,10 +39,14 @@ namespace kerberos
                     throw OpenCVException(ex.msg.c_str());
                 }
             }
+        
             USBCamera(int width, int height);
             virtual ~USBCamera(){};
             void setup(StringMap & settings);
             void setImageSize(int width, int height);
+            void setRotation(int angle);
+            void setDelay(int msec);
+        
             Image * takeImage();
         
             void open();

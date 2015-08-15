@@ -54,7 +54,7 @@
             capture/RaspiCamera.cpp
             machinery/io/IoGPIO.cpp
         )
-        set(KERBEROS_DEPENDENCIES ${KERBEROS_DEPENDENCIES} userland raspicamera)
+        set(KERBEROS_DEPENDENCIES ${KERBEROS_DEPENDENCIES} raspicamera)
         set(KERBEROS_LIBRARIES ${KERBEROS_LIBRARIES} ${RASPBERRYPI_LIBRARIES})
         
     endif()

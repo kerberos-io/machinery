@@ -24,7 +24,6 @@ ExternalProject_Add(raspicamera
   CMAKE_ARGS
     -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_BINARY_DIR}/thirdparty
 )
-add_dependencies(raspicamera userland)
 
 set(RASPBERRYPI_INCLUDE_DIR ${CMAKE_BINARY_DIR}/thirdparty/include/)
 set(RASPBERRYPI_LIBRARY_DIR ${CMAKE_BINARY_DIR}/thirdparty/lib/)

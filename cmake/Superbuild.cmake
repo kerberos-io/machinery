@@ -34,13 +34,6 @@ include( ExternalProject )
     if(${IS_RASPBERRYPI})
 
         # --------------------------------------------------------------------------
-        # Userland, ARM used by raspicam
-        #
-
-        include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/External-Userland.cmake)
-        set(KERBEROS_DEPENDENCIES ${KERBEROS_DEPENDENCIES} userland)
-
-        # --------------------------------------------------------------------------
         # RaspiCam
         #
 

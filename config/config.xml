@@ -4,7 +4,7 @@
     <!-- Settings for instance -->
     <instance>
         <name type="text">frontdoor</name>
-        <timezone file="timezone.xml">Europe-Brussels</timezone>
+        <timezone type="timezone">Europe-Brussels</timezone>
         <capture file="capture.xml">RaspiCamera</capture>
         <condition file="condition.xml" type="multiple">Enabled</condition>
         <algorithm file="algorithm.xml">DifferentialCollins</algorithm>

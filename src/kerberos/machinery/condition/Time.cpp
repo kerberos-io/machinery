@@ -20,6 +20,7 @@ namespace kerberos
         setTimes(times);
         std::string timezone = settings.at("timezone");
         std::replace(timezone.begin(), timezone.end(), '-', '/');
+        std::replace(timezone.begin(), timezone.end(), '$', '_');
         setTimezone(timezone);
         
         setDelay(std::atoi(settings.at("conditions.Time.delay").c_str()));

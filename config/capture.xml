@@ -5,8 +5,8 @@
         <url type="text">http://username:password@ipaddress/image.jpg</url>
         <frameWidth type="number">800</frameWidth>
         <frameHeight type="number">640</frameHeight>
-        <delay type="number">0</delay>
-        <angle type="number">500</angle>
+        <delay type="number">500</delay>
+        <angle type="number">0</angle>
     </IPCamera>
 
     <USBCamera>

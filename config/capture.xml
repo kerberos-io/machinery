@@ -6,20 +6,20 @@
         <frameWidth type="number">800</frameWidth>
         <frameHeight type="number">640</frameHeight>
         <delay type="number">0</delay>
-        <angle type="number">0</angle>
+        <angle type="number">500</angle>
     </IPCamera>
 
     <USBCamera>
         <frameWidth type="number">800</frameWidth>
         <frameHeight type="number">640</frameHeight>
-        <delay type="number">0</delay>
+        <delay type="number">500</delay>
         <angle type="number">0</angle>
     </USBCamera>
 
     <RaspiCamera>
         <frameWidth type="number">800</frameWidth>
         <frameHeight type="number">640</frameHeight>
-        <delay type="number">0</delay>
+        <delay type="number">500</delay>
         <angle type="number">0</angle>
     </RaspiCamera>
 

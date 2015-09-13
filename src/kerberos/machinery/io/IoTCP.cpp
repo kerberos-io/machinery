@@ -8,6 +8,7 @@ namespace kerberos
 
         // ----------------------------------
         // TODO: set server credentials
+        
         setIp(settings.at("ios.TCPSocket.server").c_str());
         setPort(std::atoi(settings.at("ios.TCPSocket.port").c_str()));
         setMessage(settings.at("ios.TCPSocket.message").c_str());

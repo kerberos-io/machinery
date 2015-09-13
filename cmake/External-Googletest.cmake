@@ -1,7 +1,6 @@
 message("External project: Googletest")
 
 ExternalProject_Add(googletest
-  #URL https://googletest.googlecode.com/files/gtest-1.7.0.zip
   SVN_REPOSITORY http://googletest.googlecode.com/svn/trunk/
   SOURCE_DIR googletest
   BUILD_IN_SOURCE 1

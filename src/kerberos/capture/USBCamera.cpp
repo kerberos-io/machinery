@@ -6,10 +6,14 @@ namespace kerberos
     {
         int width = std::atoi(settings.at("captures.USBCamera.frameWidth").c_str());
         int height = std::atoi(settings.at("captures.USBCamera.frameHeight").c_str());
+        int angle = std::atoi(settings.at("captures.USBCamera.angle").c_str());
+        int delay = std::atoi(settings.at("captures.USBCamera.delay").c_str());
         
         // Save width and height in settings
         Capture::setup(settings, width, height);
         setImageSize(width, height);
+        setRotation(angle);
+        setDelay(delay);
         
         // Initialize executor (update the usb camera at specific times).
         tryToUpdateCapture.setAction(this, &USBCamera::update);
@@ -37,6 +41,10 @@ namespace kerberos
         // Take image
         try
         {
+            // Delay camera for some time..
+            usleep(m_delay*1000);
+            
+            // Get image from camera
             Image * image = new Image();
             cvGrabFrame(m_camera);
             cvGrabFrame(m_camera);
@@ -44,6 +52,9 @@ namespace kerberos
             cvGrabFrame(m_camera);
             cvGrabFrame(m_camera); // workaround for buffering
             image->setImage(cvRetrieveFrame(m_camera));
+            
+            // Check if need to rotate the image
+            image->rotate(m_angle);
             
             return image;
         }
@@ -67,6 +78,16 @@ namespace kerberos
         }
     }
     
+    void USBCamera::setRotation(int angle)
+    {
+        Capture::setRotation(angle);
+    }
+    
+    void USBCamera::setDelay(int msec)
+    {
+        Capture::setDelay(msec);
+    }
+    
     void USBCamera::open(){}
     
     void USBCamera::close()
@@ -81,8 +102,5 @@ namespace kerberos
         }
     }
     
-    void USBCamera::update()
-    {
-
-    }
+    void USBCamera::update(){}
 }

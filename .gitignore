@@ -31,3 +31,5 @@
 bin/*
 build/*
 config/*
+ide/*
+test/bin/*

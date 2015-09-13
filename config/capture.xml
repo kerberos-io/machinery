@@ -1,16 +1,26 @@
 <?xml version="1.0"?>
 <captures>
 
-	<USBCamera>
-    	<frameWidth type="number">800</frameWidth>
-    	<frameHeight type="number">640</frameHeight>
+    <IPCamera>
+        <url type="text">http://username:password@ipaddress/image.jpg</url>
+        <frameWidth type="number">800</frameWidth>
+        <frameHeight type="number">640</frameHeight>
+        <delay type="number">500</delay>
+        <angle type="number">0</angle>
+    </IPCamera>
+
+    <USBCamera>
+        <frameWidth type="number">800</frameWidth>
+        <frameHeight type="number">640</frameHeight>
+        <delay type="number">500</delay>
+        <angle type="number">0</angle>
     </USBCamera>
-    
+
     <RaspiCamera>
         <frameWidth type="number">800</frameWidth>
         <frameHeight type="number">640</frameHeight>
-        <night type="number">0</night>
-        <day type="number">0</day>
+        <delay type="number">500</delay>
+        <angle type="number">0</angle>
     </RaspiCamera>
 
 </captures>

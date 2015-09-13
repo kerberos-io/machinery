@@ -4,6 +4,8 @@ namespace kerberos
 {
     void Capture::setup(kerberos::StringMap & settings, int width, int height)
     {
+        // Make width & height global.
+        
         settings["capture.width"] = helper::to_string(width);
         settings["capture.height"] = helper::to_string(height);
     }
@@ -12,6 +14,16 @@ namespace kerberos
     {
         m_frameWidth = width;
         m_frameHeight = height;
+    }
+    
+    void Capture::setRotation(int angle)
+    {
+        m_angle = angle;
+    }
+    
+    void Capture::setDelay(int msec)
+    {
+        m_delay = msec;   
     }
 
     ImageVector & Capture::takeImages(int numberOfImages)

@@ -2,7 +2,7 @@
 //  Class: Image.h
 //  Description: An image for simple image manipulations, an OpenCV wrapper.
 //  Created:     17/07/2014
-//  Author:      Cédric Verstraeten
+//  Author:      CÃ©dric Verstraeten
 //  Mail:        hello@cedric.ws
 //  Website:     www.kerberos.io
 //
@@ -49,6 +49,7 @@ namespace kerberos
 		
             void drawRectangle(JSONValue & region, int color[3]);
             void convert2Gray();
+            void rotate(int angle);
             void difference(const Image & image, Image & result);
             void bitwiseAnd(const Image & image, Image & result);
             void erode(const Image & kernel);

@@ -26,6 +26,7 @@
 
     set(KERBEROS_FACTORY_ENTITIES
         capture/USBCamera.cpp
+        capture/IPCamera.cpp
         machinery/condition/Time.cpp
         machinery/condition/Enabled.cpp
         machinery/algorithm/DifferentialCollins.cpp
@@ -34,10 +35,11 @@
         machinery/heuristic/Sequence.cpp
         machinery/io/IoDisk.cpp
         machinery/io/IoTCP.cpp
+        machinery/io/IoWebhook.cpp
     )
 
-    set(KERBEROS_DEPENDENCIES ${KERBEROS_DEPENDENCIES} opencv)
-    set(KERBEROS_LIBRARIES ${KERBEROS_LIBRARIES} ${OPENCV_LIBRARIES})
+    set(KERBEROS_DEPENDENCIES ${KERBEROS_DEPENDENCIES} opencv restclient)
+    set(KERBEROS_LIBRARIES ${KERBEROS_LIBRARIES} ${OPENCV_LIBRARIES} ${RESTCLIENT_LIBRARIES})
 
 
 # -------------------------------------------
@@ -52,7 +54,7 @@
             capture/RaspiCamera.cpp
             machinery/io/IoGPIO.cpp
         )
-        set(KERBEROS_DEPENDENCIES ${KERBEROS_DEPENDENCIES} userland raspicamera)
+        set(KERBEROS_DEPENDENCIES ${KERBEROS_DEPENDENCIES} raspicamera)
         set(KERBEROS_LIBRARIES ${KERBEROS_LIBRARIES} ${RASPBERRYPI_LIBRARIES})
         
     endif()

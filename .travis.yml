@@ -12,7 +12,12 @@ before_install:
     - sudo apt-get install x264 v4l-utils ffmpeg
 
 script: 
-    mkdir build && cd build && cmake .. && make && make check
+    mkdir build
+    cd build
+    cmake ..
+    make
+    make check
+    sudo make install
 
 notifications:
     recipients:

@@ -25,9 +25,9 @@
 	    SET(KERBEROS_FACTORY_ENTITIES_TEMP ${KERBEROS_FACTORY_ENTITIES_TEMP} "kerberos/${src}")
 	endforeach(src ${KERBEROS_FACTORY_ENTITIES})
 
-	add_executable(kerberos main.cpp ${KERBEROS_FACTORY_ENTITIES_TEMP})
-	add_dependencies(kerberos ${KERBEROS_DEPENDENCIES})
-	target_link_libraries(kerberos ${KERBEROS_CORE_LIBRARY} ${KERBEROS_LIBRARIES})
+	add_executable(kerberosio main.cpp ${KERBEROS_FACTORY_ENTITIES_TEMP})
+	add_dependencies(kerberosio ${KERBEROS_DEPENDENCIES})
+	target_link_libraries(kerberosio ${KERBEROS_CORE_LIBRARY} ${KERBEROS_LIBRARIES})
 
 # -----------------------------------------
 # Write variables to parent CMakeLists.txt
@@ -42,3 +42,43 @@
 
 	SET(CMAKE_BUILD_TYPE Release)
 	message("Add environment variable: export DYLD_LIBRARY_PATH=$DYLD_LIBRARY_PATH:${OPENCV_LIBRARY_DIR}")
+
+# ----------------------------------------
+# Install
+
+	# copy configuration files
+	FILE(GLOB CONFIG_FILES ${CMAKE_BINARY_DIR}/../config/*)
+	INSTALL(FILES ${CONFIG_FILES}
+        DESTINATION "/etc/kerberosio/config"
+        PERMISSIONS
+        OWNER_WRITE OWNER_READ
+        GROUP_READ
+        WORLD_READ)
+
+    # copy log file
+    INSTALL(FILES "${CMAKE_BINARY_DIR}/../logs/log.stash"
+        DESTINATION "/etc/kerberosio/logs"
+        PERMISSIONS
+        OWNER_WRITE OWNER_READ
+        GROUP_READ
+        WORLD_READ)
+
+    # install binary
+	INSTALL(TARGETS kerberosio DESTINATION bin)
+
+# ----------------------------------------
+# CPack
+
+	set(CPACK_GENERATOR "DEB")
+	set(CPACK_PACKAGE_NAME "kerberosio")
+	set(CPACK_PACKAGE_VENDOR "kerberos.io")
+	SET(CPACK_DEBIAN_PACKAGE_MAINTAINER "Cédric Verstraeten")
+	set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Kerberos is a low-budget surveillance solution, that uses computer vision algorithms to detect changes, and that can trigger other devices. Kerberos is open source so you, but also other people, can customize the source to your needs and share it with our community. It has a green footprint when deploying on the Raspberry Pi and it's easy to install, you only need to transfer the image to the SD card and you're done.")
+
+	set(CPACK_PACKAGE_VERSION "1.0.0")
+	set(CPACK_PACKAGE_VERSION_MAJOR "1")
+	set(CPACK_PACKAGE_VERSION_MINOR "0")
+	set(CPACK_PACKAGE_VERSION_PATCH "0")
+	SET(CPACK_NSIS_MODIFY_PATH ON)
+
+	INCLUDE(CPack)

@@ -35,11 +35,12 @@ ExternalProject_Add(opencv
     -DBUILD_opencv_superres=OFF
     -DBUILD_opencv_ts=OFF
     -DBUILD_opencv_videostab=OFF
-    -DBUILD_SHARED_LIBS:BOOL=ON
+    -DBUILD_SHARED_LIBS:BOOL=OFF
     -DBUILD_TESTS:BOOL=OFF
     -DBUILD_PERF_TESTS:BOOL=OFF
     -DCMAKE_BUILD_TYPE:STRING=Release
     -DWITH_FFMPEG:BOOL=ON
+    -DBUILD_WITH_STATIC_CRT:BOOL=ON
     -DBUILD_FAT_JAVA_LIB=OFF
     -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_BINARY_DIR}/thirdparty
 )
@@ -51,7 +52,9 @@ else()
   set(OPENCV_LIBRARY_DIR ${CMAKE_BINARY_DIR}/thirdparty/x86/vc12/lib)
 endif()
 
-set(OPENCV_LIBRARIES opencv_core opencv_highgui opencv_imgproc)
+set(OPENCV_LIBRARIES opencv_imgproc opencv_core opencv_highgui)
 
 include_directories(${OPENCV_INCLUDE_DIR})
 link_directories(${OPENCV_LIBRARY_DIR})
+
+include(${CMAKE_BINARY_DIR}/thirdparty/share/OpenCV/OpenCVConfig.cmake)

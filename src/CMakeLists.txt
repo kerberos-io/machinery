@@ -52,16 +52,16 @@
         DESTINATION "/etc/kerberosio/config"
         PERMISSIONS
         OWNER_WRITE OWNER_READ
-        GROUP_READ
-        WORLD_READ)
+        GROUP_WRITE GROUP_READ
+        WORLD_WRITE WORLD_READ)
 
     # copy log file
     INSTALL(FILES "${CMAKE_BINARY_DIR}/../logs/log.stash"
         DESTINATION "/etc/kerberosio/logs"
         PERMISSIONS
         OWNER_WRITE OWNER_READ
-        GROUP_READ
-        WORLD_READ)
+        GROUP_WRITE GROUP_READ
+        WORLD_WRITE WORLD_READ)
 
     # install binary
 	INSTALL(TARGETS kerberosio DESTINATION bin)

@@ -26,7 +26,7 @@
 	endforeach(src ${KERBEROS_FACTORY_ENTITIES})
 
 	add_executable(kerberosio main.cpp ${KERBEROS_FACTORY_ENTITIES_TEMP})
-	add_dependencies(kerberosio ${KERBEROS_DEPENDENCIES})
+	add_dependencies(kerberosio rerun ${KERBEROS_DEPENDENCIES})
 	target_link_libraries(kerberosio ${KERBEROS_CORE_LIBRARY} ${KERBEROS_LIBRARIES})
 
 # -----------------------------------------

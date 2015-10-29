@@ -5,7 +5,7 @@
 
 ## Introduction
 
-[Kerberos](http://kerberos.io) is a low-budget surveillance solution created for the Rapsberry Pi, but it also works on OSX and Linux. It uses a motion detection algorithm to detect changes and stores images when motion is detected. Kerberos is open source, so you and others, can customize the source code to your needs and share it. It has a low-energy footprint when deploying on the Raspberry Pi and it's easy to install, you only need to transfer the image to the SD card and you're done.
+[Kerberos](http://kerberos.io) is a low-budget surveillance solution created for the Rapsberry Pi, but it also works on OSX and Linux. It uses computer vision algorithms to detect changes and stores images when motion is detected. Kerberos is open source, so you and others, can customize the source code to your needs and share it. It has a low-energy footprint when deploying on the Raspberry Pi and it's easy to install, you only need to transfer the image to the SD card and you're done.
 
 Use your mobile phone, tablet or PC to keep an eye on your property. View the images taken by [Kerberos](http://kerberos.io) with our responsive and user-friendly web interface. Look at the dashboard to get a graphical overview of the past days. Multiple [Kerberos](http://kerberos.io) instances can be installed and can be viewed with only 1 web interface.
 
@@ -28,7 +28,7 @@ To built the source, you will need to have a C++ compiler and cmake installed an
 
     git clone https://github.com/kerberos-io/machinery kerberos-io
     cd kerberos-io
-    mkdir build && cd build && cmake .. && make && make check
+    mkdir build && cd build && cmake .. && make && make check && sudo make install
 
 
 This will download all the dependencies and link the executables. Notice that this can take some time, on travis-ci it takes about 5 min.

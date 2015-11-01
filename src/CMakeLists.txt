@@ -66,7 +66,7 @@
     # create image directory
     INSTALL(DIRECTORY
         DESTINATION /srv/capture/
-        PERMISSIONS
+        DIRECTORY_PERMISSIONS 
         OWNER_WRITE OWNER_READ
         GROUP_WRITE GROUP_READ
         WORLD_WRITE WORLD_READ)

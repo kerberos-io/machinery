@@ -63,11 +63,16 @@
         GROUP_WRITE GROUP_READ
         WORLD_WRITE WORLD_READ)
 
+    # create image directory
+    INSTALL(DIRECTORY
+        DESTINATION /srv/capture/
+        PERMISSIONS
+        OWNER_WRITE OWNER_READ
+        GROUP_WRITE GROUP_READ
+        WORLD_WRITE WORLD_READ)
+        
     # install binary
 	INSTALL(TARGETS kerberosio DESTINATION bin)
-    
-    # create image directory
-    INSTALL(DIRECTORY DESTINATION /srv/capture/)
 
 # ----------------------------------------
 # CPack

@@ -16,7 +16,7 @@
         <message type="text">motion detected</message>
     </TCPSocket>
     <Webhook>
-        <url type="text">http://kerberos.web/api/v1/webhook</url>
+        <url type="text">http://localhost/api/v1/webhook</url>
     </Webhook>
     
 </ios>

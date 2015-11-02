@@ -1,6 +1,5 @@
 #KERBEROS.**IO**
 
-
 [![Build Status](https://travis-ci.org/kerberos-io/machinery.svg)](https://travis-ci.org/kerberos-io/machinery) [![Stories in Ready](https://badge.waffle.io/kerberos-io/machinery.svg?label=ready&title=Ready)](http://waffle.io/kerberos-io/machinery)  [![Join the chat at https://gitter.im/kerberos-io/hades](https://img.shields.io/badge/GITTER-join chat-green.svg)](https://gitter.im/kerberos-io/hades?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 ## Introduction
@@ -11,12 +10,12 @@ Use your mobile phone, tablet or PC to keep an eye on your property. View the im
 
 ## Machinery
 
-The machinery, is a motion detection framework, that takes images from your USB-camera or PI cameraboard and makes some calculations to recognize changes/motion. When motion is detected several IO operations can be executed (save an image to disk, store information to a DB, trigger an GPIO pin, etc). This project is built for the Open Source community, thus maintenance and expansion was/is very important. Therefore the machinery is divided in four logical parts; more information can be found on the [documentation website](http://doc.kerberos.io).
+The machinery, is a computer vision framework, that takes images from your USB camera, IP camera or PI cameraboard and makes some calculations to recognize changes/motion. When motion is detected several IO operations can be executed (save an image to disk, store information to a DB, trigger an GPIO pin, etc). The machinery is divided in four logical parts; more information can be found on the [documentation website](http://doc.kerberos.io).
 
 Developers can easily add new:
 
 - Algorithms to detect motion, by using the OpenCV library.
-- Create new controllers/heuristics to validate if detection was real.
+- Create new heuristics to validate if detection was real.
 - Integrate support for other output devices (a NOSQL database, E-mail, GPIO, TCP server and other notification services)
 
 ##Installation

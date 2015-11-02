@@ -1,0 +1,10 @@
+[Unit]
+Description=Kerberos.io Video Surveillance
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/kerberosio &
+ExecReload=/bin/kill -HUP $MAINPID
+
+[Install]
+WantedBy=multi-user.target

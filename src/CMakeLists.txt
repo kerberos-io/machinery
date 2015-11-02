@@ -63,6 +63,14 @@
         GROUP_WRITE GROUP_READ
         WORLD_WRITE WORLD_READ)
 
+    # copy service file
+    INSTALL(FILES "${CMAKE_BINARY_DIR}/../service/kerberosio.service"
+        DESTINATION "/etc/systemd/system"
+        PERMISSIONS
+        OWNER_WRITE OWNER_READ
+        GROUP_WRITE GROUP_READ
+        WORLD_WRITE WORLD_READ)
+
     # create image directory
     INSTALL(DIRECTORY
         DESTINATION /srv/capture/

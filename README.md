@@ -33,7 +33,7 @@ This will download all the dependencies and link the executables. Notice that th
 
 ##Run kerberos
 
-After kerberos is installed a binary is available **/usr/bin/kerberosio**. Just run following command in your terminal to start kerberosio.
+After kerberos is installed a binary is available at **/usr/bin/kerberosio**. Just run following command in your terminal to start kerberosio.
 
     kerberosio
     

@@ -31,7 +31,7 @@ To built the source, you will need to have a C++ compiler and cmake installed an
 
 This will download all the dependencies and link the executables. Notice that this can take some time, on travis-ci it takes about 5 min.
 
-##Run kerberos
+##Run
 
 After kerberos is installed a binary is available at **/usr/bin/kerberosio**. Just run following command in your terminal to start kerberosio.
 

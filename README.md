@@ -29,8 +29,17 @@ To built the source, you will need to have a C++ compiler and cmake installed an
     cd kerberos-io
     mkdir build && cd build && cmake .. && make && make check && sudo make install
 
-
 This will download all the dependencies and link the executables. Notice that this can take some time, on travis-ci it takes about 5 min.
+
+##Run kerberos
+
+After kerberos is installed a binary is available **/usr/bin/kerberosio**. Just run following command in your terminal to start kerberosio.
+
+    kerberosio
+    
+##Configure
+
+The configuration files can be found at **/etc/kerberosio/config**. By default the Raspberry Pi Camera module is set as your default capture device. You can update the **config.xml** file to change it to **USBCamera** or **IPCamera**. Images are stored in the **/srv/capture** directory; this location can be changed by editing the **io.xml** file.
 
 ##Contribute
 

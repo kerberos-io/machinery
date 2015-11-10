@@ -1,7 +1,7 @@
 message("External project: Googlemock")
 
 ExternalProject_Add(googlemock
-  SVN_REPOSITORY http://googlemock.googlecode.com/svn/trunk/
+  SVN_REPOSITORY https://github.com/google/googlemock
   SOURCE_DIR googlemock
   BUILD_IN_SOURCE 1
   UPDATE_COMMAND ""

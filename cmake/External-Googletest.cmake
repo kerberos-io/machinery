@@ -1,7 +1,7 @@
 message("External project: Googletest")
 
 ExternalProject_Add(googletest
-  SVN_REPOSITORY http://googletest.googlecode.com/svn/trunk/
+  SVN_REPOSITORY https://github.com/google/googletest
   SOURCE_DIR googletest
   BUILD_IN_SOURCE 1
   UPDATE_COMMAND ""
@@ -10,6 +10,7 @@ ExternalProject_Add(googletest
     -DCMAKE_BUILD_TYPE:STRING=Release
     -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_BINARY_DIR}/thirdparty
     -Dgtest_force_shared_crt=OFF
+  BUILD_COMMAND cd googletest && make && make test
   INSTALL_DIR ${CMAKE_BINARY_DIR}/thirdparty
   INSTALL_COMMAND ""
 )

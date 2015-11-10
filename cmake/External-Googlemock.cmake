@@ -10,6 +10,7 @@ ExternalProject_Add(googlemock
     -DCMAKE_BUILD_TYPE:STRING=Release
     -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_BINARY_DIR}/thirdparty
     -Dgtest_force_shared_crt=OFF
+  BUILD_COMMAND cd googlemock && make && make test
   INSTALL_DIR ${CMAKE_BINARY_DIR}/thirdparty
   INSTALL_COMMAND ""
 )

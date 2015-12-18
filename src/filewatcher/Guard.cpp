@@ -27,7 +27,7 @@ namespace FW
 	void Guard::start()
 	{
 		#if defined(__APPLE_CC__) || defined(BSD)
-			std::string file = m_directory + "/" + m_file;
+			std::string file = (m_file != "") ? m_directory + "/" + m_file : m_file;
 		#elif defined(__linux__)
 			std::string file = m_file;
 		#endif

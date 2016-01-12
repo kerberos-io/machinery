@@ -21,8 +21,7 @@ include( ExternalProject )
 
     if(${TESTS_ENABLED})
         include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/External-Googletest.cmake)
-        include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/External-Googlemock.cmake)
-        set(KERBEROS_TEST_DEPENDENCIES ${KERBEROS_TEST_DEPENDENCIES} googletest googlemock)
+        set(KERBEROS_TEST_DEPENDENCIES ${KERBEROS_TEST_DEPENDENCIES} googletest)
     endif()
 
 # --------------------------------------------------------------------------

@@ -1,7 +1,7 @@
 message("External project: Googletest")
 
 ExternalProject_Add(googletest
-  SVN_REPOSITORY http://googletest.googlecode.com/svn/trunk/
+  GIT_REPOSITORY https://github.com/google/googletest
   SOURCE_DIR googletest
   BUILD_IN_SOURCE 1
   UPDATE_COMMAND ""
@@ -14,10 +14,10 @@ ExternalProject_Add(googletest
   INSTALL_COMMAND ""
 )
 
-set(GOOGLETEST_INCLUDE_DIR ${CMAKE_BINARY_DIR}/googletest/include/)
-set(GOOGLETEST_LIBRARY_DIR ${CMAKE_BINARY_DIR}/)
+set(GOOGLETEST_INCLUDE_DIR "${CMAKE_BINARY_DIR}/googletest/googletest/include/" "${CMAKE_BINARY_DIR}/googletest/googlemock/include/")
+set(GOOGLETEST_LIBRARY_DIR ${CMAKE_BINARY_DIR}/googletest/)
 
 include_directories(${GOOGLETEST_INCLUDE_DIR})
 link_directories(${GOOGLETEST_LIBRARY_DIR})
 
-set(GOOGLETEST_LIBRARIES "${GOOGLETEST_LIBRARY_DIR}googletest/libgtest.a" "${GOOGLETEST_LIBRARY_DIR}googletest/libgtest_main.a")
+set(GOOGLETEST_LIBRARIES "${GOOGLETEST_LIBRARY_DIR}googlemock/libgmock.a" "${GOOGLETEST_LIBRARY_DIR}googlemock/libgmock_main.a")

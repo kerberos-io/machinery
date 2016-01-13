@@ -80,7 +80,7 @@
         WORLD_WRITE WORLD_READ)
         
     # install binary
-	INSTALL(TARGETS kerberosio DESTINATION bin)
+	INSTALL(TARGETS kerberosio DESTINATION /usr/bin)
 
 # ----------------------------------------
 # CPack

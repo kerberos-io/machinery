@@ -18,7 +18,7 @@ Developers can easily add new:
 - Create new heuristics to validate if detection was real.
 - Integrate support for other output devices (a NOSQL database, E-mail, GPIO, TCP server and other notification services)
 
-##Installation
+##Install
 
 The machinery is mainly built for the Raspberry PI, but it also works on OSX and Linux. It should also work on Windows with little modifications to the source code and cmake files.
 
@@ -29,9 +29,18 @@ To built the source, you will need to have a C++ compiler and cmake installed an
     cd kerberos-io
     mkdir build && cd build && cmake .. && make && make check && sudo make install
 
-
 This will download all the dependencies and link the executables. Notice that this can take some time, on travis-ci it takes about 5 min.
+    
+##Configure
 
+The configuration files can be found at **/etc/kerberosio/config**. By default the Raspberry Pi Camera module is set as capture device. You can update the **config.xml** file to change it to **USBCamera** or **IPCamera**. Images are stored in the **/srv/capture** directory; this location can be changed by editing the **io.xml** file.
+
+##Run
+
+After kerberos is installed a binary is available at **/usr/bin/kerberosio**. Just run following command in your terminal to start kerberosio.
+
+    kerberosio
+    
 ##Contribute
 
 Want to contribute? You're a Ph.D. in Computer Vision, or an ambitious programmer who wants to take kerberos.io to the next level? Then we like to welcome you to the community. Contributions are taken very seriously, besides your code, testing and documentation is very very ... very important! We only will accept pull-request with tests and documentation of a decent level and of course if everything works as expected. 

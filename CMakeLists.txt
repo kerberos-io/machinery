@@ -8,7 +8,6 @@ project(Kerberos)
 	    set(IS_RASPBERRYPI 1)   
 	endif()
 
-
 # ----------------------------------------------
 # Enable MongoDB
 
@@ -38,6 +37,11 @@ project(Kerberos)
 
 	include(${CMAKE_SOURCE_DIR}/cmake/Superbuild.cmake)
 
+# ---------------------------
+# XCode system library
+
+	link_directories("/usr/local/lib")
+    
 # ----------------------------------------------
 # Link source and tests (if enabled)
 

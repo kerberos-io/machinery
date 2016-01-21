@@ -23,6 +23,7 @@ ExternalProject_Add(raspicamera
   CMAKE_GENERATOR ${gen}
   CMAKE_ARGS
     -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_BINARY_DIR}/thirdparty
+    -DBUILD_SHARED_LIBS=OFF
 )
 
 set(RASPBERRYPI_INCLUDE_DIR ${CMAKE_BINARY_DIR}/thirdparty/include/)

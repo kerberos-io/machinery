@@ -3,7 +3,7 @@
 
 	<Disk>
         <fileFormat type="text">timestamp_microseconds_instanceName_regionCoordinates_numberOfChanges_token.jpg</fileFormat>
-    	<directory type="text">/home/kerberos-web/public/capture/</directory>
+    	<directory type="text">/srv/capture/</directory>
     </Disk>
     <GPIO>
         <pin type="number">17</pin>
@@ -16,7 +16,7 @@
         <message type="text">motion detected</message>
     </TCPSocket>
     <Webhook>
-        <url type="text">http://kerberos.web/api/v1/webhook</url>
+        <url type="text">http://localhost/api/v1/webhook</url>
     </Webhook>
     
 </ios>

@@ -24,7 +24,7 @@ namespace kerberos
     {
         try
         {
-            m_camera = cvCaptureFromCAM(CV_CAP_ANY);
+            m_camera = new cv::VideoCapture(CV_CAP_ANY);
             setImageSize(width, height);
         }
         catch(cv::Exception & ex)
@@ -46,12 +46,12 @@ namespace kerberos
             
             // Get image from camera
             Image * image = new Image();
-            cvGrabFrame(m_camera);
-            cvGrabFrame(m_camera);
-            cvGrabFrame(m_camera);
-            cvGrabFrame(m_camera);
-            cvGrabFrame(m_camera); // workaround for buffering
-            image->setImage(cvRetrieveFrame(m_camera));
+            m_camera->grab();
+            m_camera->grab();
+            m_camera->grab();
+            m_camera->grab();
+            m_camera->grab(); // workaround for buffering
+            m_camera->retrieve(image->getImage());
             
             // Check if need to rotate the image
             image->rotate(m_angle);
@@ -69,8 +69,8 @@ namespace kerberos
         Capture::setImageSize(width, height);
         try
         {
-            cvSetCaptureProperty(m_camera, CV_CAP_PROP_FRAME_WIDTH, m_frameWidth);
-            cvSetCaptureProperty(m_camera, CV_CAP_PROP_FRAME_HEIGHT, m_frameHeight);
+            //cvSetCaptureProperty(m_camera, CV_CAP_PROP_FRAME_WIDTH, m_frameWidth);
+            //cvSetCaptureProperty(m_camera, CV_CAP_PROP_FRAME_HEIGHT, m_frameHeight);
         }
         catch(cv::Exception & ex)
         {
@@ -94,7 +94,7 @@ namespace kerberos
     {
         try
         {
-            cvReleaseCapture(&m_camera);
+            m_camera->release();
         }
         catch(cv::Exception & ex)
         {

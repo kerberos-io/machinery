@@ -24,7 +24,7 @@ namespace kerberos
     class USBCamera : public CaptureCreator<USBCameraName, USBCamera>
     {
         private:
-            CvCapture * m_camera;
+            cv::VideoCapture * m_camera;
             Executor<USBCamera> tryToUpdateCapture;
         
         public:
@@ -32,7 +32,7 @@ namespace kerberos
             {
                 try
                 {
-                    m_camera = cvCaptureFromCAM(CV_CAP_ANY);
+                    m_camera = new cv::VideoCapture(CV_CAP_ANY);
                 }
                 catch(cv::Exception & ex)
                 {

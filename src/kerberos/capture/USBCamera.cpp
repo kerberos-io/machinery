@@ -69,8 +69,8 @@ namespace kerberos
         Capture::setImageSize(width, height);
         try
         {
-            //cvSetCaptureProperty(m_camera, CV_CAP_PROP_FRAME_WIDTH, m_frameWidth);
-            //cvSetCaptureProperty(m_camera, CV_CAP_PROP_FRAME_HEIGHT, m_frameHeight);
+            m_camera->set(CV_CAP_PROP_FRAME_WIDTH, m_frameWidth);
+            m_camera->set(CV_CAP_PROP_FRAME_HEIGHT, m_frameHeight);
         }
         catch(cv::Exception & ex)
         {

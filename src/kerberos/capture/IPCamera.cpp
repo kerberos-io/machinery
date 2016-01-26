@@ -18,6 +18,7 @@ namespace kerberos
         
         // Initialize URL to IP Camera
         setUrl(url);
+        open(m_url.c_str());
         
         // Initialize executor (update the usb camera at specific times).
         tryToUpdateCapture.setAction(this, &IPCamera::update);
@@ -47,16 +48,23 @@ namespace kerberos
             // Delay camera for some time..
             usleep(m_delay*1000);
             
-            open(m_url.c_str());
-            cv::Mat img;
-            m_camera->read(img);
-            close();
-            
+            // Get image from RTSP or MJPEG stream
             Image * image = new Image();
-            image->setImage(img);
-            
-            // Check if need to rotate the image
-            image->rotate(m_angle);
+            if(m_streamType == "rtsp")
+            {
+                m_camera->grab();
+                m_camera->grab();
+                m_camera->grab();
+                m_camera->grab();
+                m_camera->grab(); // workaround for buffering
+                m_camera->retrieve(image->getImage());
+            }
+            else
+            {
+                open(m_url.c_str());
+                m_camera->read(image->getImage());
+                close();
+            }
             
             return image;
         }
@@ -69,6 +77,15 @@ namespace kerberos
     void IPCamera::setImageSize(int width, int height)
     {
         Capture::setImageSize(width, height);
+        try
+        {
+            m_camera->set(CV_CAP_PROP_FRAME_WIDTH, m_frameWidth);
+            m_camera->set(CV_CAP_PROP_FRAME_HEIGHT, m_frameHeight);
+        }
+        catch(cv::Exception & ex)
+        {
+            throw OpenCVException(ex.msg.c_str());
+        }
     }
     
     void IPCamera::setRotation(int angle)

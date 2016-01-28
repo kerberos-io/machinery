@@ -31,7 +31,6 @@ namespace kerberos
     {
         const char * getValueByKey(kerberos::StringMap & map, const std::string & key);
         kerberos::StringMap getCommandOptions(int argc, char ** argv);
-        char* getCommandOption(char ** begin, char ** end, const std::string & option);
         kerberos::StringMap getSettingsFromXML(const std::string & path);
         bool replace(std::string& str, const std::string& from, const std::string& to);
         template <class T> inline std::string to_string (const T& t);

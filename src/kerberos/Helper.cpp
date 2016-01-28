@@ -42,18 +42,6 @@ namespace kerberos
             
             return parameters;
         }
-        
-        char* getCommandOption(char ** begin, char ** end, const std::string & option)
-        {
-            char ** itr = std::find(begin, end, option.c_str());
-            
-            if (itr != end && ++itr != end)
-            {
-                return *itr;
-            }
-            
-            return 0;
-        }
 
         void getSettingsFromXML(TiXmlElement * root, std::string prefix, kerberos::StringMap & settings);
         kerberos::StringMap getSettingsFromXML(const std::string & path)

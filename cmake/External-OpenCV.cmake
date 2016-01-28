@@ -34,7 +34,7 @@ ExternalProject_Add(opencv
     -DBUILD_opencv_stitching=OFF
     -DBUILD_opencv_superres=OFF
     -DBUILD_opencv_ts=OFF
-    -DBUILD_WITH_IPP=OFF
+    -DBUILD_WITH_IPP:BOOL=OFF
     -DBUILD_opencv_videostab=OFF
     -DBUILD_SHARED_LIBS:BOOL=OFF
     -DBUILD_TESTS:BOOL=OFF

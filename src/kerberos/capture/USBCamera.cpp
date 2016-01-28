@@ -29,7 +29,7 @@ namespace kerberos
     {
         try
         {
-            m_camera = new cv::VideoCapture(getDeviceNumber());
+            m_camera = new cv::VideoCapture();
             setImageSize(width, height);
         }
         catch(cv::Exception & ex)

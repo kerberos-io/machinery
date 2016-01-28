@@ -2,11 +2,17 @@
 
 namespace kerberos
 {
-    void Kerberos::bootstrap(const std::string & configuration)
+    void Kerberos::bootstrap(StringMap & parameters)
     {
+        // --------------------------------
+        // Set parameters from command-line
+        
+        setParameters(parameters);
+        
         // ---------------------
         // Initialize kerberos
-
+        
+        std::string configuration = (helper::getValueByKey(parameters, "config")) ?: "/etc/kerberosio/config/config.xml";
         configure(configuration);
 
         // ------------------------------------------
@@ -73,8 +79,20 @@ namespace kerberos
     {
         // ---------------------------
     	// Get settings from XML file
-
+        
         StringMap settings = kerberos::helper::getSettingsFromXML(configuration);
+        
+        // -------------------------------
+        // Override config with parameters
+        
+        StringMap parameters = getParameters();
+        StringMap::iterator begin = parameters.begin();
+        StringMap::iterator end = parameters.end();
+        
+        for(begin; begin != end; begin++)
+        {
+            settings[begin->first] = begin->second;
+        }
         
         // ---------------------------
         // Initialize capture device

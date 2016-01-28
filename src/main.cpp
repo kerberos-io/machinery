@@ -22,27 +22,26 @@ using namespace kerberos;
 int main(int argc, char** argv)
 {
     // ----------------------------------
-    // Locate kerberos working directory
-
-    std::string workDirectory = helper::getRootDirectory(argv[0]);
+    // Get parameters from command line
+    
+    StringMap parameters = helper::getCommandOptions(argc, argv);
     
     while(true)
     {
         try
         {
-            // ---------------------------------------------
-            // Bootstrap kerberos with a configuration file.
-
-            std::string configFile = (argc > 1) ? argv[1] : "/etc/kerberosio/config/config.xml";
-            Kerberos::run(configFile);
+            // ----------------------------------
+            // Bootstrap kerberos with parameters
+            
+            Kerberos::run(parameters);
         }
         catch(Exception & ex)
         {
             // ------------------------------------------
             // Exceptions are logged in "log.stash" file.
-        
+            
             std::ofstream logstash;
-            std::string logFile = (argc > 2) ? argv[2] : "/etc/kerberosio/logs/log.stash";
+            std::string logFile = (helper::getValueByKey(parameters, "log")) ?: "/etc/kerberosio/logs/log.stash";
             logstash.open(logFile.c_str(), std::ios_base::app);
             
             if(logstash.is_open())

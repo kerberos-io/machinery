@@ -4,6 +4,57 @@ namespace kerberos
 {
     namespace helper
     {
+        const char * getValueByKey(kerberos::StringMap & map, const std::string & key)
+        {
+            if(map.find(key) != map.end())
+            {
+                return map.at(key).c_str();
+            }
+        
+            return 0;
+        }
+    
+        kerberos::StringMap getCommandOptions(int argc, char ** argv)
+        {
+            kerberos::StringMap parameters;
+            
+            char ** begin = argv;
+            char ** end = argv + argc;
+            
+            while(begin != end)
+            {
+                std::string option = *begin;
+                if(option.substr(0,2) == "--")
+                {
+                    option = option.substr(2,option.size());
+                    std::string value = *(++begin);
+                    if(value.substr(0,2) != "--")
+                    {
+                        parameters[option] = value;
+                    }
+                    else
+                    {
+                        --begin;
+                    }
+                }
+                begin++;
+            }
+            
+            return parameters;
+        }
+        
+        char* getCommandOption(char ** begin, char ** end, const std::string & option)
+        {
+            char ** itr = std::find(begin, end, option);
+            
+            if (itr != end && ++itr != end)
+            {
+                return *itr;
+            }
+            
+            return 0;
+        }
+
         void getSettingsFromXML(TiXmlElement * root, std::string prefix, kerberos::StringMap & settings);
         kerberos::StringMap getSettingsFromXML(const std::string & path)
         {

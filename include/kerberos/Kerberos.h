@@ -30,13 +30,16 @@ namespace kerberos
             Machinery * machinery;
             ImageVector images;
             int m_captureDelayTime;
+            StringMap m_parameters;
 
             Kerberos(){};
             ~Kerberos(){delete guard; delete capture; delete machinery;};
 
-            void bootstrap(const std::string & configuration);
+            void bootstrap(StringMap & parameters);
             void configure(const std::string & configuration);
             void setCaptureDelayTime(int delay){m_captureDelayTime=delay;};
+            void setParameters(StringMap & parameters){m_parameters = parameters;};
+            StringMap getParameters(){return m_parameters;}
         
         public:
             // -----------
@@ -51,9 +54,9 @@ namespace kerberos
             // ----------------
             // Run application
 
-            static void run(const std::string & configuration)
+            static void run(StringMap & parameters)
             {
-                getInstance()->bootstrap(configuration);
+                getInstance()->bootstrap(parameters);
             }
 
             // -----------------------------------

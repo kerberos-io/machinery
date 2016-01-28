@@ -6,6 +6,7 @@ namespace kerberos
     {
         int width = std::atoi(settings.at("captures.USBCamera.frameWidth").c_str());
         int height = std::atoi(settings.at("captures.USBCamera.frameHeight").c_str());
+        int deviceNumber = std::atoi(settings.at("captures.USBCamera.deviceNumber").c_str());
         int angle = std::atoi(settings.at("captures.USBCamera.angle").c_str());
         int delay = std::atoi(settings.at("captures.USBCamera.delay").c_str());
         
@@ -14,6 +15,10 @@ namespace kerberos
         setImageSize(width, height);
         setRotation(angle);
         setDelay(delay);
+        setDeviceNumber(deviceNumber);
+        
+        // Initialize USB Camera
+        open();
         
         // Initialize executor (update the usb camera at specific times).
         tryToUpdateCapture.setAction(this, &USBCamera::update);
@@ -24,7 +29,7 @@ namespace kerberos
     {
         try
         {
-            m_camera = new cv::VideoCapture(CV_CAP_ANY);
+            m_camera = new cv::VideoCapture(getDeviceNumber());
             setImageSize(width, height);
         }
         catch(cv::Exception & ex)
@@ -46,7 +51,12 @@ namespace kerberos
             
             // Get image from camera
             Image * image = new Image();
-            m_camera->read(image->getImage());
+            m_camera->grab();
+            m_camera->grab();
+            m_camera->grab();
+            m_camera->grab();
+            m_camera->grab(); // workaround for buffering
+            m_camera->retrieve(image->getImage());
             
             // Check if need to rotate the image
             image->rotate(m_angle);
@@ -73,17 +83,10 @@ namespace kerberos
         }
     }
     
-    void USBCamera::setRotation(int angle)
+    void USBCamera::open()
     {
-        Capture::setRotation(angle);
+        m_camera->open(getDeviceNumber());
     }
-    
-    void USBCamera::setDelay(int msec)
-    {
-        Capture::setDelay(msec);
-    }
-    
-    void USBCamera::open(){}
     
     void USBCamera::close()
     {

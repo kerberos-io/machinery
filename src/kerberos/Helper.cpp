@@ -45,7 +45,7 @@ namespace kerberos
         
         char* getCommandOption(char ** begin, char ** end, const std::string & option)
         {
-            char ** itr = std::find(begin, end, option);
+            char ** itr = std::find(begin, end, option.c_str());
             
             if (itr != end && ++itr != end)
             {

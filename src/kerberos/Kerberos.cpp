@@ -12,7 +12,7 @@ namespace kerberos
 
         for(;;)
         {
-            capture->grab();
+            capture->takeImage();
         }
     }
     

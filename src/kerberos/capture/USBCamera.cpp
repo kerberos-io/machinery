@@ -52,10 +52,6 @@ namespace kerberos
             // Get image from camera
             Image * image = new Image();
             m_camera->grab();
-            m_camera->grab();
-            m_camera->grab();
-            m_camera->grab();
-            m_camera->grab(); // workaround for buffering
             m_camera->retrieve(image->getImage());
             
             // Check if need to rotate the image

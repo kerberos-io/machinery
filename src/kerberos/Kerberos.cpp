@@ -2,6 +2,20 @@
 
 namespace kerberos
 {
+    // -------------------------------------------
+    // Function ran in a thread, which continously
+    // grabs frames.
+
+    void * grabContinuously(void * cap)
+    {
+        Capture * capture = (Capture *) cap;
+
+        for(;;)
+        {
+            capture->grab();
+        }
+    }
+    
     void Kerberos::bootstrap(StringMap & parameters)
     {
         // --------------------------------
@@ -12,7 +26,7 @@ namespace kerberos
         // ---------------------
         // Initialize kerberos
         
-        std::string configuration = (helper::getValueByKey(parameters, "config")) ?: "/etc/kerberosio/config/config.xml";
+        std::string configuration = (helper::getValueByKey(parameters, "config")) ?: CONFIGURATION_PATH;
         configure(configuration);
 
         // ------------------------------------------
@@ -27,6 +41,13 @@ namespace kerberos
         
         guard->onChange(&Kerberos::reconfigure);
         guard->start();
+        
+        // ------------------------------------------------
+        // Start a new thread that grabs images continously.
+        // This is needed to clear the buffer of the capture device.
+        
+        pthread_t thread;
+        pthread_create(&thread, NULL, grabContinuously, (Capture *) capture);
         
         // --------------------------
         // This should be forever...

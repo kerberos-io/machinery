@@ -33,19 +33,13 @@ namespace kerberos
         usleep(m_delay*1000);
         
         // take an image 
-        Image * image = grab();
+        Image * image = new Image();
+        m_camera->grab();
+        m_camera->retrieve(image->getImage());
         
         // Check if need to rotate the image
         image->rotate(m_angle);
                 
-        return image;
-    }
-    
-    Image * RaspiCamera::grab()
-    {
-        Image * image = new Image();
-        m_camera->grab();
-        m_camera->retrieve(image->getImage());
         return image;
     }
     

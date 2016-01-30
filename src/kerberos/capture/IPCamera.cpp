@@ -53,10 +53,6 @@ namespace kerberos
             if(m_streamType == "rtsp")
             {
                 m_camera->grab();
-                m_camera->grab();
-                m_camera->grab();
-                m_camera->grab();
-                m_camera->grab(); // workaround for buffering
                 m_camera->retrieve(image->getImage());
             }
             else

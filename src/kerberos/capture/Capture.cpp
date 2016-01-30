@@ -25,7 +25,7 @@ namespace kerberos
     {
         m_delay = msec;   
     }
-
+    
     ImageVector & Capture::takeImages(int numberOfImages)
     {
 	    m_images.resize(numberOfImages);

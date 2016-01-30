@@ -54,6 +54,17 @@ namespace kerberos
             void setRotation(int angle);
             void setDelay(int msec);
         
+            void grab()
+            {
+                m_camera->grab();
+            }
+            Image retrieve()
+            {
+                Image image;
+                m_camera->retrieve(image.getImage());
+                return image;
+            }
+        
             Image * takeImage();
         
             void open();

@@ -41,7 +41,7 @@ int main(int argc, char** argv)
             // Exceptions are logged in "log.stash" file.
             
             std::ofstream logstash;
-            std::string logFile = (helper::getValueByKey(parameters, "log")) ?: "/etc/kerberosio/logs/log.stash";
+            std::string logFile = (helper::getValueByKey(parameters, "log")) ?: LOG_PATH;
             logstash.open(logFile.c_str(), std::ios_base::app);
             
             if(logstash.is_open())

@@ -38,7 +38,11 @@ namespace kerberos
             virtual void setImageSize(int width, int height);
             virtual void setRotation(int angle);
             virtual void setDelay(int msec);
+              
+            virtual void grab() = 0;
+            virtual Image retrieve() = 0;
             virtual Image * takeImage() = 0;
+
             ImageVector & takeImages(int numberOfImages);
             ImageVector & shiftImage();
             ImageVector & shiftImages(int numberOfImages);

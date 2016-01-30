@@ -46,8 +46,8 @@ namespace kerberos
         // Start a new thread that grabs images continously.
         // This is needed to clear the buffer of the capture device.
         
-        pthread_t thread;
-        pthread_create(&thread, NULL, grabContinuously, (Capture *) capture);
+        //pthread_t thread;
+        //pthread_create(&thread, NULL, grabContinuously, (Capture *) capture);
         
         // --------------------------
         // This should be forever...

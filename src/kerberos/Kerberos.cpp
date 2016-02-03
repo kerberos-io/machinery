@@ -12,7 +12,7 @@ namespace kerberos
 
         for(;;)
         {
-            capture->takeImage();
+            capture->grab();
         }
     }
     
@@ -46,8 +46,8 @@ namespace kerberos
         // Start a new thread that grabs images continously.
         // This is needed to clear the buffer of the capture device.
         
-        //pthread_t thread;
-        //pthread_create(&thread, NULL, grabContinuously, (Capture *) capture);
+        pthread_t thread;
+        pthread_create(&thread, NULL, grabContinuously, (Capture *) capture);
         
         // --------------------------
         // This should be forever...
@@ -59,7 +59,6 @@ namespace kerberos
 
             JSON m_data;
             m_data.SetObject();
-
 
             // ------------------------------------
             // Guard look if the configuration has

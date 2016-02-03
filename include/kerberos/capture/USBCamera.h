@@ -50,22 +50,12 @@ namespace kerberos
             void setDeviceNumber(int number){m_deviceNumber=number;}
             int getDeviceNumber(){return m_deviceNumber;}
             
-            void grab()
-            {
-                m_camera->grab();
-            }
-            Image retrieve()
-            {
-                Image image;
-                m_camera->retrieve(image.getImage());
-                return image;
-            }
-        
+            void grab();
+            Image retrieve();
             Image * takeImage();
         
             void open();
             void close();
-        
             void update();
     };
 }

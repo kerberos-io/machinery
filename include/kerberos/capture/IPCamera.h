@@ -46,31 +46,17 @@ namespace kerberos
             virtual ~IPCamera(){};
             void setup(StringMap & settings);
             void setImageSize(int width, int height);
-            void setUrl(std::string url)
-            {
-                m_url=url;
-                m_streamType = url.substr(0, 4);
-            }
+            void setUrl(std::string url);
             void setRotation(int angle);
             void setDelay(int msec);
         
-            void grab()
-            {
-                m_camera->grab();
-            }
-            Image retrieve()
-            {
-                Image image;
-                m_camera->retrieve(image.getImage());
-                return image;
-            }
-        
+            void grab();
+            Image retrieve();
             Image * takeImage();
         
             void open();
             void open(const char * url);
             void close();
-        
             void update();
     };
 }

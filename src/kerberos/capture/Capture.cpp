@@ -4,10 +4,16 @@ namespace kerberos
 {
     void Capture::setup(kerberos::StringMap & settings, int width, int height)
     {
+        // --------------------------
         // Make width & height global.
         
         settings["capture.width"] = helper::to_string(width);
         settings["capture.height"] = helper::to_string(height);
+        
+        // ----------------
+        // Initialize mutex
+        
+        pthread_mutex_init(&m_lock, NULL);
     }
         
     void Capture::setImageSize(int width, int height)

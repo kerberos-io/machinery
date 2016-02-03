@@ -23,6 +23,36 @@ namespace kerberos
         tryToUpdateCapture.setInterval("once at 1000 calls");
     }
     
+    void RaspiCamera::grab()
+    {
+        try
+        {
+            pthread_mutex_lock(&m_lock);
+            m_camera->grab();
+            pthread_mutex_unlock(&m_lock);
+        }
+        catch(cv::Exception & ex)
+        {
+            throw OpenCVException(ex.msg.c_str());
+        }
+    }
+    
+    Image RaspiCamera::retrieve()
+    {
+        try
+        {
+            Image image;
+            pthread_mutex_lock(&m_lock);
+            m_camera->retrieve(image.getImage());
+            pthread_mutex_unlock(&m_lock);
+            return image;
+        }
+        catch(cv::Exception & ex)
+        {
+            throw OpenCVException(ex.msg.c_str());
+        }
+    }
+    
     Image * RaspiCamera::takeImage()
     {
         // update the camera settings, with latest images
@@ -34,8 +64,11 @@ namespace kerberos
         
         // take an image 
         Image * image = new Image();
+        
+        pthread_mutex_lock(&m_lock);
         m_camera->grab();
         m_camera->retrieve(image->getImage());
+        pthread_mutex_unlock(&m_lock);
         
         // Check if need to rotate the image
         image->rotate(m_angle);

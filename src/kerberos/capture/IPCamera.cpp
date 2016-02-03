@@ -37,6 +37,37 @@ namespace kerberos
         }
     };
     
+    void IPCamera::grab()
+    {
+        try
+        {
+            pthread_mutex_lock(&m_lock);
+            m_camera->grab();
+            pthread_mutex_unlock(&m_lock);
+        }
+        catch(cv::Exception & ex)
+        {
+            throw OpenCVException(ex.msg.c_str());
+        }
+    }
+    
+    Image IPCamera::retrieve()
+    {
+        try
+        {
+            Image image;
+            pthread_mutex_lock(&m_lock);
+            m_camera->retrieve(image.getImage());
+            pthread_mutex_unlock(&m_lock);
+            return image;
+        }
+        catch(cv::Exception & ex)
+        {
+            throw OpenCVException(ex.msg.c_str());
+        }
+    }
+    
+    
     Image * IPCamera::takeImage()
     {
         // Update camera, call executor's functor.
@@ -50,10 +81,13 @@ namespace kerberos
             
             // Get image from RTSP or MJPEG stream
             Image * image = new Image();
+            
+            pthread_mutex_lock(&m_lock);
             if(m_streamType == "rtsp")
             {
                 m_camera->grab();
                 m_camera->retrieve(image->getImage());
+                
             }
             else
             {
@@ -61,6 +95,7 @@ namespace kerberos
                 m_camera->read(image->getImage());
                 close();
             }
+            pthread_mutex_unlock(&m_lock);
             
             return image;
         }
@@ -82,6 +117,12 @@ namespace kerberos
         {
             throw OpenCVException(ex.msg.c_str());
         }
+    }
+    
+    void IPCamera::setUrl(std::string url)
+    {
+        m_url=url;
+        m_streamType = url.substr(0, 4);
     }
     
     void IPCamera::setRotation(int angle)

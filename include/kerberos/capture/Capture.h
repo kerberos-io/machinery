@@ -25,6 +25,7 @@ namespace kerberos
         protected:
             ImageVector m_images;
             const char * name;
+            pthread_mutex_t m_lock;
         
         public:
             int m_frameWidth, m_frameHeight;
@@ -49,6 +50,7 @@ namespace kerberos
         
             virtual void open() = 0;
             virtual void close() = 0;
+            virtual void update() = 0;
     };
 
     template<const char * Alias, typename Class>

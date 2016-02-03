@@ -38,6 +38,36 @@ namespace kerberos
         }
     };
     
+    void USBCamera::grab()
+    {
+        try
+        {
+            pthread_mutex_lock(&m_lock);
+            m_camera->grab();
+            pthread_mutex_unlock(&m_lock);
+        }
+        catch(cv::Exception & ex)
+        {
+            throw OpenCVException(ex.msg.c_str());
+        }
+    }
+    
+    Image USBCamera::retrieve()
+    {
+        try
+        {
+            Image image;
+            pthread_mutex_lock(&m_lock);
+            m_camera->retrieve(image.getImage());
+            pthread_mutex_unlock(&m_lock);
+            return image;
+        }
+        catch(cv::Exception & ex)
+        {
+            throw OpenCVException(ex.msg.c_str());
+        }
+    }
+    
     Image * USBCamera::takeImage()
     {
         // Update camera, call executor's functor.
@@ -51,8 +81,11 @@ namespace kerberos
             
             // Get image from camera
             Image * image = new Image();
+            
+            pthread_mutex_lock(&m_lock);
             m_camera->grab();
             m_camera->retrieve(image->getImage());
+            pthread_mutex_unlock(&m_lock);
             
             // Check if need to rotate the image
             image->rotate(m_angle);

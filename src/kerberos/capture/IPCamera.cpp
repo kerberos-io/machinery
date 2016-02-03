@@ -47,6 +47,7 @@ namespace kerberos
         }
         catch(cv::Exception & ex)
         {
+            pthread_mutex_unlock(&m_lock);
             throw OpenCVException(ex.msg.c_str());
         }
     }
@@ -63,6 +64,7 @@ namespace kerberos
         }
         catch(cv::Exception & ex)
         {
+            pthread_mutex_unlock(&m_lock);
             throw OpenCVException(ex.msg.c_str());
         }
     }
@@ -101,6 +103,7 @@ namespace kerberos
         }
         catch(cv::Exception & ex)
         {
+            pthread_mutex_unlock(&m_lock);
             throw OpenCVException(ex.msg.c_str());
         }
     }

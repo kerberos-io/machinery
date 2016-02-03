@@ -33,6 +33,7 @@ namespace kerberos
         }
         catch(cv::Exception & ex)
         {
+            pthread_mutex_unlock(&m_lock);
             throw OpenCVException(ex.msg.c_str());
         }
     }
@@ -49,6 +50,7 @@ namespace kerberos
         }
         catch(cv::Exception & ex)
         {
+            pthread_mutex_unlock(&m_lock);
             throw OpenCVException(ex.msg.c_str());
         }
     }
@@ -59,29 +61,45 @@ namespace kerberos
         //  - it's possible that we have to change the brightness, saturation, etc.
         tryToUpdateCapture();
         
-        // Delay camera for some time..
-        usleep(m_delay*1000);
+        try
+        {
+            // Delay camera for some time..
+            usleep(m_delay*1000);
+
+            // take an image 
+            Image * image = new Image();
+
+            pthread_mutex_lock(&m_lock);
+            m_camera->grab();
+            m_camera->retrieve(image->getImage());
+            pthread_mutex_unlock(&m_lock);
+
+            // Check if need to rotate the image
+            image->rotate(m_angle);
+        }
+        catch(cv::Exception & ex)
+        {
+            pthread_mutex_unlock(&m_lock);
+            throw OpenCVException(ex.msg.c_str());
+        }
         
-        // take an image 
-        Image * image = new Image();
-        
-        pthread_mutex_lock(&m_lock);
-        m_camera->grab();
-        m_camera->retrieve(image->getImage());
-        pthread_mutex_unlock(&m_lock);
-        
-        // Check if need to rotate the image
-        image->rotate(m_angle);
-                
         return image;
     }
     
     void RaspiCamera::setImageSize(int width, int height)
     {
         Capture::setImageSize(width, height);
-        m_camera->set(CV_CAP_PROP_FORMAT, CV_8UC3);
-        m_camera->set(CV_CAP_PROP_FRAME_WIDTH, m_frameWidth);
-        m_camera->set(CV_CAP_PROP_FRAME_HEIGHT, m_frameHeight);
+        try
+        {
+            m_camera->set(CV_CAP_PROP_FORMAT, CV_8UC3);
+            m_camera->set(CV_CAP_PROP_FRAME_WIDTH, m_frameWidth);
+            m_camera->set(CV_CAP_PROP_FRAME_HEIGHT, m_frameHeight);
+        }
+        catch(cv::Exception & ex)
+        {
+            pthread_mutex_unlock(&m_lock);
+            throw OpenCVException(ex.msg.c_str());
+        }
     }
     
     void RaspiCamera::setRotation(int angle)

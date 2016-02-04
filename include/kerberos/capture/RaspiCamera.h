@@ -45,6 +45,7 @@ namespace kerberos
             void open();
             void close();
             void update();
+            bool isOpened();
     };
 }
 

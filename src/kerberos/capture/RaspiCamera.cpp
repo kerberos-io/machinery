@@ -123,4 +123,9 @@ namespace kerberos
     }
     
     void RaspiCamera::update(){}
+    
+    bool RaspiCamera::isOpened()
+    {
+        return m_camera->isOpened();
+    }
 }

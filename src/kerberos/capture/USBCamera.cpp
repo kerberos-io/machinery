@@ -133,4 +133,9 @@ namespace kerberos
     }
     
     void USBCamera::update(){}
+    
+    bool USBCamera::isOpened()
+    {
+        return m_camera->isOpened();
+    }
 }

@@ -42,13 +42,6 @@ namespace kerberos
         guard->onChange(&Kerberos::reconfigure);
         guard->start();
         
-        // ------------------------------------------------
-        // Start a new thread that grabs images continously.
-        // This is needed to clear the buffer of the capture device.
-        
-        pthread_t thread;
-        pthread_create(&thread, NULL, grabContinuously, (Capture *) capture);
-        
         // --------------------------
         // This should be forever...
 
@@ -114,6 +107,12 @@ namespace kerberos
             settings[begin->first] = begin->second;
         }
         
+        // ----------------------------------
+        // Cancel the existing capture thread,
+        // before deleting the device.
+        
+        pthread_cancel(captureThread);
+        
         // ---------------------------
         // Initialize capture device
         
@@ -124,6 +123,12 @@ namespace kerberos
         }
         capture = Factory<Capture>::getInstance()->create(settings.at("capture"));
         capture->setup(settings);
+        
+        // ------------------------------------------------
+        // Start a new thread that grabs images continously.
+        // This is needed to clear the buffer of the capture device.
+        
+        pthread_create(&captureThread, NULL, grabContinuously, (Capture *) capture);
 
         // -------------------
         // Take first images

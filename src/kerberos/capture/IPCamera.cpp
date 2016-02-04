@@ -15,7 +15,7 @@ namespace kerberos
         setImageSize(width, height);
         setRotation(angle);
         setDelay(delay);
-        
+
         // Initialize URL to IP Camera
         setUrl(url);
         open(m_url.c_str());
@@ -48,6 +48,7 @@ namespace kerberos
         catch(cv::Exception & ex)
         {
             pthread_mutex_unlock(&m_lock);
+            pthread_mutex_destroy(&m_lock);
             throw OpenCVException(ex.msg.c_str());
         }
     }
@@ -65,6 +66,7 @@ namespace kerberos
         catch(cv::Exception & ex)
         {
             pthread_mutex_unlock(&m_lock);
+            pthread_mutex_destroy(&m_lock);
             throw OpenCVException(ex.msg.c_str());
         }
     }
@@ -89,7 +91,6 @@ namespace kerberos
             {
                 m_camera->grab();
                 m_camera->retrieve(image->getImage());
-                
             }
             else
             {
@@ -104,6 +105,7 @@ namespace kerberos
         catch(cv::Exception & ex)
         {
             pthread_mutex_unlock(&m_lock);
+            pthread_mutex_destroy(&m_lock);
             throw OpenCVException(ex.msg.c_str());
         }
     }
@@ -141,13 +143,31 @@ namespace kerberos
     void IPCamera::open(){}
     void IPCamera::open(const char * url)
     {
-        m_camera->open(url);
+        try
+        {
+            std::cout << "try to open" << std::endl;
+            if(!m_camera->isOpened())
+            {
+                std::cout << "opening" << std::endl;
+                m_camera->release();
+                m_camera->open(url);
+            }
+            std::cout << "opened" << std::endl;
+        }
+        catch(cv::Exception & ex)
+        {
+            throw OpenCVException(ex.msg.c_str());
+        }
     }
     
     void IPCamera::close()
     {
         try
         {
+            
+            std::cout << "close" << std::endl;
+            pthread_mutex_unlock(&m_lock);
+            pthread_mutex_destroy(&m_lock);
             m_camera->release();
         }
         catch(cv::Exception & ex)
@@ -157,4 +177,9 @@ namespace kerberos
     }
     
     void IPCamera::update(){}
+    
+    bool IPCamera::isOpened()
+    {
+        return m_camera->isOpened();
+    }
 }

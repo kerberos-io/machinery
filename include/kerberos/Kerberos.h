@@ -34,6 +34,7 @@ namespace kerberos
             ImageVector images;
             int m_captureDelayTime;
             StringMap m_parameters;
+            pthread_t captureThread;
 
             Kerberos(){};
             ~Kerberos(){delete guard; delete capture; delete machinery;};

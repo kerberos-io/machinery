@@ -58,6 +58,7 @@ namespace kerberos
             void open(const char * url);
             void close();
             void update();
+            bool isOpened();
     };
 }
 

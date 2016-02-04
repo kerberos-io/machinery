@@ -51,6 +51,7 @@ namespace kerberos
             virtual void open() = 0;
             virtual void close() = 0;
             virtual void update() = 0;
+            virtual bool isOpened() = 0;
     };
 
     template<const char * Alias, typename Class>

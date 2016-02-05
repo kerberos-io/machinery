@@ -33,7 +33,7 @@ This will download all the dependencies and link the executables. Notice that th
     
 ##Configure
 
-The configuration files can be found at **/etc/kerberosio/config**. By default the Raspberry Pi Camera module is set as capture device. You can update the **config.xml** file to change it to **USBCamera** or **IPCamera**. Images are stored in the **/srv/capture** directory; this location can be changed by editing the **io.xml** file.
+The configuration files can be found at **/etc/opt/kerberosio/config**. By default the Raspberry Pi Camera module is set as capture device. You can update the **config.xml** file to change it to **USBCamera** or **IPCamera**. Images are stored in the **/srv/capture** directory; this location can be changed by editing the **io.xml** file.
 
 ##Run
 

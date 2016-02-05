@@ -2,21 +2,6 @@
 
 namespace kerberos
 {
-    // -------------------------------------------
-    // Function ran in a thread, which continously
-    // grabs frames.
-
-    void * grabContinuously(void * cap)
-    {
-        Capture * capture = (Capture *) cap;
-
-        for(;;)
-        {
-            usleep(1000*100);
-            capture->grab();
-        }
-    }
-    
     void Kerberos::bootstrap(StringMap & parameters)
     {
         // --------------------------------
@@ -88,7 +73,7 @@ namespace kerberos
             images = capture->shiftImage();
         }
     }
-
+    
     void Kerberos::configure(const std::string & configuration)
     {
         // ---------------------------
@@ -108,6 +93,43 @@ namespace kerberos
             settings[begin->first] = begin->second;
         }
         
+        // -----------------
+        // Configure cloud
+        
+        configureCloud(settings);
+        
+        // ------------------
+        // Configure capture
+        
+        configureCapture(settings);
+        
+        // -------------------
+        // Take first images
+
+        for(ImageVector::iterator it = images.begin(); it != images.end(); it++)
+        {
+            delete *it;
+        }
+
+        images.clear();
+        images = capture->takeImages(3);
+        
+        // --------------------
+        // Initialize machinery
+
+        if(machinery != 0) delete machinery;
+        machinery = new Machinery();
+        machinery->setup(settings);
+        machinery->initialize(images);
+    }
+    
+    // ----------------------------------
+    // Configure capture device + thread
+    
+    void * grabContinuously(void * cap);
+    
+    void Kerberos::configureCapture(StringMap & settings)
+    {
         // ----------------------------------
         // Cancel the existing capture thread,
         // before deleting the device.
@@ -131,24 +153,87 @@ namespace kerberos
         // This is needed to clear the buffer of the capture device.
         
         pthread_create(&captureThread, NULL, grabContinuously, (Capture *) capture);
+    }
+    
+    // -------------------------------------------
+    // Function ran in a thread, which continously
+    // grabs frames.
+    
+    void * grabContinuously(void * cap)
+    {
+        Capture * capture = (Capture *) cap;
 
-        // -------------------
-        // Take first images
-
-        for(ImageVector::iterator it = images.begin(); it != images.end(); it++)
+        for(;;)
         {
-            delete *it;
+            usleep(1000*100);
+            capture->grab();
         }
-
-        images.clear();
-        images = capture->takeImages(3);
+    }
+    
+    // ----------------------------------
+    // Configure cloud device + thread
+    
+    void * uploadContinuously(void * clo);
+    void * watchContinuously(void * set);
+    
+    void Kerberos::configureCloud(StringMap & settings)
+    {
+        // ----------------------------------
+        // Cancel the existing upload thread,
+        // before deleting the device.
         
-        // --------------------
-        // Initialize machinery
-
-        if(machinery != 0) delete machinery;
-        machinery = new Machinery();
-        machinery->setup(settings);
-        machinery->initialize(images);
+        pthread_detach(uploadThread);
+        pthread_cancel(uploadThread);
+        
+        // ---------------------------
+        // Initialize capture device
+        
+        if(cloud != 0)
+        {
+            delete cloud;
+        }
+        
+        cloud = Factory<Cloud>::getInstance()->create(settings.at("cloud"));
+        cloud->setup(settings);
+        
+        // -----------------------------------
+        // Start a uploads images continously
+        
+        pthread_create(&uploadThread, NULL, uploadContinuously, (Cloud *) cloud);
+        
+        // ------------------------------------------------
+        // Start a new thread that grabs images continously.
+        // This is needed to clear the buffer of the capture device.
+        
+        pthread_detach(watchThread);
+        pthread_cancel(watchThread);
+        
+        const char * file = settings.at("ios.Disk.directory").c_str();
+        if(file != 0)
+        {
+            pthread_create(&watchThread, NULL, watchContinuously, (char *) file);
+        }
+    }
+    
+    // -------------------------------------------
+    // Function ran in a thread, which continously
+    // upload files.
+    
+    void * uploadContinuously(void * clo)
+    {
+        Cloud * cloud = (Cloud *) clo;
+        cloud->scan();
+    }
+    
+    // -------------------------------------------
+    // Function ran in a thread, which continously
+    // grabs frames.
+    
+    void * watchContinuously(void * file)
+    {
+        char * fileDirectory = (char *) file;
+        Watcher watch;
+        watch.setup(fileDirectory);
+        watch.scan();
     }
 }

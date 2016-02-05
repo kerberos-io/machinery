@@ -8,12 +8,14 @@
 	include_directories(${CMAKE_SOURCE_DIR}/include/kerberos)
 	include_directories(${CMAKE_SOURCE_DIR}/include/rapidjson)
 	include_directories(${CMAKE_SOURCE_DIR}/include/mmapgpio)
+    include_directories(${CMAKE_SOURCE_DIR}/include/encode)
 
 	add_subdirectory(tinyxml)
 	add_subdirectory(executor)
 	add_subdirectory(filewatcher)
 	add_subdirectory(kerberos)
 	add_subdirectory(mmapgpio)
+	add_subdirectory(encode)
 
 # ----------------------------------------------
 # Executable + define linking libraries
@@ -62,6 +64,14 @@
         OWNER_WRITE OWNER_READ
         GROUP_WRITE GROUP_READ
         WORLD_WRITE WORLD_READ)
+        
+    # create symbol directory
+    INSTALL(DIRECTORY
+        DESTINATION "/etc/opt/kerberosio/symbols"
+        DIRECTORY_PERMISSIONS 
+        OWNER_WRITE OWNER_READ
+        GROUP_WRITE GROUP_READ
+        WORLD_WRITE WORLD_READ)
 
     # copy service file
     INSTALL(FILES "${CMAKE_BINARY_DIR}/../service/kerberosio.service"
@@ -73,7 +83,7 @@
 
     # create image directory
     INSTALL(DIRECTORY
-        DESTINATION /srv/capture/
+        DESTINATION "/srv/capture/"
         DIRECTORY_PERMISSIONS 
         OWNER_WRITE OWNER_READ
         GROUP_WRITE GROUP_READ

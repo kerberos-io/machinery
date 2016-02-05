@@ -13,6 +13,7 @@
 	include_directories(${CMAKE_SOURCE_DIR}/include/kerberos)
 	include_directories(${CMAKE_SOURCE_DIR}/include/rapidjson)
 	include_directories(${CMAKE_SOURCE_DIR}/include/mmapgpio)
+    include_directories(${CMAKE_SOURCE_DIR}/include/encode)
 
 # -----------------------------------
 # Mocks

@@ -18,10 +18,8 @@
 #include "Factory.h"
 #include "machinery/Machinery.h"
 #include "Guard.h"
+#include "cloud/Watcher.h"
 #include "document.h" // rapidjson
-
-#define CONFIGURATION_PATH "/etc/opt/kerberosio/config/config.xml"
-#define LOG_PATH "/etc/opt/kerberosio/logs/log.stash"
 
 namespace kerberos
 {
@@ -29,18 +27,25 @@ namespace kerberos
     {
         private:
             FW::Guard * guard;
+            Cloud * cloud;
             Capture * capture;
             Machinery * machinery;
             ImageVector images;
             int m_captureDelayTime;
             StringMap m_parameters;
+            
             pthread_t captureThread;
+            pthread_t uploadThread;
+            pthread_t watchThread;
 
             Kerberos(){};
             ~Kerberos(){delete guard; delete capture; delete machinery;};
 
             void bootstrap(StringMap & parameters);
             void configure(const std::string & configuration);
+            void configureCapture(StringMap & settings);
+            void configureCloud(StringMap & settings);
+        
             void setCaptureDelayTime(int delay){m_captureDelayTime=delay;};
             void setParameters(StringMap & parameters){m_parameters = parameters;};
             StringMap getParameters(){return m_parameters;}

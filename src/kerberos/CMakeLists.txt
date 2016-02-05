@@ -4,6 +4,8 @@
 #   and test binary
 
     set(KERBEROS_SRC
+        cloud/Cloud.cpp
+        cloud/Watcher.cpp
         capture/Capture.cpp
         capture/Image.cpp
         machinery/Machinery.cpp
@@ -25,6 +27,7 @@
 #   or Io classes belong here.
 
     set(KERBEROS_FACTORY_ENTITIES
+        cloud/S3.cpp
         capture/USBCamera.cpp
         capture/IPCamera.cpp
         machinery/condition/Time.cpp
@@ -57,20 +60,6 @@
         set(KERBEROS_DEPENDENCIES ${KERBEROS_DEPENDENCIES} raspicamera)
         set(KERBEROS_LIBRARIES ${KERBEROS_LIBRARIES} ${RASPBERRYPI_LIBRARIES})
         
-    endif()
-
-# -------------------------------------------
-# If mongoDB enabled
-#   - We can use mongoDB for IO operations
-
-    if(${INCLUDED_MONGODB})
-
-        set(MONGODB_SRC
-            ""
-        )
-        set(KERBEROS_DEPENDENCIES ${KERBEROS_DEPENDENCIES})
-        set(KERBEROS_LIBRARIES ${KERBEROS_LIBRARIES} ${BOOST_LIBRARIES})
-
     endif()
 
 # -------------------------------------------

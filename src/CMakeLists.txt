@@ -49,7 +49,7 @@
 	# copy configuration files
 	FILE(GLOB CONFIG_FILES ${CMAKE_BINARY_DIR}/../config/*)
 	INSTALL(FILES ${CONFIG_FILES}
-        DESTINATION "/etc/kerberosio/config"
+        DESTINATION "/etc/opt/kerberosio/config"
         PERMISSIONS
         OWNER_WRITE OWNER_READ
         GROUP_WRITE GROUP_READ
@@ -57,7 +57,7 @@
 
     # copy log file
     INSTALL(FILES "${CMAKE_BINARY_DIR}/../logs/log.stash"
-        DESTINATION "/etc/kerberosio/logs"
+        DESTINATION "/etc/opt/kerberosio/logs"
         PERMISSIONS
         OWNER_WRITE OWNER_READ
         GROUP_WRITE GROUP_READ

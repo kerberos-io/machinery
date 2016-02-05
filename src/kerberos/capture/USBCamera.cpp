@@ -49,6 +49,7 @@ namespace kerberos
         catch(cv::Exception & ex)
         {
             pthread_mutex_unlock(&m_lock);
+            pthread_mutex_destroy(&m_lock);
             throw OpenCVException(ex.msg.c_str());
         }
     }
@@ -66,6 +67,7 @@ namespace kerberos
         catch(cv::Exception & ex)
         {
             pthread_mutex_unlock(&m_lock);
+            pthread_mutex_destroy(&m_lock);
             throw OpenCVException(ex.msg.c_str());
         }
     }
@@ -101,6 +103,7 @@ namespace kerberos
         }
     }
     
+    
     void USBCamera::setImageSize(int width, int height)
     {
         Capture::setImageSize(width, height);
@@ -117,13 +120,26 @@ namespace kerberos
     
     void USBCamera::open()
     {
-        m_camera->open(getDeviceNumber());
+        try
+        {
+            if(!isOpened())
+            {
+                m_camera->release();
+                m_camera->open(getDeviceNumber());
+            }
+        }
+        catch(cv::Exception & ex)
+        {
+            throw OpenCVException(ex.msg.c_str());
+        }
     }
     
     void USBCamera::close()
     {
         try
         {
+            pthread_mutex_unlock(&m_lock);
+            pthread_mutex_destroy(&m_lock);
             m_camera->release();
         }
         catch(cv::Exception & ex)

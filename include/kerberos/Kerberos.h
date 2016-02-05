@@ -20,8 +20,8 @@
 #include "Guard.h"
 #include "document.h" // rapidjson
 
-#define CONFIGURATION_PATH "/etc/kerberosio/config/config.xml"
-#define LOG_PATH "/etc/kerberosio/logs/log.stash"
+#define CONFIGURATION_PATH "/etc/opt/kerberosio/config/config.xml"
+#define LOG_PATH "/etc/opt/kerberosio/logs/log.stash"
 
 namespace kerberos
 {

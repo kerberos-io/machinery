@@ -145,14 +145,11 @@ namespace kerberos
     {
         try
         {
-            std::cout << "try to open" << std::endl;
-            if(!m_camera->isOpened())
+            if(!isOpened())
             {
-                std::cout << "opening" << std::endl;
                 m_camera->release();
                 m_camera->open(url);
             }
-            std::cout << "opened" << std::endl;
         }
         catch(cv::Exception & ex)
         {
@@ -164,8 +161,6 @@ namespace kerberos
     {
         try
         {
-            
-            std::cout << "close" << std::endl;
             pthread_mutex_unlock(&m_lock);
             pthread_mutex_destroy(&m_lock);
             m_camera->release();

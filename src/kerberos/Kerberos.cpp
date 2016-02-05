@@ -12,6 +12,7 @@ namespace kerberos
 
         for(;;)
         {
+            usleep(1000*100);
             capture->grab();
         }
     }
@@ -111,6 +112,7 @@ namespace kerberos
         // Cancel the existing capture thread,
         // before deleting the device.
         
+        pthread_detach(captureThread);
         pthread_cancel(captureThread);
         
         // ---------------------------

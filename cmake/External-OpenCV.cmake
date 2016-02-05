@@ -53,7 +53,7 @@ else()
   set(OPENCV_LIBRARY_DIR ${CMAKE_BINARY_DIR}/thirdparty/x86/vc12/lib)
 endif()
 
-set(OPENCV_LIBRARIES opencv_imgproc opencv_core opencv_highgui)
+set(OPENCV_LIBRARIES opencv_imgproc opencv_core opencv_highgui opencv_videoio opencv_imgcodecs)
 
 include_directories(${OPENCV_INCLUDE_DIR})
 link_directories(${OPENCV_LIBRARY_DIR})

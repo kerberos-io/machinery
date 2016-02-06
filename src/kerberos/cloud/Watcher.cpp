@@ -34,8 +34,16 @@ namespace kerberos
         
         while(true)
         {
-            guard->look();
-            usleep(1000*1000);
+            try
+            {
+                guard->look();
+                usleep(1000*1000);
+            }
+            catch(FW::FileNotFoundException & ex)
+            {
+                // try again
+                addFile(ex.getFile());
+            }
         }
     }
 }

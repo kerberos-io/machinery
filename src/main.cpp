@@ -52,8 +52,8 @@ int main(int argc, char** argv)
                 delete (char *) error;
             }
         
-            // Try again in 10 seconds..
-            usleep(10 * 1000000);
+            // Try again in 3 seconds..
+            usleep(3 * 1000000);
         }
     }
 

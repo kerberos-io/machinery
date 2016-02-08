@@ -19,7 +19,8 @@ namespace kerberos
         // Initialize URL to IP Camera
         setUrl(url);
         reopen();
-
+        grab();
+        
         // Initialize executor (update the usb camera at specific times).
         tryToUpdateCapture.setAction(this, &IPCamera::update);
         tryToUpdateCapture.setInterval("thrice in 10 functions calls");
@@ -49,6 +50,7 @@ namespace kerberos
         {
             pthread_mutex_lock(&m_lock);
             m_camera->grab();
+            m_connectionCount++;
             pthread_mutex_unlock(&m_lock);
         }
         catch(cv::Exception & ex)
@@ -96,7 +98,6 @@ namespace kerberos
             pthread_mutex_lock(&m_connectionLock);
             if(m_streamType == "rtsp")
             {
-                m_camera->grab();
                 m_camera->retrieve(image->getImage());
             }
             else
@@ -207,18 +208,17 @@ namespace kerberos
         for(;;)
         {
             usleep(1000*1000);
-            count += 1;
-            count %=  1024;
-            
             if(count == capture->m_connectionCount)
             {
                 pthread_mutex_lock(&capture->m_connectionLock);
                 capture->stopGrabThread();
                 capture->reopen();
                 pthread_mutex_unlock(&capture->m_connectionLock);
-                pthread_mutex_unlock(&capture->m_lock);
                 capture->startGrabThread();
+                pthread_mutex_unlock(&capture->m_lock);
             }
+            
+            count = capture->m_connectionCount;
         }
     }
     void IPCamera::startConnectionThread()

@@ -74,4 +74,38 @@ namespace kerberos
         }
         return m_images;
     }
+    
+    // -------------------------------------------
+    // Function ran in a thread, which continously
+    // grabs frames.
+    
+    void * grabContinuously(void * self)
+    {
+        Capture * capture = (Capture *) self;
+
+        for(;;)
+        {
+            usleep(1000*100);
+            capture->grab();
+        }
+    }
+    
+    void Capture::startGrabThread()
+    {
+        // ------------------------------------------------
+        // Start a new thread that grabs images continously.
+        // This is needed to clear the buffer of the capture device.
+        
+        pthread_create(&m_captureThread, NULL, grabContinuously, this);   
+    }
+    
+    void Capture::stopGrabThread()
+    {
+        // ----------------------------------
+        // Cancel the existing capture thread,
+        // before deleting the device.
+        
+        pthread_detach(m_captureThread);
+        pthread_cancel(m_captureThread);  
+    }
 }

@@ -18,7 +18,6 @@
 #include "Factory.h"
 #include "machinery/Machinery.h"
 #include "Guard.h"
-#include "cloud/Watcher.h"
 #include "document.h" // rapidjson
 
 namespace kerberos
@@ -33,10 +32,6 @@ namespace kerberos
             ImageVector images;
             int m_captureDelayTime;
             StringMap m_parameters;
-            
-            pthread_t captureThread;
-            pthread_t uploadThread;
-            pthread_t watchThread;
 
             Kerberos(){};
             ~Kerberos(){delete guard; delete capture; delete machinery;};

@@ -29,7 +29,11 @@ namespace kerberos
             std::string m_url;
             std::string m_streamType;
         
-        public:
+        public:   
+            int m_connectionCount;
+            pthread_mutex_t m_connectionLock;
+            pthread_t m_connectionThread;
+        
             IPCamera()
             {
                 try
@@ -56,9 +60,13 @@ namespace kerberos
         
             void open();
             void open(const char * url);
+            void reopen();
             void close();
             void update();
             bool isOpened();
+        
+            void startConnectionThread();
+            void closeConnectionThread();
     };
 }
 

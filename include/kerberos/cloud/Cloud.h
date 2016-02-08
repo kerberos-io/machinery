@@ -17,6 +17,8 @@
 #ifndef __Cloud_H_INCLUDED__   // if Cloud.h hasn't been included yet...
 #define __Cloud_H_INCLUDED__   // #define this so the compiler knows it has been included
 
+#include "cloud/Watcher.h"
+
 namespace kerberos
 {
     class Cloud
@@ -27,13 +29,20 @@ namespace kerberos
             int m_max;
             int m_interval;
         
-        public:
+        public:    
+            pthread_t m_uploadThread;
+            pthread_t m_watchThread;
         
             Cloud(){};
             virtual ~Cloud(){};
             virtual void setup(kerberos::StringMap & settings) = 0;
             virtual bool upload(std::string pathToImage) = 0;
             void scan();
+        
+            void startWatchThread(StringMap & settings);
+            void stopWatchThread();
+            void startUploadThread();
+            void stopUploadThread();
     };
 
     template<const char * Alias, typename Class>

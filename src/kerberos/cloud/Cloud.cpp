@@ -10,6 +10,9 @@ namespace kerberos
         m_min = 1500;
         m_max = 256000;
         m_interval = m_min;
+        
+        startUploadThread();
+        startWatchThread(settings);
     }
     
     void Cloud::scan()
@@ -42,5 +45,51 @@ namespace kerberos
                 it++;
             }
         }
+    }
+    
+    // --------------
+    // Upload thread
+    
+    void * uploadContinuously(void * clo)
+    {
+        Cloud * cloud = (Cloud *) clo;
+        cloud->scan();
+    }
+    
+    void Cloud::startUploadThread()
+    {
+        pthread_create(&m_uploadThread, NULL, uploadContinuously, this);   
+    }
+    
+    void Cloud::stopUploadThread()
+    {
+        pthread_detach(m_uploadThread);
+        pthread_cancel(m_uploadThread);  
+    }
+    
+    // --------------
+    // Watch thread
+    
+    void * watchContinuously(void * file)
+    {
+        char * fileDirectory = (char *) file;
+        Watcher watch;
+        watch.setup(fileDirectory);
+        watch.scan();
+    }
+    
+    void Cloud::startWatchThread(StringMap & settings)
+    {
+        const char * file = settings.at("ios.Disk.directory").c_str();
+        if(file != 0)
+        {
+            pthread_create(&m_watchThread, NULL, watchContinuously, (char *) file);
+        }
+    }
+    
+    void Cloud::stopWatchThread()
+    {
+        pthread_detach(m_watchThread);
+        pthread_cancel(m_watchThread);  
     }
 }

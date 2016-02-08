@@ -25,9 +25,11 @@ namespace kerberos
         protected:
             ImageVector m_images;
             const char * name;
-            pthread_mutex_t m_lock;
         
         public:
+            pthread_mutex_t m_lock;
+            pthread_t m_captureThread;
+            
             int m_frameWidth, m_frameHeight;
             int m_angle; // 90, 180, 270
             int m_delay; // msec
@@ -52,6 +54,9 @@ namespace kerberos
             virtual void close() = 0;
             virtual void update() = 0;
             virtual bool isOpened() = 0;
+        
+            void startGrabThread();
+            void stopGrabThread();
     };
 
     template<const char * Alias, typename Class>

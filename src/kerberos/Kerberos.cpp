@@ -76,6 +76,8 @@ namespace kerberos
     
     void Kerberos::configure(const std::string & configuration)
     {
+        std::cout << "reconfigure" << std::endl;
+        
         // ---------------------------
     	// Get settings from XML file
         
@@ -126,114 +128,38 @@ namespace kerberos
     // ----------------------------------
     // Configure capture device + thread
     
-    void * grabContinuously(void * cap);
-    
     void Kerberos::configureCapture(StringMap & settings)
     {
-        // ----------------------------------
-        // Cancel the existing capture thread,
-        // before deleting the device.
-        
-        pthread_detach(captureThread);
-        pthread_cancel(captureThread);
-        
         // ---------------------------
         // Initialize capture device
         
         if(capture != 0)
         {
+            capture->stopGrabThread();
             capture->close();
             delete capture;
         }
         capture = Factory<Capture>::getInstance()->create(settings.at("capture"));
         capture->setup(settings);
         
-        // ------------------------------------------------
-        // Start a new thread that grabs images continously.
-        // This is needed to clear the buffer of the capture device.
-        
-        pthread_create(&captureThread, NULL, grabContinuously, (Capture *) capture);
-    }
-    
-    // -------------------------------------------
-    // Function ran in a thread, which continously
-    // grabs frames.
-    
-    void * grabContinuously(void * cap)
-    {
-        Capture * capture = (Capture *) cap;
-
-        for(;;)
-        {
-            usleep(1000*100);
-            capture->grab();
-        }
+        capture->startGrabThread();
     }
     
     // ----------------------------------
     // Configure cloud device + thread
-    
-    void * uploadContinuously(void * clo);
-    void * watchContinuously(void * set);
-    
+
     void Kerberos::configureCloud(StringMap & settings)
     {
-        // ----------------------------------
-        // Cancel the existing upload thread,
-        // before deleting the device.
-        
-        pthread_detach(uploadThread);
-        pthread_cancel(uploadThread);
-        
         // ---------------------------
-        // Initialize capture device
+        // Initialize cloud service
         
         if(cloud != 0)
         {
+            cloud->stopWatchThread();
             delete cloud;
         }
         
         cloud = Factory<Cloud>::getInstance()->create(settings.at("cloud"));
         cloud->setup(settings);
-        
-        // -----------------------------------
-        // Start a uploads images continously
-        
-        pthread_create(&uploadThread, NULL, uploadContinuously, (Cloud *) cloud);
-        
-        // ------------------------------------------------
-        // Start a new thread that grabs images continously.
-        // This is needed to clear the buffer of the capture device.
-        
-        pthread_detach(watchThread);
-        pthread_cancel(watchThread);
-        
-        const char * file = settings.at("ios.Disk.directory").c_str();
-        if(file != 0)
-        {
-            pthread_create(&watchThread, NULL, watchContinuously, (char *) file);
-        }
-    }
-    
-    // -------------------------------------------
-    // Function ran in a thread, which continously
-    // upload files.
-    
-    void * uploadContinuously(void * clo)
-    {
-        Cloud * cloud = (Cloud *) clo;
-        cloud->scan();
-    }
-    
-    // -------------------------------------------
-    // Function ran in a thread, which continously
-    // grabs frames.
-    
-    void * watchContinuously(void * file)
-    {
-        char * fileDirectory = (char *) file;
-        Watcher watch;
-        watch.setup(fileDirectory);
-        watch.scan();
     }
 }

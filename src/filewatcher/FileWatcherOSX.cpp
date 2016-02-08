@@ -40,7 +40,7 @@
 namespace FW
 {
 	
-#define MAX_CHANGE_EVENT_SIZE 2000
+#define MAX_CHANGE_EVENT_SIZE 99999
 	
 	typedef struct kevent KEvent;
 	

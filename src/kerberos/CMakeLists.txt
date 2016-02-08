@@ -28,6 +28,7 @@
 
     set(KERBEROS_FACTORY_ENTITIES
         cloud/S3.cpp
+        cloud/GoogleDrive.cpp
         capture/USBCamera.cpp
         capture/IPCamera.cpp
         machinery/condition/Time.cpp

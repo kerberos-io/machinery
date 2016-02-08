@@ -26,9 +26,11 @@ namespace kerberos
     {
         private:
             std::string m_fileDirectory;
+            FW::Guard * guard;
         
         public:
             Watcher(){}
+            ~Watcher(){delete guard;}
             void setup(const char * fileDirectory);
         
             static void addFile(const std::string & file);

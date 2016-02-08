@@ -156,5 +156,4 @@ namespace kerberos
         size_t retcode = fread(ptr, size, nmemb, stream);
         return retcode;
     }
-    
 }

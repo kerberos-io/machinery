@@ -1,7 +1,7 @@
 //
-//  Class: S3
-//  Description: Simple Storage Service of AWS
-//  Created:     05/02/2015
+//  Class: GoogleDrive
+//  Description: Google drive storage
+//  Created:     08/02/2015
 //  Author:      Cédric Verstraeten
 //  Mail:        hello@cedric.ws
 //	Website:	 www.cedric.ws
@@ -12,8 +12,8 @@
 //
 /////////////////////////////////////////////////////
 
-#ifndef __S3_H_INCLUDED__   // if S3.h hasn't been included yet...
-#define __S3_H_INCLUDED__   // #define this so the compiler knows it has been included
+#ifndef __GoogleDrive_H_INCLUDED__   // if GoogleDrive.h hasn't been included yet...
+#define __GoogleDrive_H_INCLUDED__   // #define this so the compiler knows it has been included
 
 #include "cloud/Cloud.h"
 #include "Executor.h"
@@ -24,8 +24,8 @@
 
 namespace kerberos
 {
-    char S3Name[] = "S3";
-    class S3 : public CloudCreator<S3Name, S3>
+    char GoogleDriveName[] = "GoogleDrive";
+    class GoogleDrive : public CloudCreator<GoogleDriveName, GoogleDrive>
     {
         private:
         
@@ -36,8 +36,8 @@ namespace kerberos
             
         public:
         
-            S3(){};
-            virtual ~S3(){};
+            GoogleDrive(){};
+            virtual ~GoogleDrive(){};
         
             void setup(StringMap & settings);
             void setBucket(std::string bucket);
@@ -46,11 +46,6 @@ namespace kerberos
             void setPrivateKey(std::string key);
         
             bool upload(std::string pathToImage);
-            std::string authorize(const std::string request);
-            std::string getDate();
-            bool put(const std::string & url, const std::vector<std::string> & headers, const std::vector<std::string> & body);
-            static size_t write(void *contents, size_t size, size_t nmemb, void *userp);
-            static size_t reader(void *ptr, size_t size, size_t nmemb, FILE *stream);
     };
 }
 

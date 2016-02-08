@@ -76,8 +76,6 @@ namespace kerberos
     
     void Kerberos::configure(const std::string & configuration)
     {
-        std::cout << "reconfigure" << std::endl;
-        
         // ---------------------------
     	// Get settings from XML file
         
@@ -156,6 +154,7 @@ namespace kerberos
         if(cloud != 0)
         {
             cloud->stopWatchThread();
+            cloud->stopUploadThread();
             delete cloud;
         }
         

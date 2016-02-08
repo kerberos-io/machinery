@@ -17,15 +17,16 @@ namespace kerberos
     
     void Cloud::scan()
     {
+        
         for(;;)
         {
             usleep(m_min*1000);
-            
+
             std::vector<std::string> storage;
             helper::getFilesInDirectory(storage, SYMBOL_DIRECTORY); // get all symbol links of directory
-            
+        
             std::vector<std::string>::iterator it = storage.begin();
-
+            
             while(it != storage.end())
             { 
                 std::string file = *it;

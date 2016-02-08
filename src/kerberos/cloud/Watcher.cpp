@@ -26,24 +26,28 @@ namespace kerberos
     }
     
     void Watcher::scan()
-    {        
-        FW::Guard * guard = new FW::Guard();
-        guard->listenTo(m_fileDirectory);
-        guard->onChange(&Watcher::addFile);
-        guard->startLookingForNewFiles();
-        
+    {      
         while(true)
         {
             try
             {
-                guard->look();
-                usleep(1000*1000);
+                guard = new FW::Guard();
+                guard->listenTo(m_fileDirectory);
+                guard->onChange(&Watcher::addFile);
+                guard->startLookingForNewFiles();
+        
+                while(true)
+                {
+                    guard->look();
+                    usleep(1000*1000);
+                }
             }
             catch(FW::FileNotFoundException & ex)
             {
                 // try again
                 addFile(ex.getFile());
             }
+            usleep(1000*1000);
         }
     }
 }

@@ -18,7 +18,7 @@ namespace kerberos
 
         // Initialize URL to IP Camera
         setUrl(url);
-        open(m_url.c_str());
+        reopen();
 
         // Initialize executor (update the usb camera at specific times).
         tryToUpdateCapture.setAction(this, &IPCamera::update);
@@ -27,10 +27,7 @@ namespace kerberos
         // Start connection thread
         startConnectionThread();
         
-        
-        // ----------------
         // Initialize mutex
-        
         pthread_mutex_init(&m_connectionLock, NULL);
     }
     
@@ -51,9 +48,7 @@ namespace kerberos
         try
         {
             pthread_mutex_lock(&m_lock);
-            std::cout << "grab" << std::endl;
             m_camera->grab();
-            std::cout << "grabbed" << std::endl;
             pthread_mutex_unlock(&m_lock);
         }
         catch(cv::Exception & ex)
@@ -101,7 +96,6 @@ namespace kerberos
             pthread_mutex_lock(&m_connectionLock);
             if(m_streamType == "rtsp")
             {
-                std::cout << "taking image.." << std::endl;
                 m_camera->grab();
                 m_camera->retrieve(image->getImage());
             }
@@ -172,8 +166,11 @@ namespace kerberos
     }
     void IPCamera::reopen()
     {
-        m_camera->release();
-        open(m_url.c_str());
+        while(!isOpened())
+        {
+            open(m_url.c_str());
+            usleep(1000*2500);
+        }
     }
     
     void IPCamera::close()
@@ -207,33 +204,20 @@ namespace kerberos
         IPCamera * capture = (IPCamera *) self;
         
         int count = capture->m_connectionCount;
-        int test = 0;
         for(;;)
         {
-            test++;
-            
             usleep(1000*1000);
-            std::cout << "check conneciton is still alive.." << std::endl;
             count += 1;
             count %=  1024;
             
             if(count == capture->m_connectionCount)
             {
-                // error..
-            }
-            
-            if(test == 5)
-            {
                 pthread_mutex_lock(&capture->m_connectionLock);
                 capture->stopGrabThread();
-                std::cout << "opening.." << std::endl;
                 capture->reopen();
-                std::cout << "opened.." << std::endl; 
                 pthread_mutex_unlock(&capture->m_connectionLock);
                 pthread_mutex_unlock(&capture->m_lock);
-                
                 capture->startGrabThread();
-                test = 0;
             }
         }
     }

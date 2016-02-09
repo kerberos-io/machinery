@@ -53,41 +53,42 @@
 	INSTALL(FILES ${CONFIG_FILES}
         DESTINATION "/etc/opt/kerberosio/config"
         PERMISSIONS
-        OWNER_WRITE OWNER_READ
-        GROUP_WRITE GROUP_READ
-        WORLD_WRITE WORLD_READ)
+        OWNER_EXECUTE OWNER_WRITE OWNER_READ
+        GROUP_EXECUTE GROUP_WRITE GROUP_READ
+        WORLD_EXECUTE WORLD_WRITE WORLD_READ)
 
     # copy log file
     INSTALL(FILES "${CMAKE_BINARY_DIR}/../logs/log.stash"
         DESTINATION "/etc/opt/kerberosio/logs"
         PERMISSIONS
-        OWNER_WRITE OWNER_READ
-        GROUP_WRITE GROUP_READ
-        WORLD_WRITE WORLD_READ)
+        OWNER_EXECUTE OWNER_WRITE OWNER_READ
+        GROUP_EXECUTE GROUP_WRITE GROUP_READ
+        WORLD_EXECUTE WORLD_WRITE WORLD_READ)
         
     # create symbol directory
     INSTALL(DIRECTORY
         DESTINATION "/etc/opt/kerberosio/symbols"
         DIRECTORY_PERMISSIONS 
-        OWNER_WRITE OWNER_READ
-        GROUP_WRITE GROUP_READ
-        WORLD_WRITE WORLD_READ)
+        OWNER_EXECUTE OWNER_WRITE OWNER_READ
+        GROUP_EXECUTE GROUP_WRITE GROUP_READ
+        WORLD_EXECUTE WORLD_WRITE WORLD_READ)
+
+    # create image directory
+    INSTALL(DIRECTORY
+        DESTINATION "/etc/opt/kerberosio/capture/"
+        DIRECTORY_PERMISSIONS 
+        OWNER_EXECUTE OWNER_WRITE OWNER_READ
+        GROUP_EXECUTE GROUP_WRITE GROUP_READ
+        WORLD_EXECUTE WORLD_WRITE WORLD_READ
+        )
 
     # copy service file
     INSTALL(FILES "${CMAKE_BINARY_DIR}/../service/kerberosio.service"
         DESTINATION "/etc/systemd/system"
         PERMISSIONS
-        OWNER_WRITE OWNER_READ
-        GROUP_WRITE GROUP_READ
-        WORLD_WRITE WORLD_READ)
-
-    # create image directory
-    INSTALL(DIRECTORY
-        DESTINATION "/srv/capture/"
-        DIRECTORY_PERMISSIONS 
-        OWNER_WRITE OWNER_READ
-        GROUP_WRITE GROUP_READ
-        WORLD_WRITE WORLD_READ)
+        OWNER_EXECUTE OWNER_READ
+        GROUP_EXECUTE GROUP_READ
+        WORLD_EXECUTE WORLD_READ)
         
     # install binary
 	INSTALL(TARGETS kerberosio DESTINATION /usr/bin)

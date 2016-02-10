@@ -17,6 +17,12 @@
 	add_subdirectory(mmapgpio)
 	add_subdirectory(encode)
 
+# ---------------------------------------
+# Get configuration files
+
+    FILE(GLOB CONFIG_FILES ${CMAKE_BINARY_DIR}/../config/*)
+    FILE(GLOB LOG_FILE ${CMAKE_BINARY_DIR}/../logs/log.stash)
+    
 # ----------------------------------------------
 # Executable + define linking libraries
 
@@ -29,7 +35,7 @@
     
     if(${PACKAGE})
         if(APPLE)
-            SET(KERBEROS_FACTORY_ENTITIES_TEMP ${KERBEROS_FACTORY_ENTITIES_TEMP} ${CMAKE_CURRENT_SOURCE_DIR}/kerberosio.icns)
+            SET(KERBEROS_FACTORY_ENTITIES_TEMP ${KERBEROS_FACTORY_ENTITIES_TEMP} ${CONFIG_FILES} ${LOG_FILE} ${CMAKE_CURRENT_SOURCE_DIR}/kerberosio.icns)
             add_executable(kerberosio MACOSX_BUNDLE main.cpp ${KERBEROS_FACTORY_ENTITIES_TEMP})
         endif()
         IF("${CMAKE_SYSTEM}" MATCHES "Linux")
@@ -60,16 +66,15 @@
 # Install
 
 	# copy configuration files
-	FILE(GLOB CONFIG_FILES ${CMAKE_BINARY_DIR}/../config/*)
 	INSTALL(FILES ${CONFIG_FILES}
         DESTINATION "/etc/opt/kerberosio/config"
         PERMISSIONS
         OWNER_EXECUTE OWNER_WRITE OWNER_READ
         GROUP_EXECUTE GROUP_WRITE GROUP_READ
         WORLD_EXECUTE WORLD_WRITE WORLD_READ)
-
+message("log: ${LOG_FILE}")
     # copy log file
-    INSTALL(FILES "${CMAKE_BINARY_DIR}/../logs/log.stash"
+    INSTALL(FILES ${LOG_FILE}
         DESTINATION "/etc/opt/kerberosio/logs"
         PERMISSIONS
         OWNER_EXECUTE OWNER_WRITE OWNER_READ
@@ -112,8 +117,8 @@
     IF(APPLE)
         SET(MACOSX_BUNDLE_ICON_FILE kerberosio.icns) 
         SET_SOURCE_FILES_PROPERTIES(${CMAKE_CURRENT_SOURCE_DIR}/kerberosio.icns PROPERTIES MACOSX_PACKAGE_LOCATION Resources)
-        SET_SOURCE_FILES_PROPERTIES(${CONFIG_FILES} PROPERTIES MACOSX_PACKAGE_LOCATION Resources)
-        SET_SOURCE_FILES_PROPERTIES(${CONFIG_FILES} PROPERTIES MACOSX_PACKAGE_LOCATION Resources)
+        SET_SOURCE_FILES_PROPERTIES(${CONFIG_FILES} PROPERTIES MACOSX_PACKAGE_LOCATION Resources/config)
+        SET_SOURCE_FILES_PROPERTIES(${LOG_FILE} PROPERTIES MACOSX_PACKAGE_LOCATION Resources/logs)
         set(CPACK_BINARY_DRAGNDROP ON)
     ENDIF()
 

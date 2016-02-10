@@ -45,7 +45,7 @@ project(Kerberos)
 # ---------
 # Package
 
-	set(PACKAGE 0)
+	set(PACKAGE 0 CACHE STRING "Should the project be packaged?")
     
 # ----------------------------------------------
 # Link source and tests (if enabled)

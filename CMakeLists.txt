@@ -41,6 +41,11 @@ project(Kerberos)
 # XCode system library
 
 	link_directories("/usr/local/lib")
+
+# ---------
+# Package
+
+	set(PACKAGE 0)
     
 # ----------------------------------------------
 # Link source and tests (if enabled)

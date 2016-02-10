@@ -26,17 +26,21 @@
 	foreach(src ${KERBEROS_FACTORY_ENTITIES})
 	    SET(KERBEROS_FACTORY_ENTITIES_TEMP ${KERBEROS_FACTORY_ENTITIES_TEMP} "kerberos/${src}")
 	endforeach(src ${KERBEROS_FACTORY_ENTITIES})
-
-    if(APPLE)
-        SET(KERBEROS_FACTORY_ENTITIES_TEMP ${KERBEROS_FACTORY_ENTITIES_TEMP} ${CMAKE_CURRENT_SOURCE_DIR}/kerberosio.icns)
-        add_executable(kerberosio MACOSX_BUNDLE main.cpp ${KERBEROS_FACTORY_ENTITIES_TEMP})
-    endif(APPLE)
-    if(LINUX)
-        add_executable(kerberosio main.cpp ${KERBEROS_FACTORY_ENTITIES_TEMP})
-    endif(LINUX)
     
-	add_dependencies(kerberosio rerun ${KERBEROS_DEPENDENCIES})
-	target_link_libraries(kerberosio ${KERBEROS_CORE_LIBRARY} ${KERBEROS_LIBRARIES})
+    if(${PACKAGE})
+        if(APPLE)
+            SET(KERBEROS_FACTORY_ENTITIES_TEMP ${KERBEROS_FACTORY_ENTITIES_TEMP} ${CMAKE_CURRENT_SOURCE_DIR}/kerberosio.icns)
+            add_executable(kerberosio MACOSX_BUNDLE main.cpp ${KERBEROS_FACTORY_ENTITIES_TEMP})
+        endif()
+        IF("${CMAKE_SYSTEM}" MATCHES "Linux")
+            add_executable(kerberosio main.cpp ${KERBEROS_FACTORY_ENTITIES_TEMP})
+        endif()
+    else()
+        add_executable(kerberosio main.cpp ${KERBEROS_FACTORY_ENTITIES_TEMP})
+    endif()
+    
+    add_dependencies(kerberosio rerun ${KERBEROS_DEPENDENCIES})
+    target_link_libraries(kerberosio ${KERBEROS_CORE_LIBRARY} ${KERBEROS_LIBRARIES})
 
 # -----------------------------------------
 # Write variables to parent CMakeLists.txt
@@ -51,31 +55,6 @@
 
 	SET(CMAKE_BUILD_TYPE Release)
 	message("Add environment variable: export DYLD_LIBRARY_PATH=$DYLD_LIBRARY_PATH:${OPENCV_LIBRARY_DIR}")
-
-# ----------------------------------------
-# CPack
-
-    IF(APPLE)
-        SET(MACOSX_BUNDLE_ICON_FILE kerberosio.icns) 
-        SET_SOURCE_FILES_PROPERTIES(${CMAKE_CURRENT_SOURCE_DIR}/kerberosio.icns PROPERTIES MACOSX_PACKAGE_LOCATION Resources)
-        set(CPACK_BINARY_DRAGNDROP ON)
-    ENDIF(APPLE)
-
-    IF(LINUX)
-        set(CPACK_GENERATOR "DEB")
-        set(CPACK_PACKAGE_NAME "kerberosio")
-        set(CPACK_PACKAGE_VENDOR "kerberos.io")
-        SET(CPACK_DEBIAN_PACKAGE_MAINTAINER "Cédric Verstraeten")
-        set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Kerberos is a low-budget surveillance solution, that uses computer vision algorithms to detect changes, and that can trigger other devices. Kerberos is open source so you, but also other people, can customize the source to your needs and share it with our community. It has a green footprint when deploying on the Raspberry Pi and it's easy to install, you only need to transfer the image to the SD card and you're done.")
-
-        set(CPACK_PACKAGE_VERSION "1.1.0")
-        set(CPACK_PACKAGE_VERSION_MAJOR "1")
-        set(CPACK_PACKAGE_VERSION_MINOR "1")
-        set(CPACK_PACKAGE_VERSION_PATCH "0")
-        SET(CPACK_NSIS_MODIFY_PATH ON)
-    ENDIF(LINUX)
-    
-	INCLUDE(CPack)
     
 # ----------------------------------------
 # Install
@@ -126,3 +105,30 @@
     INSTALL(TARGETS kerberosio
     BUNDLE DESTINATION . COMPONENT Runtime
     RUNTIME DESTINATION /usr/bin COMPONENT Runtime)
+    
+# ----------------------------------------
+# CPack
+
+    IF(APPLE)
+        SET(MACOSX_BUNDLE_ICON_FILE kerberosio.icns) 
+        SET_SOURCE_FILES_PROPERTIES(${CMAKE_CURRENT_SOURCE_DIR}/kerberosio.icns PROPERTIES MACOSX_PACKAGE_LOCATION Resources)
+        SET_SOURCE_FILES_PROPERTIES(${CONFIG_FILES} PROPERTIES MACOSX_PACKAGE_LOCATION Resources)
+        SET_SOURCE_FILES_PROPERTIES(${CONFIG_FILES} PROPERTIES MACOSX_PACKAGE_LOCATION Resources)
+        set(CPACK_BINARY_DRAGNDROP ON)
+    ENDIF()
+
+    IF("${CMAKE_SYSTEM}" MATCHES "Linux")
+        set(CPACK_GENERATOR "DEB")
+        set(CPACK_PACKAGE_NAME "kerberosio")
+        set(CPACK_PACKAGE_VENDOR "kerberos.io")
+        SET(CPACK_DEBIAN_PACKAGE_MAINTAINER "Cédric Verstraeten")
+        set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Kerberos is a low-budget surveillance solution, that uses computer vision algorithms to detect changes, and that can trigger other devices. Kerberos is open source so you, but also other people, can customize the source to your needs and share it with our community. It has a green footprint when deploying on the Raspberry Pi and it's easy to install, you only need to transfer the image to the SD card and you're done.")
+
+        set(CPACK_PACKAGE_VERSION "1.1.0")
+        set(CPACK_PACKAGE_VERSION_MAJOR "1")
+        set(CPACK_PACKAGE_VERSION_MINOR "1")
+        set(CPACK_PACKAGE_VERSION_PATCH "0")
+        SET(CPACK_NSIS_MODIFY_PATH ON)
+    ENDIF()
+    
+	INCLUDE(CPack)

@@ -154,11 +154,7 @@ namespace kerberos
     {
         try
         {
-            if(!isOpened())
-            {
-                m_camera->release();
-                m_camera->open(url);
-            }
+            m_camera->open(url);
         }
         catch(cv::Exception & ex)
         {
@@ -167,6 +163,8 @@ namespace kerberos
     }
     void IPCamera::reopen()
     {
+        m_camera->release();
+        
         while(!isOpened())
         {
             open(m_url.c_str());
@@ -207,7 +205,7 @@ namespace kerberos
         int count = capture->m_connectionCount;
         for(;;)
         {
-            usleep(1000*1000);
+            usleep(2500*1000);
             if(count == capture->m_connectionCount)
             {
                 pthread_mutex_lock(&capture->m_connectionLock);

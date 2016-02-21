@@ -3,7 +3,7 @@
 
 	<Disk>
         <fileFormat type="text">timestamp_microseconds_instanceName_regionCoordinates_numberOfChanges_token.jpg</fileFormat>
-    	<directory type="text">/srv/capture/</directory>
+    	<directory type="text">/etc/opt/kerberosio/capture/</directory>
     </Disk>
     <GPIO>
         <pin type="number">17</pin>

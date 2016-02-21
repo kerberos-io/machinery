@@ -196,7 +196,7 @@ namespace kerberos
     
     // -------------------------------------------
     // Function ran in a thread, which continously
-    // grabs frames.
+    // checks if the ip camera is still connected.
     
     void * checkConnection(void * self)
     {
@@ -205,8 +205,13 @@ namespace kerberos
         int count = capture->m_connectionCount;
         for(;;)
         {
-            usleep(2500*1000);
-            if(count == capture->m_connectionCount)
+            usleep(30000*1000);
+            int diff = capture->m_connectionCount - count;
+            
+            // ---------------------------------------------------
+            // if less than 10 frames are taken, restart ip camera
+            
+            if(diff >= 0 && diff < 10)
             {
                 pthread_mutex_lock(&capture->m_connectionLock);
                 capture->stopGrabThread();

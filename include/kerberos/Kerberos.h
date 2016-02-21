@@ -19,6 +19,7 @@
 #include "machinery/Machinery.h"
 #include "Guard.h"
 #include "document.h" // rapidjson
+#include "capture/Stream.h"
 
 namespace kerberos
 {
@@ -27,7 +28,6 @@ namespace kerberos
         private:
             FW::Guard * guard;
             Cloud * cloud;
-            Capture * capture;
             Machinery * machinery;
             ImageVector images;
             int m_captureDelayTime;
@@ -40,12 +40,20 @@ namespace kerberos
             void configure(const std::string & configuration);
             void configureCapture(StringMap & settings);
             void configureCloud(StringMap & settings);
+            void startStreamThread();
+            void stopStreamThread();
         
             void setCaptureDelayTime(int delay){m_captureDelayTime=delay;};
             void setParameters(StringMap & parameters){m_parameters = parameters;};
             StringMap getParameters(){return m_parameters;}
         
         public:
+        
+            Capture * capture;
+            Stream * stream;
+            pthread_t m_streamThread;
+            pthread_mutex_t m_streamLock;
+        
             // -----------
             // Singleton
 

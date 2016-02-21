@@ -9,12 +9,23 @@ namespace kerberos
         
         setParameters(parameters);
         
+        // ----------------
+        // Initialize mutex
+        
+        pthread_mutex_init(&m_streamLock, NULL);
+        
         // ---------------------
         // Initialize kerberos
         
         std::string configuration = (helper::getValueByKey(parameters, "config")) ?: CONFIGURATION_PATH;
         configure(configuration);
-
+        
+        // ------------------
+        // Open the stream
+        
+        stream = new Stream(8888);
+        startStreamThread();
+        
         // ------------------------------------------
         // Guard is a filewatcher, that looks if the 
         // configuration has been changed. On change 
@@ -71,6 +82,7 @@ namespace kerberos
             // Shift images
             
             images = capture->shiftImage();
+            usleep(1000*1000);
         }
     }
     
@@ -131,6 +143,7 @@ namespace kerberos
         // ---------------------------
         // Initialize capture device
         
+        pthread_mutex_lock(&m_streamLock);
         if(capture != 0)
         {
             capture->stopGrabThread();
@@ -139,8 +152,8 @@ namespace kerberos
         }
         capture = Factory<Capture>::getInstance()->create(settings.at("capture"));
         capture->setup(settings);
-        
         capture->startGrabThread();
+        pthread_mutex_unlock(&m_streamLock);
     }
     
     // ----------------------------------
@@ -160,5 +173,40 @@ namespace kerberos
         
         cloud = Factory<Cloud>::getInstance()->create(settings.at("cloud"));
         cloud->setup(settings);
+    }
+    
+    // -------------------------------------------
+    // Function ran in a thread, which continously
+    // stream MJPEG's.
+    
+    void * streamContinuously(void * self)
+    {
+        Kerberos * kerberos = (Kerberos *) self;   
+
+        while(kerberos->stream->isOpened())
+        {
+            pthread_mutex_lock(&kerberos->m_streamLock);
+            kerberos->stream->connect();
+            kerberos->stream->write(kerberos->capture->retrieve());
+            pthread_mutex_unlock(&kerberos->m_streamLock);
+        }
+    }
+    
+    void Kerberos::startStreamThread()
+    {
+        // ------------------------------------------------
+        // Start a new thread that streams MJPEG's continously.
+        
+        pthread_create(&m_streamThread, NULL, streamContinuously, this);   
+    }
+    
+    void Kerberos::stopStreamThread()
+    {
+        // ----------------------------------
+        // Cancel the existing stream thread,
+        // before deleting the device.
+        
+        pthread_detach(m_streamThread);
+        pthread_cancel(m_streamThread);  
     }
 }

@@ -1,5 +1,5 @@
 #include "capture/Capture.h"
-
+    
 namespace kerberos
 {
     void Capture::setup(kerberos::StringMap & settings, int width, int height)
@@ -85,7 +85,6 @@ namespace kerberos
 
         for(;;)
         {
-            usleep(125*100);
             capture->grab();
         }
     }

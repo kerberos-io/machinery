@@ -18,6 +18,14 @@
 #ifndef __Capture_H_INCLUDED__   // if Capture.h hasn't been included yet...
 #define __Capture_H_INCLUDED__   // #define this so the compiler knows it has been included
 
+#include<stdio.h>
+#include<string.h>    //strlen
+#include<stdlib.h>    //strlen
+#include<sys/socket.h>
+#include<arpa/inet.h> //inet_addr
+#include<unistd.h>    //write
+#include<pthread.h> //for threading , link with lpthread
+
 namespace kerberos
 {
     class Capture

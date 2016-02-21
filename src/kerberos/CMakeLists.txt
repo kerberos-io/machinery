@@ -7,6 +7,7 @@
         cloud/Cloud.cpp
         cloud/Watcher.cpp
         capture/Capture.cpp
+        capture/Stream.cpp
         capture/Image.cpp
         machinery/Machinery.cpp
         machinery/condition/Condition.cpp

@@ -21,6 +21,11 @@ using namespace kerberos;
 
 int main(int argc, char** argv)
 {
+    // ----------------
+    // Disable SIGPIPE
+    
+    signal(SIGPIPE, SIG_IGN);
+    
     // ----------------------------------
     // Get parameters from command line
     

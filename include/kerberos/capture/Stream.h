@@ -48,7 +48,7 @@ namespace kerberos
         int _write( int sock, char *s, int len ) 
         { 
             if ( len < 1 ) { len = strlen(s); }
-            return ::send( sock, s, len, 0 );
+            return send( sock, s, len, 0 );
         }
 
     public:

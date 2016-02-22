@@ -24,9 +24,6 @@ namespace kerberos
     bool Stream::open(int port)
     {
         sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-
-        int set = 1;
-        setsockopt(sock, SOL_SOCKET, SO_NOSIGPIPE, (void *)&set, sizeof(int));
         
         int reuse = 1;
         setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, (const char*)&reuse, sizeof(reuse));
@@ -42,7 +39,6 @@ namespace kerberos
             release();
             usleep(1000*10000);
             sock = ::socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-            setsockopt(sock, SOL_SOCKET, SO_NOSIGPIPE, (void *)&set, sizeof(int));
         }
         
         while(listen(sock, 2) == SOCKET_ERROR)
@@ -81,8 +77,6 @@ namespace kerberos
         }
 
         int set = 1;
-        setsockopt(client, SOL_SOCKET, SO_NOSIGPIPE, (void *)&set, sizeof(int));
- 
         setsockopt(client, SOL_SOCKET, SO_RCVTIMEO, (char *) &to, sizeof(struct timeval));
         setsockopt(client, SOL_SOCKET, SO_SNDTIMEO, (char *) &to, sizeof(struct timeval));
               

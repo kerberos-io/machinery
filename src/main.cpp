@@ -16,6 +16,7 @@
 #include "Helper.h"
 #include <iostream>
 #include <fstream>
+#include <sys/signal.h>
 
 using namespace kerberos;
 

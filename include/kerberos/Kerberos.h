@@ -53,6 +53,7 @@ namespace kerberos
             Stream * stream;
             pthread_t m_streamThread;
             pthread_mutex_t m_streamLock;
+            pthread_mutex_t m_cloudLock;
         
             // -----------
             // Singleton

@@ -13,6 +13,7 @@ namespace kerberos
         // Initialize mutex
         
         pthread_mutex_init(&m_streamLock, NULL);
+        pthread_mutex_init(&m_cloudLock, NULL);
         
         // ---------------------
         // Initialize kerberos
@@ -75,7 +76,9 @@ namespace kerberos
             
             if(machinery->detect(images, m_data))
             {
+                pthread_mutex_lock(&m_cloudLock);
                 machinery->save(cleanImage, m_data);
+                pthread_mutex_unlock(&m_cloudLock);
             }
 
             // -------------
@@ -163,7 +166,7 @@ namespace kerberos
     {
         // ---------------------------
         // Initialize cloud service
-        
+        pthread_mutex_lock(&m_cloudLock);
         if(cloud != 0)
         {
             cloud->stopWatchThread();
@@ -173,6 +176,8 @@ namespace kerberos
         
         cloud = Factory<Cloud>::getInstance()->create(settings.at("cloud"));
         cloud->setup(settings);
+        cloud->setLock(m_cloudLock);
+        pthread_mutex_unlock(&m_cloudLock);
     }
     
     // -------------------------------------------
@@ -185,10 +190,19 @@ namespace kerberos
 
         while(kerberos->stream->isOpened())
         {
-            pthread_mutex_lock(&kerberos->m_streamLock);
-            kerberos->stream->connect();
-            kerberos->stream->write(kerberos->capture->retrieve());
-            pthread_mutex_unlock(&kerberos->m_streamLock);
+            try
+            {
+                pthread_mutex_lock(&kerberos->m_streamLock);
+                kerberos->stream->connect();
+                kerberos->capture->grab();
+                Image image = kerberos->capture->retrieve();
+                kerberos->stream->write(image);
+                pthread_mutex_unlock(&kerberos->m_streamLock);
+            }
+            catch(cv::Exception & ex)
+            {
+                pthread_mutex_unlock(&kerberos->m_streamLock);
+            }
         }
     }
     

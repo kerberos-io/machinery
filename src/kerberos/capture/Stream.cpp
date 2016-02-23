@@ -151,4 +151,4 @@ namespace kerberos
         }
         catch(cv::Exception & ex){}
     }
-}
+}                                                       

@@ -99,6 +99,9 @@ namespace kerberos
 
     bool S3::put(const std::string & url, const std::vector<std::string> & headers, const std::vector<std::string> & body)
     {
+        // If no credentials are set do nothing..
+        if(m_bucket == "" || m_folder == "" || m_privateKey == "" || m_publicKey == "") return true;
+        
         // Initialize curl 
         curl_global_init(CURL_GLOBAL_ALL);
         CURL* curlHandle = curl_easy_init();

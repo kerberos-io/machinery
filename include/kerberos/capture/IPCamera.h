@@ -30,9 +30,6 @@ namespace kerberos
             std::string m_streamType;
         
         public:   
-            int m_connectionCount;
-            pthread_mutex_t m_connectionLock;
-            pthread_t m_connectionThread;
         
             IPCamera()
             {
@@ -64,9 +61,6 @@ namespace kerberos
             void close();
             void update();
             bool isOpened();
-        
-            void startConnectionThread();
-            void closeConnectionThread();
     };
 }
 

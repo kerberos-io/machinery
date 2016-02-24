@@ -19,17 +19,10 @@ namespace kerberos
         // Initialize URL to IP Camera
         setUrl(url);
         reopen();
-        grab();
         
         // Initialize executor (update the usb camera at specific times).
         tryToUpdateCapture.setAction(this, &IPCamera::update);
         tryToUpdateCapture.setInterval("thrice in 10 functions calls");
-        
-        // Start connection thread
-        startConnectionThread();
-        
-        // Initialize mutex
-        pthread_mutex_init(&m_connectionLock, NULL);
     }
     
     IPCamera::IPCamera(int width, int height)
@@ -50,7 +43,6 @@ namespace kerberos
         {
             pthread_mutex_lock(&m_lock);
             m_camera->grab();
-            m_connectionCount++;
             pthread_mutex_unlock(&m_lock);
         }
         catch(cv::Exception & ex)
@@ -88,26 +80,27 @@ namespace kerberos
         // Take image
         try
         {
-            // Delay camera for some time..
-            usleep(m_delay*1000);
-            
             // Get image from RTSP or MJPEG stream
             Image * image = new Image();
             
-            pthread_mutex_lock(&m_lock);
-            pthread_mutex_lock(&m_connectionLock);
-            if(m_streamType == "rtsp")
+            while(image->getColumns() == 0 || image->getRows() == 0)
             {
-                m_camera->retrieve(image->getImage());
+                // Delay camera for some time..
+                usleep(m_delay*1000);
+            
+                pthread_mutex_lock(&m_lock);
+                if(m_streamType == "rtsp")
+                {
+                    m_camera->retrieve(image->getImage());
+                }
+                else
+                {
+                    open(m_url.c_str());
+                    m_camera->read(image->getImage());
+                    close();
+                }
+                pthread_mutex_unlock(&m_lock);
             }
-            else
-            {
-                open(m_url.c_str());
-                m_camera->read(image->getImage());
-                close();
-            }
-            pthread_mutex_unlock(&m_connectionLock);
-            pthread_mutex_unlock(&m_lock);
             
             return image;
         }
@@ -176,7 +169,6 @@ namespace kerberos
     {
         try
         {
-            closeConnectionThread();
             pthread_mutex_unlock(&m_lock);
             pthread_mutex_destroy(&m_lock);
             m_camera->release();
@@ -192,47 +184,5 @@ namespace kerberos
     bool IPCamera::isOpened()
     {
         return m_camera->isOpened();
-    }
-    
-    // -------------------------------------------
-    // Function ran in a thread, which continously
-    // checks if the ip camera is still connected.
-    
-    void * checkConnection(void * self)
-    {
-        IPCamera * capture = (IPCamera *) self;
-        
-        int count = capture->m_connectionCount;
-        for(;;)
-        {
-            usleep(30000*1000);
-            int diff = capture->m_connectionCount - count;
-            
-            // ---------------------------------------------------
-            // if less than 10 frames are taken, restart ip camera
-            
-            if(diff >= 0 && diff < 10)
-            {
-                pthread_mutex_lock(&capture->m_connectionLock);
-                capture->stopGrabThread();
-                capture->reopen();
-                pthread_mutex_unlock(&capture->m_connectionLock);
-                capture->startGrabThread();
-                pthread_mutex_unlock(&capture->m_lock);
-            }
-            
-            count = capture->m_connectionCount;
-        }
-    }
-    void IPCamera::startConnectionThread()
-    {   
-        m_connectionCount = 0;
-        pthread_create(&m_connectionThread, NULL, checkConnection, this); 
-    }
-    
-    void IPCamera::closeConnectionThread()
-    {   
-        pthread_detach(m_connectionThread);
-        pthread_cancel(m_connectionThread);  
     }
 }

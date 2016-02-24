@@ -53,7 +53,7 @@ namespace kerberos
 
     public:
 
-        Stream(int port = 0) : sock(INVALID_SOCKET), timeout(10), quality(100)
+        Stream(int port = 0) : sock(INVALID_SOCKET), timeout(10), quality(50)
         {
             FD_ZERO( &master );
             if (port) open(port);

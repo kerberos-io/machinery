@@ -194,8 +194,7 @@ namespace kerberos
             {
                 pthread_mutex_lock(&kerberos->m_streamLock);
                 kerberos->stream->connect();
-                Image image = kerberos->capture->retrieve();
-                kerberos->stream->write(image);
+                kerberos->stream->write(kerberos->capture->retrieve());
                 pthread_mutex_unlock(&kerberos->m_streamLock);
             }
             catch(cv::Exception & ex)
@@ -217,7 +216,6 @@ namespace kerberos
     {
         // ----------------------------------
         // Cancel the existing stream thread,
-        // before deleting the device.
         
         pthread_detach(m_streamThread);
         pthread_cancel(m_streamThread);  

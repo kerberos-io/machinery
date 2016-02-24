@@ -35,7 +35,7 @@ ExternalProject_Add(opencv
     -DBUILD_opencv_superres=OFF
     -DBUILD_opencv_ts=OFF
     -DBUILD_opencv_videostab=OFF
-    -DBUILD_SHARED_LIBS:BOOL=ON
+    -DBUILD_SHARED_LIBS:BOOL=OFF
     -DBUILD_TESTS:BOOL=OFF
     -DBUILD_PERF_TESTS:BOOL=OFF
     -DCMAKE_BUILD_TYPE:STRING=Release

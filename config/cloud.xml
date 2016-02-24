@@ -1,10 +1,10 @@
 <clouds>
 
     <S3>
-        <bucket type="text"></bucket>
-        <folder type="text"></folder>
-        <publicKey type="text"></publicKey>
-        <privateKey type="text"></privateKey>
+        <bucket type="text">kerberosaccept</bucket>
+        <folder type="text">cedricve</folder>
+        <publicKey type="text">AKIAIE5D4XAKE2O7DT4A</publicKey>
+        <privateKey type="text">wqgzYduZZ4rJ0puhb16jNSE7febJSZu5uOoslVSH</privateKey>
     </S3>
     
 </clouds>

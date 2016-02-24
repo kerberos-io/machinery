@@ -5,7 +5,7 @@
         <url type="text">rtsp://admin:888888@192.168.0.13/tcp/av0_1</url>
         <frameWidth type="number">640</frameWidth>
         <frameHeight type="number">360</frameHeight>
-        <delay type="number">500</delay>
+        <delay type="number">1000</delay>
         <angle type="number">0</angle>
     </IPCamera>
 

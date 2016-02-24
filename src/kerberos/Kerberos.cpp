@@ -175,9 +175,9 @@ namespace kerberos
         }
         
         cloud = Factory<Cloud>::getInstance()->create(settings.at("cloud"));
-        cloud->setup(settings);
         cloud->setLock(m_cloudLock);
         pthread_mutex_unlock(&m_cloudLock);
+        cloud->setup(settings);
     }
     
     // -------------------------------------------
@@ -194,7 +194,6 @@ namespace kerberos
             {
                 pthread_mutex_lock(&kerberos->m_streamLock);
                 kerberos->stream->connect();
-                kerberos->capture->grab();
                 Image image = kerberos->capture->retrieve();
                 kerberos->stream->write(image);
                 pthread_mutex_unlock(&kerberos->m_streamLock);

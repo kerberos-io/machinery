@@ -175,8 +175,8 @@ namespace kerberos
         }
         
         cloud = Factory<Cloud>::getInstance()->create(settings.at("cloud"));
-        cloud->setLock(m_cloudLock);
         pthread_mutex_unlock(&m_cloudLock);
+        cloud->setLock(m_cloudLock);
         cloud->setup(settings);
     }
     

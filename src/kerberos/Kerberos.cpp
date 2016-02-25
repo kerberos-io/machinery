@@ -196,6 +196,7 @@ namespace kerberos
                 kerberos->stream->connect();
                 kerberos->stream->write(kerberos->capture->retrieve());
                 pthread_mutex_unlock(&kerberos->m_streamLock);
+                usleep(1000*100);
             }
             catch(cv::Exception & ex)
             {

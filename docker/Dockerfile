@@ -29,7 +29,7 @@ RUN apt-get -y install git supervisor curl subversion libcurl4-gnutls-dev cmake 
 #################################
 # Kerberos.io version
 
-ENV BRANCH develop
+ENV CHECKOUT master
 
 ############################
 # Clone and build machinery
@@ -41,7 +41,7 @@ RUN git clone https://github.com/FFmpeg/FFmpeg && \
     cd .. && rm -rf FFmpeg
     
 RUN	git clone https://github.com/kerberos-io/machinery /tmp/machinery && \
-    cd /tmp/machinery && git checkout $BRANCH && \
+    cd /tmp/machinery && git checkout $CHECKOUT && \
     mkdir build && cd build && \
     cmake .. && make && make check && make install && \
     rm -rf /tmp/machinery && \

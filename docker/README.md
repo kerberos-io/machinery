@@ -8,4 +8,4 @@ https://hub.docker.com/r/kerberos/machinery/
 
 Execute following command to build the docker image.
 
-    docker build kerberos/machinery .
+    docker build --build-arg CHECKOUT=develop --no-cache -t machinery .

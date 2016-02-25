@@ -86,6 +86,7 @@ namespace kerberos
         for(;;)
         {
             capture->grab();
+            usleep(1000*100);
         }
     }
     

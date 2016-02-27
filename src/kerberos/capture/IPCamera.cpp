@@ -42,7 +42,11 @@ namespace kerberos
         try
         {
             pthread_mutex_lock(&m_lock);
-            m_camera->grab();
+            if(!m_camera->grab())
+            {
+                reopen();
+                usleep(1000*2500);
+            }
             pthread_mutex_unlock(&m_lock);
         }
         catch(cv::Exception & ex)

@@ -23,8 +23,7 @@ namespace kerberos
         
         // ------------------
         // Open the stream
-        
-        stream = new Stream(8888);
+
         startStreamThread();
         
         // ------------------------------------------
@@ -210,7 +209,12 @@ namespace kerberos
         // ------------------------------------------------
         // Start a new thread that streams MJPEG's continously.
         
-        pthread_create(&m_streamThread, NULL, streamContinuously, this);   
+        if(stream == 0)
+        {
+            stream = new Stream(8888);
+        }
+        
+        pthread_create(&m_streamThread, NULL, streamContinuously, this);
     }
     
     void Kerberos::stopStreamThread()
@@ -218,7 +222,7 @@ namespace kerberos
         // ----------------------------------
         // Cancel the existing stream thread,
         
-        pthread_detach(m_streamThread);
-        pthread_cancel(m_streamThread);  
+        pthread_cancel(m_streamThread);
+        pthread_join(m_streamThread, NULL);
     }
 }

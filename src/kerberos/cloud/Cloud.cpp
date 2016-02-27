@@ -67,8 +67,8 @@ namespace kerberos
     
     void Cloud::stopUploadThread()
     {
-        pthread_detach(m_uploadThread);
-        pthread_cancel(m_uploadThread);  
+        pthread_cancel(m_uploadThread);
+        pthread_join(m_uploadThread, NULL);
     }
     
     // --------------
@@ -93,7 +93,7 @@ namespace kerberos
     
     void Cloud::stopWatchThread()
     {
-        pthread_detach(m_watchThread);
-        pthread_cancel(m_watchThread);  
+        pthread_cancel(m_watchThread);
+        pthread_join(m_watchThread, NULL);
     }
 }

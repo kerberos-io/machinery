@@ -105,7 +105,7 @@ namespace kerberos
         // Cancel the existing capture thread,
         // before deleting the device.
         
-        pthread_detach(m_captureThread);
-        pthread_cancel(m_captureThread);  
+        pthread_cancel(m_captureThread);
+        pthread_join(m_captureThread, NULL);
     }
 }

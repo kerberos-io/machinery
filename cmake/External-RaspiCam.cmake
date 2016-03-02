@@ -27,6 +27,8 @@ ExternalProject_Add(raspicamera
     -DBUILD_UTILS=OFF
 )
 
+add_dependencies(raspicamera opencv)
+
 set(RASPBERRYPI_INCLUDE_DIR ${CMAKE_BINARY_DIR}/thirdparty/include/)
 set(RASPBERRYPI_LIBRARY_DIR ${CMAKE_BINARY_DIR}/thirdparty/lib/)
 

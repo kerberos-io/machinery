@@ -69,8 +69,7 @@ namespace kerberos
             }
         }
         
-        template <class T>
-        std::string to_string(const T & t)
+        std::string to_string(const int & t)
         {
             std::stringstream ss;
             ss << t;

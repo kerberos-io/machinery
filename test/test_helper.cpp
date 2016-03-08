@@ -7,7 +7,7 @@ using namespace std;
 TEST(HELPER, T_TO_STRING)
 {
     int number = 5;
-    std::string word = kerberos::helper::to_string<int>(number);
+    std::string word = kerberos::helper::to_string(number);
     EXPECT_EQ("5",word);
 }
 

@@ -42,7 +42,7 @@ namespace kerberos
         kerberos::StringMap getCommandOptions(int argc, char ** argv);
         kerberos::StringMap getSettingsFromXML(const std::string & path);
         bool replace(std::string& str, const std::string& from, const std::string& to);
-        template <class T> inline std::string to_string (const T& t);
+        std::string to_string (const int & t);
         std::string generatePath(const std::string timezone, const std::string & subDirectory = "");
         std::string getTimestamp();
         std::string getMicroseconds();

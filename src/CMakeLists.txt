@@ -99,7 +99,7 @@ message("log: ${LOG_FILE}")
         )
 
     # copy service file
-    INSTALL(FILES "${CMAKE_BINARY_DIR}/../service/kerberosio.service"
+    INSTALL(FILES "${CMAKE_SOURCE_DIR}/service/kerberosio.service"
         DESTINATION "/etc/systemd/system"
         PERMISSIONS
         OWNER_EXECUTE OWNER_READ

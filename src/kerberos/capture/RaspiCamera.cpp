@@ -61,15 +61,15 @@ namespace kerberos
         //  - it's possible that we have to change the brightness, saturation, etc.
         tryToUpdateCapture();
         
+        Image * image = new Image();
+
         try
         {
             // Delay camera for some time..
             usleep(m_delay*1000);
 
             // take an image 
-            Image * image = new Image();
-
-            pthread_mutex_lock(&m_lock);
+           pthread_mutex_lock(&m_lock);
             m_camera->grab();
             m_camera->retrieve(image->getImage());
             pthread_mutex_unlock(&m_lock);

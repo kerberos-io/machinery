@@ -20,8 +20,8 @@
 # ---------------------------------------
 # Get configuration files
 
-    FILE(GLOB CONFIG_FILES ${CMAKE_BINARY_DIR}/../config/*)
-    FILE(GLOB LOG_FILE ${CMAKE_BINARY_DIR}/../logs/log.stash)
+    FILE(GLOB CONFIG_FILES ${CMAKE_SOURCE_DIR}/config/*)
+    FILE(GLOB LOG_FILE ${CMAKE_SOURCE_DIR}/logs/log.stash)
     
 # ----------------------------------------------
 # Executable + define linking libraries

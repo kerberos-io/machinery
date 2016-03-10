@@ -75,7 +75,7 @@
 # -------------------------------------------
 # Create a library of the KERBEROS_SRC files
 
-    add_library(KERBEROS_CORE ${KERBEROS_SRC})
+    add_library(KERBEROS_CORE STATIC ${KERBEROS_SRC})
     target_link_libraries(KERBEROS_CORE ${KERBEROS_LIBRARIES})
     add_dependencies(KERBEROS_CORE ${KERBEROS_DEPENDENCIES})
     set(KERBEROS_CORE_LIBRARY ${KERBEROS_CORE_LIBRARY} KERBEROS_CORE PARENT_SCOPE)

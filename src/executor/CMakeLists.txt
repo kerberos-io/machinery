@@ -1,6 +1,6 @@
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 # Build library
-add_library(EXECUTOR_LIBRARY 
+add_library(EXECUTOR_LIBRARY STATIC 
     Executor.cpp)
 
 set(KERBEROS_DEPENDENCIES ${KERBEROS_DEPENDENCIES} EXECUTOR_LIBRARY PARENT_SCOPE)

@@ -1,7 +1,7 @@
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 # Build encode
 
-add_library(ENCODE_LIBRARY 
+add_library(ENCODE_LIBRARY STATIC 
     base64.cpp
     HMAC_SHA1.cpp
     SHA1.cpp)

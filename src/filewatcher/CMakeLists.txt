@@ -1,6 +1,6 @@
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 # Build library
-add_library(FILEWATCHER_LIBRARY 
+add_library(FILEWATCHER_LIBRARY STATIC 
     FileWatcher.cpp
     FileWatcherLinux.cpp
     FileWatcherOSX.cpp

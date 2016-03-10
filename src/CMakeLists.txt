@@ -60,22 +60,21 @@
 # Additional options
 
 	SET(CMAKE_BUILD_TYPE Release)
-	message("Add environment variable: export DYLD_LIBRARY_PATH=$DYLD_LIBRARY_PATH:${OPENCV_LIBRARY_DIR}")
     
 # ----------------------------------------
 # Install
 
 	# copy configuration files
 	INSTALL(FILES ${CONFIG_FILES}
-        DESTINATION "/etc/opt/kerberosio/config"
+        DESTINATION "/data/etc/kerberosio/config"
         PERMISSIONS
         OWNER_EXECUTE OWNER_WRITE OWNER_READ
         GROUP_EXECUTE GROUP_WRITE GROUP_READ
         WORLD_EXECUTE WORLD_WRITE WORLD_READ)
-message("log: ${LOG_FILE}")
+
     # copy log file
     INSTALL(FILES ${LOG_FILE}
-        DESTINATION "/etc/opt/kerberosio/logs"
+        DESTINATION "/data/etc/kerberosio/logs"
         PERMISSIONS
         OWNER_EXECUTE OWNER_WRITE OWNER_READ
         GROUP_EXECUTE GROUP_WRITE GROUP_READ
@@ -83,7 +82,7 @@ message("log: ${LOG_FILE}")
         
     # create symbol directory
     INSTALL(DIRECTORY
-        DESTINATION "/etc/opt/kerberosio/symbols"
+        DESTINATION "/data/etc/kerberosio/symbols"
         DIRECTORY_PERMISSIONS 
         OWNER_EXECUTE OWNER_WRITE OWNER_READ
         GROUP_EXECUTE GROUP_WRITE GROUP_READ
@@ -91,20 +90,11 @@ message("log: ${LOG_FILE}")
 
     # create image directory
     INSTALL(DIRECTORY
-        DESTINATION "/etc/opt/kerberosio/capture/"
+        DESTINATION "/data/etc/kerberosio/capture/"
         DIRECTORY_PERMISSIONS 
         OWNER_EXECUTE OWNER_WRITE OWNER_READ
         GROUP_EXECUTE GROUP_WRITE GROUP_READ
-        WORLD_EXECUTE WORLD_WRITE WORLD_READ
-        )
-
-    # copy service file
-    INSTALL(FILES "${CMAKE_SOURCE_DIR}/service/kerberosio.service"
-        DESTINATION "/etc/systemd/system"
-        PERMISSIONS
-        OWNER_EXECUTE OWNER_READ
-        GROUP_EXECUTE GROUP_READ
-        WORLD_EXECUTE WORLD_READ)
+        WORLD_EXECUTE WORLD_WRITE WORLD_READ)
     
     # install binary
     INSTALL(TARGETS kerberosio

@@ -66,7 +66,7 @@
 
 	# copy configuration files
 	INSTALL(FILES ${CONFIG_FILES}
-        DESTINATION "/data/etc/kerberosio/config"
+        DESTINATION "/etc/opt/kerberosio/config"
         PERMISSIONS
         OWNER_EXECUTE OWNER_WRITE OWNER_READ
         GROUP_EXECUTE GROUP_WRITE GROUP_READ
@@ -74,7 +74,7 @@
 
     # copy log file
     INSTALL(FILES ${LOG_FILE}
-        DESTINATION "/data/etc/kerberosio/logs"
+        DESTINATION "/etc/opt/kerberosio/logs"
         PERMISSIONS
         OWNER_EXECUTE OWNER_WRITE OWNER_READ
         GROUP_EXECUTE GROUP_WRITE GROUP_READ
@@ -82,7 +82,7 @@
         
     # create symbol directory
     INSTALL(DIRECTORY
-        DESTINATION "/data/etc/kerberosio/symbols"
+        DESTINATION "/etc/opt/kerberosio/symbols"
         DIRECTORY_PERMISSIONS 
         OWNER_EXECUTE OWNER_WRITE OWNER_READ
         GROUP_EXECUTE GROUP_WRITE GROUP_READ
@@ -90,7 +90,7 @@
 
     # create image directory
     INSTALL(DIRECTORY
-        DESTINATION "/data/etc/kerberosio/capture/"
+        DESTINATION "/etc/opt/kerberosio/capture/"
         DIRECTORY_PERMISSIONS 
         OWNER_EXECUTE OWNER_WRITE OWNER_READ
         GROUP_EXECUTE GROUP_WRITE GROUP_READ

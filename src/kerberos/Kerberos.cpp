@@ -202,7 +202,7 @@ namespace kerberos
                 kerberos->stream->write(image);
                 
                 pthread_mutex_unlock(&kerberos->m_streamLock);
-                usleep(1000*100);
+                usleep(1500*100);
             }
             catch(cv::Exception & ex)
             {

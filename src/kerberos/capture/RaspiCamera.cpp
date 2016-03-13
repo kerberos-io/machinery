@@ -69,7 +69,7 @@ namespace kerberos
             usleep(m_delay*1000);
 
             // take an image 
-           pthread_mutex_lock(&m_lock);
+            pthread_mutex_lock(&m_lock);
             m_camera->grab();
             m_camera->retrieve(image->getImage());
             pthread_mutex_unlock(&m_lock);

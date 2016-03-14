@@ -84,7 +84,7 @@ namespace kerberos
             // Shift images
             
             images = capture->shiftImage();
-            usleep(1000*1000);
+            usleep(250*1000);
         }
     }
     

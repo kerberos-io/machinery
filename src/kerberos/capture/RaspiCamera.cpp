@@ -94,7 +94,6 @@ namespace kerberos
             m_camera->set(CV_CAP_PROP_FORMAT, CV_8UC3);
             m_camera->set(CV_CAP_PROP_FRAME_WIDTH, m_frameWidth);
             m_camera->set(CV_CAP_PROP_FRAME_HEIGHT, m_frameHeight);
-            m_camera->set(CV_CAP_PROP_EXPOSURE, 100);
         }
         catch(cv::Exception & ex)
         {

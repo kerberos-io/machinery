@@ -5,9 +5,9 @@ namespace kerberos
     void Cloud::setup(kerberos::StringMap & settings)
     {
         // -------------------------------
-        // Upload interval [1.5sec;4.2min]
+        // Upload interval [5sec;4.2min]
         
-        m_min = 1500;
+        m_min = 5000;
         m_max = 256000;
         m_interval = m_min;
         

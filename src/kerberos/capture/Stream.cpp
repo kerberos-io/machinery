@@ -102,8 +102,12 @@ namespace kerberos
     {
         try
         {
+            // Check if some clients connected
+            // if not drop this shit..
+            if(clients.size()==0) return;
+            
+            // Encode the image
             cv::Mat frame = image.getImage();
-
             if(frame.cols > 0 && frame.rows > 0)
             {
                 std::vector<uchar>outbuf;

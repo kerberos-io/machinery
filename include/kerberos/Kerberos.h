@@ -42,6 +42,7 @@ namespace kerberos
             void setCaptureDelayTime(int delay){m_captureDelayTime=delay;};
             void setParameters(StringMap & parameters){m_parameters = parameters;};
             StringMap getParameters(){return m_parameters;}
+            std::string toJSON(JSON & data);
         
         public:
 

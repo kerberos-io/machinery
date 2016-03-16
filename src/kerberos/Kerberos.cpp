@@ -80,12 +80,10 @@ namespace kerberos
             
             if(machinery->detect(m_images, data))
             {
-                pthread_mutex_lock(&m_ioLock);
+                // ---------------------------
+                // If something is detected...
 
-                rapidjson::StringBuffer buffer;
-                rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);
-                data.Accept(writer);
-                Detection detection(buffer.GetString(), cleanImage);
+                Detection detection(toJSON(data), cleanImage);
                 m_detections.push_back(detection);
 
                 pthread_mutex_unlock(&m_ioLock);
@@ -96,9 +94,34 @@ namespace kerberos
 
             m_images = capture->shiftImage();
             usleep(250*1000);
+
+
         }
     }
-    
+
+    std::string Kerberos::toJSON(JSON & data)
+    {
+        JSON::AllocatorType& allocator = data.GetAllocator();
+
+        JSONValue timestamp;
+        timestamp.SetString(kerberos::helper::getTimestamp().c_str(), allocator);
+        data.AddMember("timestamp", timestamp, allocator);
+
+        std::string micro = kerberos::helper::getMicroseconds();
+        micro = micro + "-" + kerberos::helper::to_string((int)micro.length());
+
+        JSONValue microseconds;
+        microseconds.SetString(micro.c_str(), allocator);
+        data.AddMember("microseconds", microseconds, allocator);
+
+        data.AddMember("token", rand()%1000, allocator);
+
+        rapidjson::StringBuffer buffer;
+        rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);
+        data.Accept(writer);
+        return buffer.GetString();
+    }
+
     void Kerberos::configure(const std::string & configuration)
     {
         // ---------------------------
@@ -253,39 +276,51 @@ namespace kerberos
     {
         Kerberos * kerberos = (Kerberos *) self;
 
+        int previousCount = 0;
+        int currentCount = 0;
+        int timesEqual = 0;
+
         while(true)
         {
-            int previousCount = 0;
-            int currentCount = 0;
-
             try
             {
                 previousCount = currentCount;
                 currentCount = kerberos->m_detections.size();
 
-                // If no new detections are found, we will run the IO devices
                 if(previousCount == currentCount)
+                {
+                    timesEqual++;
+                }
+                else if(timesEqual > 0)
+                {
+                    timesEqual--;
+                }
+
+                // If no new detections are found, we will run the IO devices (or max 25 images in memory)
+                if((currentCount > 0 && timesEqual > 4) || currentCount >= 30)
                 {
                     pthread_mutex_lock(&kerberos->m_ioLock);
                     pthread_mutex_lock(&kerberos->m_cloudLock);
 
                     for (int i = 0; i < currentCount; i++)
                     {
-                        Detection detection = kerberos->m_detections[i];
+                        Detection detection = kerberos->m_detections[0];
                         JSON data;
                         data.Parse(detection.t.c_str());
 
                         if(kerberos->machinery->save(detection.k, data))
                         {
-                            kerberos->m_detections.erase(kerberos->m_detections.begin() + i);
+                            kerberos->m_detections.erase(kerberos->m_detections.begin());
                         }
                     }
 
                     pthread_mutex_unlock(&kerberos->m_cloudLock);
                     pthread_mutex_unlock(&kerberos->m_ioLock);
+
+                    timesEqual = 0;
                 }
 
-                usleep(3000*100);
+                usleep(500*1000);
             }
             catch(cv::Exception & ex)
             {

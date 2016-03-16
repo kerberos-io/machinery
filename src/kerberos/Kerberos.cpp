@@ -108,7 +108,7 @@ namespace kerberos
         data.AddMember("timestamp", timestamp, allocator);
 
         std::string micro = kerberos::helper::getMicroseconds();
-        micro = micro + "-" + kerberos::helper::to_string((int)micro.length());
+        micro = kerberos::helper::to_string((int)micro.length()) + "-" + micro;
 
         JSONValue microseconds;
         microseconds.SetString(micro.c_str(), allocator);
@@ -296,26 +296,24 @@ namespace kerberos
                     timesEqual--;
                 }
 
-                // If no new detections are found, we will run the IO devices (or max 25 images in memory)
+                // If no new detections are found, we will run the IO devices (or max 30 images in memory)
                 if((currentCount > 0 && timesEqual > 4) || currentCount >= 30)
                 {
-                    pthread_mutex_lock(&kerberos->m_ioLock);
-                    pthread_mutex_lock(&kerberos->m_cloudLock);
-
                     for (int i = 0; i < currentCount; i++)
                     {
                         Detection detection = kerberos->m_detections[0];
                         JSON data;
                         data.Parse(detection.t.c_str());
 
+                        pthread_mutex_lock(&kerberos->m_ioLock);
+                        pthread_mutex_lock(&kerberos->m_cloudLock);
                         if(kerberos->machinery->save(detection.k, data))
                         {
                             kerberos->m_detections.erase(kerberos->m_detections.begin());
                         }
+                        pthread_mutex_unlock(&kerberos->m_cloudLock);
+                        pthread_mutex_unlock(&kerberos->m_ioLock);
                     }
-
-                    pthread_mutex_unlock(&kerberos->m_cloudLock);
-                    pthread_mutex_unlock(&kerberos->m_ioLock);
 
                     timesEqual = 0;
                 }

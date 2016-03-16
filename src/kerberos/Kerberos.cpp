@@ -255,25 +255,37 @@ namespace kerberos
 
         while(true)
         {
+            int previousCount = 0;
+            int currentCount = 0;
+
             try
             {
-                pthread_mutex_lock(&kerberos->m_ioLock);
-                pthread_mutex_lock(&kerberos->m_cloudLock);
+                previousCount = currentCount;
+                currentCount = kerberos->m_detections.size();
 
-                for(int i = 0; i < kerberos->m_detections.size(); i++)
+                // If no new detections are found, we will run the IO devices
+                if(previousCount == currentCount)
                 {
-                    Detection detection = kerberos->m_detections[i];
-                    JSON data;
-                    data.Parse(detection.t.c_str());
-                    if(kerberos->machinery->save(detection.k, data))
+                    pthread_mutex_lock(&kerberos->m_ioLock);
+                    pthread_mutex_lock(&kerberos->m_cloudLock);
+
+                    for (int i = 0; i < currentCount; i++)
                     {
-                        kerberos->m_detections.erase(kerberos->m_detections.begin()+i);
+                        Detection detection = kerberos->m_detections[i];
+                        JSON data;
+                        data.Parse(detection.t.c_str());
+
+                        if(kerberos->machinery->save(detection.k, data))
+                        {
+                            kerberos->m_detections.erase(kerberos->m_detections.begin() + i);
+                        }
                     }
+
+                    pthread_mutex_unlock(&kerberos->m_cloudLock);
+                    pthread_mutex_unlock(&kerberos->m_ioLock);
                 }
 
-                pthread_mutex_unlock(&kerberos->m_cloudLock);
-                pthread_mutex_unlock(&kerberos->m_ioLock);
-                usleep(500*100);
+                usleep(3000*100);
             }
             catch(cv::Exception & ex)
             {

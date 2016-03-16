@@ -20,11 +20,16 @@ namespace kerberos
         
         std::string configuration = (helper::getValueByKey(parameters, "config")) ?: CONFIGURATION_PATH;
         configure(configuration);
-        
+
         // ------------------
         // Open the stream
 
         startStreamThread();
+
+        // ------------------
+        // Open the io thread
+
+        startIOThread();
         
         // ------------------------------------------
         // Guard is a filewatcher, that looks if the 
@@ -47,8 +52,8 @@ namespace kerberos
             // -------------------
             // Initialize data
 
-            JSON m_data;
-            m_data.SetObject();
+            JSON data;
+            data.SetObject();
 
             // ------------------------------------
             // Guard look if the configuration has
@@ -60,7 +65,7 @@ namespace kerberos
             // If machinery is NOT allowed to do detection
             // continue iteration
             
-            if(!machinery->allowed(images))
+            if(!machinery->allowed(m_images))
             {
                 continue;
             }
@@ -68,22 +73,28 @@ namespace kerberos
             // --------------------
             // Clean image to save
 
-            Image cleanImage = *images[images.size()-1];
+            Image cleanImage = *m_images[m_images.size()-1];
 
             // --------------
             // Processing..
             
-            if(machinery->detect(images, m_data))
+            if(machinery->detect(m_images, data))
             {
-                pthread_mutex_lock(&m_cloudLock);
-                machinery->save(cleanImage, m_data);
-                pthread_mutex_unlock(&m_cloudLock);
+                pthread_mutex_lock(&m_ioLock);
+
+                rapidjson::StringBuffer buffer;
+                rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);
+                data.Accept(writer);
+                Detection detection(buffer.GetString(), cleanImage);
+                m_detections.push_back(detection);
+
+                pthread_mutex_unlock(&m_ioLock);
             }
 
             // -------------
             // Shift images
-            
-            images = capture->shiftImage();
+
+            m_images = capture->shiftImage();
             usleep(250*1000);
         }
     }
@@ -120,13 +131,13 @@ namespace kerberos
         // -------------------
         // Take first images
 
-        for(ImageVector::iterator it = images.begin(); it != images.end(); it++)
+        for(ImageVector::iterator it = m_images.begin(); it != m_images.end(); it++)
         {
             delete *it;
         }
 
-        images.clear();
-        images = capture->takeImages(3);
+        m_images.clear();
+        m_images = capture->takeImages(3);
         
         // --------------------
         // Initialize machinery
@@ -134,7 +145,7 @@ namespace kerberos
         if(machinery != 0) delete machinery;
         machinery = new Machinery();
         machinery->setup(settings);
-        machinery->initialize(images);
+        machinery->initialize(m_images);
     }
     
     // ----------------------------------
@@ -178,14 +189,14 @@ namespace kerberos
         cloud->setLock(m_cloudLock);
         cloud->setup(settings);
     }
-    
-    // -------------------------------------------
-    // Function ran in a thread, which continously
+
+    // --------------------------------------------
+    // Function ran in a thread, which continuously
     // stream MJPEG's.
-    
+
     void * streamContinuously(void * self)
     {
-        Kerberos * kerberos = (Kerberos *) self;   
+        Kerberos * kerberos = (Kerberos *) self;
 
         while(kerberos->stream->isOpened())
         {
@@ -193,14 +204,14 @@ namespace kerberos
             {
                 pthread_mutex_lock(&kerberos->m_streamLock);
                 kerberos->stream->connect();
-                
+
                 Image image = kerberos->capture->retrieve();
                 if(kerberos->capture->m_angle != 0)
                 {
                     image.rotate(kerberos->capture->m_angle);
                 }
                 kerberos->stream->write(image);
-                
+
                 pthread_mutex_unlock(&kerberos->m_streamLock);
                 usleep(800*100);
             }
@@ -214,7 +225,7 @@ namespace kerberos
     void Kerberos::startStreamThread()
     {
         // ------------------------------------------------
-        // Start a new thread that streams MJPEG's continously.
+        // Start a new thread that streams MJPEG's continuously.
         
         if(stream == 0)
         {
@@ -231,5 +242,61 @@ namespace kerberos
         
         pthread_cancel(m_streamThread);
         pthread_join(m_streamThread, NULL);
+    }
+
+    // -------------------------------------------
+    // Function ran in a thread, which continuously
+    // checks if some detections occurred and
+    // execute the IO devices if so.
+
+    void * checkDetectionsContinuously(void * self)
+    {
+        Kerberos * kerberos = (Kerberos *) self;
+
+        while(true)
+        {
+            try
+            {
+                pthread_mutex_lock(&kerberos->m_ioLock);
+                pthread_mutex_lock(&kerberos->m_cloudLock);
+
+                for(int i = 0; i < kerberos->m_detections.size(); i++)
+                {
+                    Detection detection = kerberos->m_detections[i];
+                    JSON data;
+                    data.Parse(detection.t.c_str());
+                    if(kerberos->machinery->save(detection.k, data))
+                    {
+                        kerberos->m_detections.erase(kerberos->m_detections.begin()+i);
+                    }
+                }
+
+                pthread_mutex_unlock(&kerberos->m_cloudLock);
+                pthread_mutex_unlock(&kerberos->m_ioLock);
+                usleep(500*100);
+            }
+            catch(cv::Exception & ex)
+            {
+                pthread_mutex_unlock(&kerberos->m_ioLock);
+                pthread_mutex_unlock(&kerberos->m_cloudLock);
+            }
+        }
+    }
+
+    void Kerberos::startIOThread()
+    {
+        // ------------------------------------------------
+        // Start a new thread that cheks for detections
+
+        pthread_create(&m_ioThread, NULL, checkDetectionsContinuously, this);
+    }
+
+    void Kerberos::stopIOThread()
+    {
+        // ----------------------------------
+        // Cancel the existing io thread,
+
+        pthread_cancel(m_ioThread);
+        pthread_join(m_ioThread, NULL);
     }
 }

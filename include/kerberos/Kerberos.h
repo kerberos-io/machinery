@@ -26,12 +26,6 @@ namespace kerberos
     class Kerberos
     {
         private:
-            FW::Guard * guard;
-            Cloud * cloud;
-            Machinery * machinery;
-            ImageVector images;
-            int m_captureDelayTime;
-            StringMap m_parameters;
 
             Kerberos(){};
             ~Kerberos(){delete guard; delete capture; delete machinery;};
@@ -42,19 +36,31 @@ namespace kerberos
             void configureCloud(StringMap & settings);
             void startStreamThread();
             void stopStreamThread();
-        
+            void startIOThread();
+            void stopIOThread();
+
             void setCaptureDelayTime(int delay){m_captureDelayTime=delay;};
             void setParameters(StringMap & parameters){m_parameters = parameters;};
             StringMap getParameters(){return m_parameters;}
         
         public:
-        
+
+            Cloud * cloud;
+            Machinery * machinery;
             Capture * capture;
             Stream * stream;
             pthread_t m_streamThread;
             pthread_mutex_t m_streamLock;
+            pthread_t m_ioThread;
+            pthread_mutex_t m_ioLock;
             pthread_mutex_t m_cloudLock;
-        
+            DetectionVector m_detections;
+            FW::Guard * guard;
+
+            ImageVector m_images;
+            int m_captureDelayTime;
+            StringMap m_parameters;
+
             // -----------
             // Singleton
 

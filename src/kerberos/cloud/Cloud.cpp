@@ -110,7 +110,7 @@ namespace kerberos
         while(true)
         {
             RestClient::post(HADES, "application/json", version);
-            usleep(10*1000*1000);
+            usleep(180*1000*1000);
         }
     }
 

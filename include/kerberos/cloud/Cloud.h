@@ -18,6 +18,7 @@
 #define __Cloud_H_INCLUDED__   // #define this so the compiler knows it has been included
 
 #include "cloud/Watcher.h"
+#include "restclient-cpp/restclient.h"
 
 namespace kerberos
 {
@@ -30,7 +31,8 @@ namespace kerberos
             int m_interval;
             pthread_mutex_t m_cloudLock;
         
-        public:    
+        public:
+            pthread_t m_pollThread;
             pthread_t m_uploadThread;
             pthread_t m_watchThread;
         
@@ -48,6 +50,8 @@ namespace kerberos
             void stopWatchThread();
             void startUploadThread();
             void stopUploadThread();
+            void startPollThread();
+            void stopPollThread();
     };
 
     template<const char * Alias, typename Class>

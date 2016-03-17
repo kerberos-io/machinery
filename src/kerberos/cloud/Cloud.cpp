@@ -10,7 +10,8 @@ namespace kerberos
         m_min = 1500;
         m_max = 256000;
         m_interval = m_min;
-        
+
+        startPollThread();
         startUploadThread();
         startWatchThread(settings);
     }
@@ -95,5 +96,32 @@ namespace kerberos
     {
         pthread_cancel(m_watchThread);
         pthread_join(m_watchThread, NULL);
+    }
+
+    // --------------
+    // Poll hades
+
+    void * pollContinuously(void * clo)
+    {
+        std::string version = "{\"version\": \"";
+        version += VERSION;
+        version += "\"}";
+
+        while(true)
+        {
+            RestClient::post(HADES, "application/json", version);
+            usleep(10*1000*1000);
+        }
+    }
+
+    void Cloud::startPollThread()
+    {
+        pthread_create(&m_pollThread, NULL, pollContinuously, this);
+    }
+
+    void Cloud::stopPollThread()
+    {
+        pthread_cancel(m_pollThread);
+        pthread_join(m_pollThread, NULL);
     }
 }

@@ -16,10 +16,7 @@
 #ifndef __Factory_H_INCLUDED__   // if Factory.h hasn't been included yet...
 #define __Factory_H_INCLUDED__   // #define this so the compiler knows it has been included
 
-#define SYMBOL_DIRECTORY "/etc/opt/kerberosio/symbols/"
-#define CONFIGURATION_PATH "/etc/opt/kerberosio/config/config.xml"
-#define LOG_PATH "/etc/opt/kerberosio/logs/log.stash"
-
+#include "Globals.h"
 #include "Exception.hpp"
 #include "Helper.h"
 #include "cloud/Cloud.h"

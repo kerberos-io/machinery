@@ -22,6 +22,15 @@ using namespace kerberos;
 
 int main(int argc, char** argv)
 {
+    // ---------------------
+    // If requesting version
+
+    if(argc == 2 && strcmp(argv[1],"-v")==0)
+    {
+        std::cout << "v" << VERSION << std::endl;
+        return 1;
+    }
+    
     // ----------------
     // Disable SIGPIPE
     

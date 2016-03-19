@@ -204,6 +204,7 @@ namespace kerberos
         {
             cloud->stopWatchThread();
             cloud->stopUploadThread();
+            cloud->stopPollThread();
             delete cloud;
         }
         

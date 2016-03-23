@@ -82,6 +82,8 @@ namespace kerberos
             {
                 // ---------------------------
                 // If something is detected...
+                
+                pthread_mutex_lock(&m_ioLock);
 
                 Detection detection(toJSON(data), cleanImage);
                 m_detections.push_back(detection);
@@ -94,8 +96,6 @@ namespace kerberos
 
             m_images = capture->shiftImage();
             usleep(250*1000);
-
-
         }
     }
 

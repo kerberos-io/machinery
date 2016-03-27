@@ -152,6 +152,7 @@ namespace kerberos
         try
         {
             m_camera->open(url);
+            setImageSize(m_frameWidth, m_frameHeight);
         }
         catch(cv::Exception & ex)
         {

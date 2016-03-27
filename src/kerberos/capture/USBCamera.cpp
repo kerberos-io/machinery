@@ -126,6 +126,7 @@ namespace kerberos
             {
                 m_camera->release();
                 m_camera->open(getDeviceNumber());
+                setImageSize(m_frameWidth, m_frameHeight);
             }
         }
         catch(cv::Exception & ex)

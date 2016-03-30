@@ -14,6 +14,7 @@
 	include_directories(${CMAKE_SOURCE_DIR}/include/rapidjson)
 	include_directories(${CMAKE_SOURCE_DIR}/include/mmapgpio)
     include_directories(${CMAKE_SOURCE_DIR}/include/encode)
+    include_directories(${CMAKE_SOURCE_DIR}/include/easylogging)
     
 # -----------------------------------
 # Mocks

@@ -14,6 +14,7 @@
 
 #include "Factory.h"
 #include "capture/Image.h"
+#include "easylogging++.h"
 
 #ifndef __Algorithm_H_INCLUDED__   // if Algorithm.h hasn't been included yet...
 #define __Algorithm_H_INCLUDED__   // #define this so the compiler knows it has been included

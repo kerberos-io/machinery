@@ -114,7 +114,7 @@ namespace kerberos
         // Replace variables
 
         pathToImage = buildPath(pathToImage);
-        
+
         // -------------------------------------------------------
         // Add path to JSON object, so other IO devices can use it
         
@@ -126,6 +126,7 @@ namespace kerberos
         // ---------------------------------------------------------------------
         // Save original version & generate unique timestamp for current image
 
+        BINFO << "IoDisk: saving image " + pathToImage;
         return m_fileManager.save(image, pathToImage);
     }
 }

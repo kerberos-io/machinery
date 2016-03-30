@@ -33,10 +33,12 @@ namespace kerberos
             
             if (connect(sock, (struct sockaddr *) &echoServAddr, sizeof(echoServAddr)) >= 0)
             {
+                BINFO << "IoTCP: sending TCP packet to " + (std::string) getIp() + ":" + helper::to_string(getPort());
                 if (send(sock, getMessage(), strlen(getMessage()), 0) != strlen(getMessage()))
                 {
                     throw new SocketException("send() sent a different number of bytes than expected");
                 }
+                
                 close(sock);
             }
         }

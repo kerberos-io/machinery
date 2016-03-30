@@ -139,6 +139,8 @@ namespace kerberos
             curl_easy_setopt(curlHandle, CURLOPT_WRITEFUNCTION, write);
             curl_easy_setopt(curlHandle, CURLOPT_WRITEDATA, &output);
 
+            BINFO << "S3: uploading image to bucket.";
+
             result = curl_easy_perform(curlHandle);//Perform
             curl_global_cleanup();
 

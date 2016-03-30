@@ -20,6 +20,7 @@ namespace kerberos
     {
         if(!isEnabled())
         {
+            BINFO << "Condition: not enabled.";
             usleep(getDelay()*1000);
         }
         

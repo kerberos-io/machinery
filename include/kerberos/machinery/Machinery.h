@@ -20,6 +20,7 @@
 #include "machinery/heuristic/Heuristic.h"
 #include "machinery/expositor/Expositor.h"
 #include "machinery/io/Io.h"
+#include "easylogging++.h"
 
 namespace kerberos
 {

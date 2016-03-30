@@ -20,7 +20,7 @@
 #include "easylogging++.h"
 
 _INITIALIZE_EASYLOGGINGPP
-    
+
 using namespace kerberos;
 
 int main(int argc, char** argv)
@@ -47,13 +47,16 @@ int main(int argc, char** argv)
     // ----------------------------------
     // Initialize logger
                   
-    easyloggingpp::Configurations defaultConf;
-    defaultConf.setToDefault();
-    defaultConf.setAll(easyloggingpp::ConfigurationType::ToFile, "true");
+    easyloggingpp::Configurations config;
+    config.setToDefault();
+    config.setAll(easyloggingpp::ConfigurationType::Enabled, "true");
+    config.setAll(easyloggingpp::ConfigurationType::ToFile, "true");
     std::string logFile = (helper::getValueByKey(parameters, "log")) ?: LOG_PATH;
-    defaultConf.setAll(easyloggingpp::ConfigurationType::Filename, logFile);
-    easyloggingpp::Loggers::reconfigureAllLoggers(defaultConf);
+    config.setAll(easyloggingpp::ConfigurationType::Filename, logFile);
+    config.setAll(easyloggingpp::ConfigurationType::RollOutSize, "100000"); // 100MB
+    easyloggingpp::Loggers::reconfigureAllLoggers(config);
     
+    LINFO << "Logging is set to verbose";
     LINFO << "Logging is written to: " + logFile;
     
     while(true)
@@ -63,7 +66,8 @@ int main(int argc, char** argv)
             // ----------------------------------
             // Bootstrap machinery with parameters
             
-            LINFO << "Machinery has been started";
+            LINFO << "Starting machinery";
+            
             Kerberos::run(parameters);
             
         }

@@ -18,6 +18,7 @@
 
 #include "Factory.h"
 #include "capture/Image.h"
+#include "easylogging++.h"
 
 #ifndef __Heuristic_H_INCLUDED__   // if Heuristic.h hasn't been included yet...
 #define __Heuristic_H_INCLUDED__   // #define this so the compiler knows it has been included

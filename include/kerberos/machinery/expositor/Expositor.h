@@ -15,6 +15,7 @@
 
 #include "Factory.h"
 #include "capture/Image.h"
+#include "easylogging++.h"
 
 #ifndef __Expositor_H_INCLUDED__   // if Expositor.h hasn't been included yet...
 #define __Expositor_H_INCLUDED__   // #define this so the compiler knows it has been included

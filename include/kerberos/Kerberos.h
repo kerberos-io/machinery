@@ -41,7 +41,11 @@ namespace kerberos
             void stopIOThread();
 
             void setCaptureDelayTime(int delay){m_captureDelayTime=delay;};
-            void setParameters(StringMap & parameters){m_parameters = parameters;};
+            void setParameters(StringMap & parameters)
+            {
+                LINFO << helper::printStringMap("Parameters passed from commandline:", parameters);
+                m_parameters = parameters;
+            };
             StringMap getParameters(){return m_parameters;}
             std::string toJSON(JSON & data);
         

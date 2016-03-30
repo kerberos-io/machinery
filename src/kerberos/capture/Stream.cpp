@@ -35,7 +35,7 @@ namespace kerberos
         
         while(bind(sock, (SOCKADDR*) &address, sizeof(SOCKADDR_IN)) == SOCKET_ERROR)
         {
-            std::cerr << "error : couldn't bind sock "<<sock<<" to port "<<port<<"!" << std::endl;
+            LERROR << "Stream: couldn't bind sock";
             release();
             usleep(1000*10000);
             sock = ::socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
@@ -43,7 +43,7 @@ namespace kerberos
         
         while(listen(sock, 2) == SOCKET_ERROR)
         {
-            std::cerr << "error : couldn't listen on sock "<<sock<<" on port "<<port<<" !" << std::endl;
+            LERROR << "Stream: couldn't listen on sock";
             usleep(1000*10000);
         }
         
@@ -72,7 +72,7 @@ namespace kerberos
 
         if (client == SOCKET_ERROR)
         {
-            std::cerr << "error : couldn't accept connection on sock " << sock<< " !" << std::endl;
+            LERROR << "Stream: couldn't accept connection on sock";
             return false;
         }
 

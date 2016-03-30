@@ -8,7 +8,6 @@ namespace kerberos
         // Set parameters from command-line
         
         setParameters(parameters);
-        LINFO << helper::printStringMap("Parameters passed from commandline:", parameters);
         
         // ----------------
         // Initialize mutex
@@ -68,6 +67,7 @@ namespace kerberos
             
             if(!machinery->allowed(m_images))
             {
+                LDEBUG << "Machinery on hold, one of the conditions failed.";
                 continue;
             }
             
@@ -144,7 +144,17 @@ namespace kerberos
         }
         
         LINFO << helper::printStringMap("Final configuration:", settings);
-        
+
+        // -------------------------------------------
+        // Check if we need to disable verbose logging
+
+        if(settings.at("logging") != "verbose")
+        {
+            easyloggingpp::Configurations config;
+            config.set(easyloggingpp::Level::Info, easyloggingpp::ConfigurationType::Enabled, "false");
+            easyloggingpp::Loggers::reconfigureLogger("business", config);
+        }
+
         // -----------------
         // Configure cloud
         
@@ -216,7 +226,7 @@ namespace kerberos
             cloud->stopPollThread();
             delete cloud;
         }
-        
+
         LINFO << "Starting cloud service: " + settings.at("cloud");
         cloud = Factory<Cloud>::getInstance()->create(settings.at("cloud"));
         pthread_mutex_unlock(&m_cloudLock);
@@ -264,7 +274,7 @@ namespace kerberos
         if(stream == 0)
         {
             int port = 8888;
-            LINFO << "Starting stream on port " + port;
+            LINFO << "Starting stream on port " + helper::to_string(port);
             stream = new Stream(port);
         }
         
@@ -312,6 +322,8 @@ namespace kerberos
                 // If no new detections are found, we will run the IO devices (or max 30 images in memory)
                 if((currentCount > 0 && timesEqual > 4) || currentCount >= 30)
                 {
+                    BINFO << "Executing IO devices for " + helper::to_string(currentCount)  + " detection(s)";
+
                     for (int i = 0; i < currentCount; i++)
                     {
                         Detection detection = kerberos->m_detections[0];

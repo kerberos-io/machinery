@@ -67,7 +67,7 @@ namespace kerberos
             
             if(!machinery->allowed(m_images))
             {
-                LDEBUG << "Machinery on hold, one of the conditions failed.";
+                BINFO << "Machinery on hold, conditions failed.";
                 continue;
             }
             
@@ -148,7 +148,7 @@ namespace kerberos
         // -------------------------------------------
         // Check if we need to disable verbose logging
 
-        if(settings.at("logging") != "verbose")
+        if(settings.at("logging") == "false")
         {
             easyloggingpp::Configurations config;
             config.set(easyloggingpp::Level::Info, easyloggingpp::ConfigurationType::Enabled, "false");

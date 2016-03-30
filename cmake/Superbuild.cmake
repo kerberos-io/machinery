@@ -24,6 +24,14 @@ include( ExternalProject )
         set(KERBEROS_TEST_DEPENDENCIES ${KERBEROS_TEST_DEPENDENCIES} googletest)
     endif()
 
+
+
+# --------------------------------------------------------------------------
+# Logging with easylogging
+
+    include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/External-Easylogging.cmake)
+    set(KERBEROS_DEPENDENCIES ${KERBEROS_TEST_DEPENDENCIES} easylogging)
+
 # --------------------------------------------------------------------------
 # OpenCV
 

@@ -159,6 +159,20 @@ namespace kerberos
             }
         }
         
+        std::string printStringMap(const std::string & prefix, const kerberos::StringMap & map)
+        {
+            std::string output = prefix + "\n";
+            
+            for(kerberos::StringMap::const_iterator it = map.begin(); it != map.end(); it++)
+            {
+                output += "- " + it->first + " = " + it->second + "\n";
+            }
+            
+            output.erase( output.end()-1, output.end());
+            
+            return output;
+        }
+        
         std::string to_string(const int & t)
         {
             std::stringstream ss;

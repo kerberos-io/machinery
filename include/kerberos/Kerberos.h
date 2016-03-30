@@ -20,6 +20,7 @@
 #include "Guard.h"
 #include "document.h" // rapidjson
 #include "capture/Stream.h"
+#include "easylogging++.h"
 
 namespace kerberos
 {

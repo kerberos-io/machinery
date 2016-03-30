@@ -17,7 +17,10 @@
 #include <iostream>
 #include <fstream>
 #include <sys/signal.h>
+#include "easylogging++.h"
 
+_INITIALIZE_EASYLOGGINGPP
+    
 using namespace kerberos;
 
 int main(int argc, char** argv)
@@ -41,32 +44,33 @@ int main(int argc, char** argv)
     
     StringMap parameters = helper::getCommandOptions(argc, argv);
     
+    // ----------------------------------
+    // Initialize logger
+                  
+    easyloggingpp::Configurations defaultConf;
+    defaultConf.setToDefault();
+    defaultConf.setAll(easyloggingpp::ConfigurationType::ToFile, "true");
+    std::string logFile = (helper::getValueByKey(parameters, "log")) ?: LOG_PATH;
+    defaultConf.setAll(easyloggingpp::ConfigurationType::Filename, logFile);
+    easyloggingpp::Loggers::reconfigureAllLoggers(defaultConf);
+    
+    LINFO << "Logging is written to: " + logFile;
+    
     while(true)
     {
         try
         {
             // ----------------------------------
-            // Bootstrap kerberos with parameters
+            // Bootstrap machinery with parameters
             
+            LINFO << "Machinery has been started";
             Kerberos::run(parameters);
+            
         }
         catch(Exception & ex)
         {
-            // ------------------------------------------
-            // Exceptions are logged in "log.stash" file.
+            LERROR << ex.what();
             
-            std::ofstream logstash;
-            std::string logFile = (helper::getValueByKey(parameters, "log")) ?: LOG_PATH;
-            logstash.open(logFile.c_str(), std::ios_base::app);
-            
-            if(logstash.is_open())
-            {
-                const char * error = ex.what();
-                logstash << helper::currentDateTime() << " - " << error << std::endl;
-                logstash.close();
-                delete (char *) error;
-            }
-        
             // Try again in 3 seconds..
             usleep(3 * 1000000);
         }

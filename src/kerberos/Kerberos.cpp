@@ -8,6 +8,7 @@ namespace kerberos
         // Set parameters from command-line
         
         setParameters(parameters);
+        LINFO << helper::printStringMap("Parameters passed from commandline:", parameters);
         
         // ----------------
         // Initialize mutex
@@ -127,6 +128,7 @@ namespace kerberos
         // ---------------------------
     	// Get settings from XML file
         
+        LINFO << "Reading configuration file: " << configuration;
         StringMap settings = kerberos::helper::getSettingsFromXML(configuration);
         
         // -------------------------------
@@ -140,6 +142,8 @@ namespace kerberos
         {
             settings[begin->first] = begin->second;
         }
+        
+        LINFO << helper::printStringMap("Final configuration:", settings);
         
         // -----------------
         // Configure cloud
@@ -182,10 +186,13 @@ namespace kerberos
         pthread_mutex_lock(&m_streamLock);
         if(capture != 0)
         {
+            LINFO << "Stopping capture device";
             capture->stopGrabThread();
             capture->close();
             delete capture;
         }
+        
+        LINFO << "Starting capture device: " + settings.at("capture");
         capture = Factory<Capture>::getInstance()->create(settings.at("capture"));
         capture->setup(settings);
         capture->startGrabThread();
@@ -199,15 +206,18 @@ namespace kerberos
     {
         // ---------------------------
         // Initialize cloud service
+        
         pthread_mutex_lock(&m_cloudLock);
         if(cloud != 0)
         {
+            LINFO << "Stopping cloud service";
             cloud->stopWatchThread();
             cloud->stopUploadThread();
             cloud->stopPollThread();
             delete cloud;
         }
         
+        LINFO << "Starting cloud service: " + settings.at("cloud");
         cloud = Factory<Cloud>::getInstance()->create(settings.at("cloud"));
         pthread_mutex_unlock(&m_cloudLock);
         cloud->setLock(m_cloudLock);
@@ -253,7 +263,9 @@ namespace kerberos
         
         if(stream == 0)
         {
-            stream = new Stream(8888);
+            int port = 8888;
+            LINFO << "Starting stream on port " + port;
+            stream = new Stream(port);
         }
         
         pthread_create(&m_streamThread, NULL, streamContinuously, this);

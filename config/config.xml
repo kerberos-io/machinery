@@ -4,6 +4,7 @@
     <instance>
         <name type="text">frontdoor</name>
         <timezone type="timezone">Europe-Brussels</timezone>
+        <logging type="choice" values="none,verbose">none</logging>
         <capture file="capture.xml">RaspiCamera</capture>
         <condition file="condition.xml" type="multiple">Enabled</condition>
         <algorithm file="algorithm.xml">DifferentialCollins</algorithm>

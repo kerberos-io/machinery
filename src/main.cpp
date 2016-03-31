@@ -55,8 +55,7 @@ int main(int argc, char** argv)
     config.setAll(easyloggingpp::ConfigurationType::Filename, logFile);
     config.setAll(easyloggingpp::ConfigurationType::RollOutSize, "100000"); // 100MB
     easyloggingpp::Loggers::reconfigureAllLoggers(config);
-    
-    LINFO << "Logging is set to verbose";
+
     LINFO << "Logging is written to: " + logFile;
     
     while(true)

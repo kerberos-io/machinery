@@ -85,7 +85,14 @@ namespace kerberos
 
         for(;;)
         {
-            capture->grab();
+            try
+            {
+                capture->grab();
+            }
+            catch(cv::Exception & ex)
+            {
+                LERROR << ex.what();
+            }
             usleep(333*100);
         }
     }

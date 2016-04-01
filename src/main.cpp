@@ -64,9 +64,7 @@ int main(int argc, char** argv)
         {
             // ----------------------------------
             // Bootstrap machinery with parameters
-            
-            LINFO << "Starting machinery";
-            
+
             Kerberos::run(parameters);
             
         }

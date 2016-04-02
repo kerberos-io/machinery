@@ -42,7 +42,23 @@ namespace kerberos
         try
         {
             pthread_mutex_lock(&m_lock);
-            if(!m_camera->grab())
+
+            bool grabbed;
+            if(m_streamType == "rtsp")
+            {
+                grabbed = m_camera->grab();
+            }
+            else
+            {
+                open(m_url.c_str());
+                if(m_camera->isOpened())
+                {
+                    grabbed = m_camera->grab();
+                }
+                close();
+            }
+
+            if(!grabbed)
             {
                 reopen();
                 usleep(1000*2500);
@@ -63,7 +79,21 @@ namespace kerberos
         {
             Image image;
             pthread_mutex_lock(&m_lock);
-            m_camera->retrieve(image.getImage());
+
+            if(m_streamType == "rtsp")
+            {
+                m_camera->retrieve(image.getImage());
+            }
+            else
+            {
+                open(m_url.c_str());
+                if(m_camera->isOpened())
+                {
+                    m_camera->read(image.getImage());
+                }
+                close();
+            }
+
             pthread_mutex_unlock(&m_lock);
             return image;
         }
@@ -100,9 +130,16 @@ namespace kerberos
                 else
                 {
                     open(m_url.c_str());
-                    m_camera->read(image->getImage());
+                    if(m_camera->isOpened())
+                    {
+                        m_camera->read(image->getImage());
+                    }
                     close();
                 }
+
+                // Check if need to rotate the image
+                image->rotate(m_angle);
+
                 pthread_mutex_unlock(&m_lock);
             }
             

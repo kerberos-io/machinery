@@ -119,11 +119,25 @@
         set(CPACK_PACKAGE_VENDOR "kerberos.io")
         SET(CPACK_DEBIAN_PACKAGE_MAINTAINER "Cédric Verstraeten")
         set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Kerberos is a low-budget surveillance solution, that uses computer vision algorithms to detect changes, and that can trigger other devices. Kerberos is open source so you, but also other people, can customize the source to your needs and share it with our community. It has a green footprint when deploying on the Raspberry Pi and it's easy to install, you only need to transfer the image to the SD card and you're done.")
-
+        
         set(CPACK_PACKAGE_VERSION "2.0.0")
         set(CPACK_PACKAGE_VERSION_MAJOR "2")
         set(CPACK_PACKAGE_VERSION_MINOR "0")
         set(CPACK_PACKAGE_VERSION_PATCH "0")
+        
+        string(TOLOWER "${CPACK_PACKAGE_NAME}" CPACK_PACKAGE_NAME_LOWERCASE)
+        find_program(DPKG_PROGRAM dpkg DOC "dpkg program of Debian-based systems")
+        if(DPKG_PROGRAM)
+            execute_process(
+                COMMAND ${DPKG_PROGRAM} --print-architecture
+                OUTPUT_VARIABLE CPACK_DEBIAN_PACKAGE_ARCHITECTURE
+                OUTPUT_STRIP_TRAILING_WHITESPACE
+            )
+            set(CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME_LOWERCASE}_${CPACK_PACKAGE_VERSION}_${CPACK_DEBIAN_PACKAGE_ARCHITECTURE}")   
+        else(DPKG_PROGRAM)
+            set(CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME_LOWERCASE}_${CPACK_PACKAGE_VERSION}_${CMAKE_SYSTEM_NAME}")
+        endif(DPKG_PROGRAM)
+        
         SET(CPACK_NSIS_MODIFY_PATH ON)
     ENDIF()
     

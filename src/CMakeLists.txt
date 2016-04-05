@@ -97,6 +97,15 @@
         GROUP_EXECUTE GROUP_WRITE GROUP_READ
         WORLD_EXECUTE WORLD_WRITE WORLD_READ)
     
+    # copy service file
+    INSTALL(FILES "${CMAKE_SOURCE_DIR}/service/kerberosio.service"
+        DESTINATION "/etc/systemd/system"
+        PERMISSIONS
+        OWNER_EXECUTE OWNER_READ
+        GROUP_EXECUTE GROUP_READ
+        WORLD_EXECUTE WORLD_READ)
+        WORLD_EXECUTE WORLD_WRITE WORLD_READ)
+ 
     # install binary
     INSTALL(TARGETS kerberosio
     BUNDLE DESTINATION . COMPONENT Runtime

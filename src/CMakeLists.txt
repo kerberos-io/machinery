@@ -61,6 +61,7 @@
 # Additional options
 
 	SET(CMAKE_BUILD_TYPE Release)
+    SET(BUILD_SHARED_LIBS OFF)
     
 # ----------------------------------------
 # Install

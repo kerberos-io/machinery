@@ -41,7 +41,7 @@ ExternalProject_Add(opencv
     -DCMAKE_BUILD_TYPE:STRING=Release
     -DWITH_FFMPEG:BOOL=ON
     -DWITH_IPP:BOOL=OFF
-    -DBUILD_PNG:BOOL=OFF # problem with compiling on RPi2
+    -DBUILD_PNG:BOOL=OFF
     -DBUILD_JPEG:BOOL=ON
     -DBUILD_ZLIB:BOOL=ON
     -DBUILD_WITH_STATIC_CRT:BOOL=ON

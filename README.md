@@ -35,7 +35,7 @@ The machinery is an **image processing framework** which is devided into four st
 * expositor
 * heuristic
 
-The steps belong to a four passway; illustrated on the image below. In each cycle a sequence of images is processed. Each step will process the sequence, and will return some result to the next step. Please check out the [**demo environment**](https//doc.kerberos.io) if you want to see a real life example.
+The steps belong to a four passway; illustrated on the image below. In each cycle a sequence of images is processed. Each step will process the sequence, and will return some result to the next step. Please check out the [demo environment](https//doc.kerberos.io) if you want to see a real life example.
 
 [Read more](https://doc.kerberos.io/2.0/machinery/introduction)
 

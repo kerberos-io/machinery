@@ -38,7 +38,7 @@ KiOS is a custom linux OS (created by buildroot) which runs Kerberos.io out-of-t
 
 ###Raspbian (for Raspberry Pi)
 
-If you already have a Raspberry Pi running with Raspbian, you probably don't want to resflash your SD-card. Therefore you can install the different parts of Kerberos.io (machinery and web) manual.
+If you already have a Raspberry Pi running with Raspbian, you probably don't want to reflash your SD-card. Therefore you can install the different parts of Kerberos.io (machinery and web) manual.
 
 [Read more](https://doc.kerberos.io/2.0/installation/Raspbian)
 

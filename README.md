@@ -26,6 +26,19 @@ Developers can easily add new:
 - Create new heuristics to validate if detection was real.
 - Integrate support for other output devices (a NOSQL database, E-mail, GPIO, TCP server and other notification services)
 
+## How does it work?
+
+The machinery is an **image processing framework** which is devided into four steps:
+
+* condition
+* algorithm
+* expositor
+* heuristic
+
+The steps belong to a four passway; illustrated on the image below. In each cycle a sequence of images is processed. Each step will process the sequence, and will return some result to the next step. Please check out the [**demo environment**](https//doc.kerberos.io) if you want to see a real life example.
+
+[Read more](https://doc.kerberos.io/2.0/machinery/introduction)
+
 ##Installation
 
 The reason why you're reading this paragraph is because you want to know how to install Kerberos.io on your Raspberry Pi, local working station, server or whatever machine you prefer. The good news is that we have **different approaches** from basic to advanced; it depends on how you want to install it.

@@ -32,7 +32,7 @@ The reason why you're reading this paragraph is because you want to know how to 
 
 ###KiOS (for Raspberry Pi)
 
-KiOS is a custom linux OS (created by buildroot) which runs Kerberos.io out-of-the-box. KiOS is **installed like every other OS** for the Raspberry Pi, you need to flash the OS (.img) to a SD card, update your network configration and you're up and running; no manual compilation or horrible configurations. This is the **most simple** and **basic** installation procedure.
+[KiOS](https://github.com/kerberos-io/kios) is a custom linux OS (created by buildroot) which runs Kerberos.io out-of-the-box. KiOS is **installed like every other OS** for the Raspberry Pi, you need to flash the OS (.img) to a SD card, update your network configration and you're up and running; no manual compilation or horrible configurations. This is the **most simple** and **basic** installation procedure.
 
 [Read more](https://doc.kerberos.io/2.0/installation/KiOS)
 

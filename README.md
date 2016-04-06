@@ -28,15 +28,15 @@ Developers can easily add new:
 
 The reason why you're reading this paragraph is because you want to know how to install Kerberos.io on your Raspberry Pi, local working station, server or whatever machine you prefer. The good news is that we have **different approaches** from basic to advanced; it depends on how you want to install it.
 
-###KiOS
+###KiOS (for Raspberry Pi)
 
 KiOS is a custom linux OS (created by buildroot) which runs Kerberos.io out-of-the-box. KiOS is **installed like every other OS** for the Raspberry Pi, you need to flash the OS (.img) to a SD card, update your network configration and you're up and running; no manual compilation or horrible configurations. This is the **most simple** and **basic** installation procedure.
 
 [**Read more**](https://doc.kerberos.io/2.0/installation/KiOS)
 
-###Raspbian
+###Raspbian (for Raspberry Pi)
 
-KiOS is a custom linux OS (created by buildroot) which runs Kerberos.io out-of-the-box. KiOS is **installed like every other OS** for the Raspberry Pi, you need to flash the OS (.img) to a SD card, update your network configration and you're up and running; no manual compilation or horrible configurations. This is the **most simple** and **basic** installation procedure.
+If you already have a Raspberry Pi running with Raspbian, you probably don't want to resflash your SD-card. Therefore you can install the different parts of Kerberos.io (machinery and web) manual.
 
 [**Read more**](https://doc.kerberos.io/2.0/installation/Raspbian)
 

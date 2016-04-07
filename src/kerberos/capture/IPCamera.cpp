@@ -50,12 +50,11 @@ namespace kerberos
             }
             else
             {
-                open(m_url.c_str());
                 if(m_camera->isOpened())
                 {
                     grabbed = m_camera->grab();
                 }
-                close();
+                reopen();
             }
 
             if(!grabbed)
@@ -86,12 +85,11 @@ namespace kerberos
             }
             else
             {
-                open(m_url.c_str());
                 if(m_camera->isOpened())
                 {
                     m_camera->read(image.getImage());
                 }
-                close();
+                reopen();
             }
 
             pthread_mutex_unlock(&m_lock);
@@ -129,12 +127,11 @@ namespace kerberos
                 }
                 else
                 {
-                    open(m_url.c_str());
                     if(m_camera->isOpened())
                     {
                         m_camera->read(image->getImage());
                     }
-                    close();
+                    reopen();
                 }
 
                 // Check if need to rotate the image
@@ -203,7 +200,7 @@ namespace kerberos
         while(!isOpened())
         {
             open(m_url.c_str());
-            usleep(1000*2500);
+            usleep(1000*500);
         }
     }
     

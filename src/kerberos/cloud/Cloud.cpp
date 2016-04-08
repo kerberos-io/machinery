@@ -37,7 +37,9 @@ namespace kerberos
                 
                 if(hasBeenUploaded)
                 {
+                    pthread_mutex_lock(&m_cloudLock);
                     unlink(file.c_str()); // remove symbol link
+                    pthread_mutex_unlock(&m_cloudLock);
                     m_interval = m_min; // reset interval
                 }
                 else

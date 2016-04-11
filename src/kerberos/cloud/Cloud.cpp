@@ -24,7 +24,7 @@ namespace kerberos
             std::vector<std::string> storage;
             
             pthread_mutex_lock(&m_cloudLock);
-            usleep(m_min*1000);
+            usleep(m_interval*1000);
             helper::getFilesInDirectory(storage, SYMBOL_DIRECTORY); // get all symbol links of directory
             pthread_mutex_unlock(&m_cloudLock);
                 

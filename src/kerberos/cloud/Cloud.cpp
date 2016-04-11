@@ -33,8 +33,17 @@ namespace kerberos
             while(it != storage.end())
             { 
                 std::string file = *it;
-                bool hasBeenUploaded = upload(file);
+               
+                struct stat st;
+                if(stat(file.c_str(), &st) == -1)
+                {
+                    pthread_mutex_lock(&m_cloudLock);
+                    unlink(file.c_str()); // remove symbol link
+                    pthread_mutex_unlock(&m_cloudLock);
+                    break;
+                }
                 
+                bool hasBeenUploaded = upload(file);
                 if(hasBeenUploaded)
                 {
                     pthread_mutex_lock(&m_cloudLock);

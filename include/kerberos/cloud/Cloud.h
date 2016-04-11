@@ -13,6 +13,7 @@
 /////////////////////////////////////////////////////
 
 #include "Factory.h"
+#include <sys/stat.h>
 
 #ifndef __Cloud_H_INCLUDED__   // if Cloud.h hasn't been included yet...
 #define __Cloud_H_INCLUDED__   // #define this so the compiler knows it has been included

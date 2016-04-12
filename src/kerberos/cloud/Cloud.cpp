@@ -84,7 +84,7 @@ namespace kerberos
                     pthread_mutex_lock(&m_cloudLock);
                     unlink(file.c_str()); // remove symbol link
                     pthread_mutex_unlock(&m_cloudLock);
-                    break;
+                    continue;
                 }
                 
                 bool hasBeenUploaded = upload(file);

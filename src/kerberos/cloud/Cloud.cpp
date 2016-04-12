@@ -80,6 +80,7 @@ namespace kerberos
     
     void Cloud::stopUploadThread()
     {
+        pthread_mutex_unlock(&m_cloudLock);
         pthread_cancel(m_uploadThread);
         pthread_join(m_uploadThread, NULL);
     }
@@ -106,6 +107,7 @@ namespace kerberos
     
     void Cloud::stopWatchThread()
     {
+        pthread_mutex_unlock(&m_cloudLock);
         pthread_cancel(m_watchThread);
         pthread_join(m_watchThread, NULL);
     }

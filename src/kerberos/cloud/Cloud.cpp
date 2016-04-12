@@ -44,7 +44,7 @@ namespace kerberos
             {
                 guard = new FW::Guard();
                 guard->listenTo(m_watchDirectory);
-                guard->onChange(&Watcher::addFile);
+                guard->onChange(&Cloud::addFile);
                 guard->startLookingForNewFiles();
         
                 while(true)

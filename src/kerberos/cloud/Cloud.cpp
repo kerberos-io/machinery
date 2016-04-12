@@ -18,6 +18,48 @@ namespace kerberos
         startWatchThread();
     }
     
+    void Cloud::addFile(const std::string & file)
+    {
+        std::ifstream f(file.c_str());
+        if(f.good())
+        {
+            // Get filename
+            std::vector<std::string> tokens;
+            helper::tokenize(file, tokens, "/");
+            std::string fileName = tokens[tokens.size()-1];
+
+            // create a symbol link
+            std::string link = SYMBOL_DIRECTORY + fileName;
+            int beenCreated = symlink(file.c_str(), link.c_str());
+            
+            f.close();
+        }
+    }
+    
+    void Cloud::watch()
+    {
+        while(true)
+        {
+            try
+            {
+                guard = new FW::Guard();
+                guard->listenTo(m_watchDirectory);
+                guard->onChange(&Watcher::addFile);
+                guard->startLookingForNewFiles();
+        
+                while(true)
+                {
+                    pthread_mutex_lock(&m_cloudLock);
+                    guard->look();
+                    pthread_mutex_unlock(&m_cloudLock);
+                    usleep(2500*1000);
+                }
+            }
+            catch(FW::FileNotFoundException & ex){}
+            usleep(1000*1000);
+        }
+    }
+    
     void Cloud::scan()
     {
         
@@ -91,10 +133,7 @@ namespace kerberos
     void * watchContinuously(void * self)
     {
         Cloud * cloud = (Cloud *) self;
-        Watcher watch;
-        watch.setup(cloud->m_watchDirectory.c_str());
-        watch.setLock(&cloud->m_cloudLock);
-        watch.scan();
+        cloud->watch();
     }
     
     void Cloud::startWatchThread()

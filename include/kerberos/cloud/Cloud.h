@@ -30,12 +30,13 @@ namespace kerberos
             int m_min;
             int m_max;
             int m_interval;
-            pthread_mutex_t m_cloudLock;
         
         public:
             pthread_t m_pollThread;
             pthread_t m_uploadThread;
             pthread_t m_watchThread;
+            std::string m_watchDirectory;
+            pthread_mutex_t m_cloudLock;
         
             Cloud(){};
             virtual ~Cloud(){};
@@ -47,7 +48,7 @@ namespace kerberos
                 m_cloudLock = lock;
             }
         
-            void startWatchThread(StringMap & settings);
+            void startWatchThread();
             void stopWatchThread();
             void startUploadThread();
             void stopUploadThread();

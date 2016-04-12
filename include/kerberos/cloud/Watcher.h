@@ -27,11 +27,16 @@ namespace kerberos
         private:
             std::string m_fileDirectory;
             FW::Guard * guard;
+            pthread_mutex_t * m_cloudLock;
         
         public:
             Watcher(){}
             ~Watcher(){delete guard;}
             void setup(const char * fileDirectory);
+            void setLock(pthread_mutex_t * lock)
+            {
+                m_cloudLock = lock;
+            }
         
             static void addFile(const std::string & file);
             void scan();

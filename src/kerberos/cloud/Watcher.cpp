@@ -38,15 +38,13 @@ namespace kerberos
         
                 while(true)
                 {
+                    pthread_mutex_lock(&*m_cloudLock);
                     guard->look();
-                    usleep(1000*1000);
+                    pthread_mutex_unlock(&*m_cloudLock);
+                    usleep(2500*1000);
                 }
             }
-            catch(FW::FileNotFoundException & ex)
-            {
-                // try again
-                addFile(ex.getFile());
-            }
+            catch(FW::FileNotFoundException & ex){}
             usleep(1000*1000);
         }
     }

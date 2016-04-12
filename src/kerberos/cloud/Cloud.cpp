@@ -10,10 +10,12 @@ namespace kerberos
         m_min = 1500;
         m_max = 256000;
         m_interval = m_min;
+        
+        m_watchDirectory = settings.at("ios.Disk.directory");
 
         startPollThread();
         startUploadThread();
-        startWatchThread(settings);
+        startWatchThread();
     }
     
     void Cloud::scan()
@@ -65,9 +67,9 @@ namespace kerberos
     // --------------
     // Upload thread
     
-    void * uploadContinuously(void * clo)
+    void * uploadContinuously(void * self)
     {
-        Cloud * cloud = (Cloud *) clo;
+        Cloud * cloud = (Cloud *) self;
         cloud->scan();
     }
     
@@ -85,20 +87,20 @@ namespace kerberos
     // --------------
     // Watch thread
     
-    void * watchContinuously(void * file)
+    void * watchContinuously(void * self)
     {
-        char * fileDirectory = (char *) file;
+        Cloud * cloud = (Cloud *) self;
         Watcher watch;
-        watch.setup(fileDirectory);
+        watch.setup(cloud->m_watchDirectory.c_str());
+        watch.setLock(&cloud->m_cloudLock);
         watch.scan();
     }
     
-    void Cloud::startWatchThread(StringMap & settings)
+    void Cloud::startWatchThread()
     {
-        const char * file = settings.at("ios.Disk.directory").c_str();
-        if(file != 0)
-        {
-            pthread_create(&m_watchThread, NULL, watchContinuously, (char *) file);
+        if(m_watchDirectory != "")
+        { 
+            pthread_create(&m_watchThread, NULL, watchContinuously, this);
         }
     }
     

@@ -7,28 +7,34 @@ namespace kerberos
         void getFilesInDirectory(std::vector<std::string> &out, const std::string &directory)
         {
             DIR *dir;
-            class dirent *ent;
-            class stat st;
+            struct dirent *ent;
+            struct stat st;
 
             dir = opendir(directory.c_str());
-            while ((ent = readdir(dir)) != NULL) {
-                const std::string file_name = ent->d_name;
-                const std::string full_file_name = directory + "/" + file_name;
+            if(dir)
+            {
+                while ((ent = readdir(dir)) != NULL)
+                {
+                    const std::string file_name = ent->d_name;
+                    const std::string full_file_name = directory + "/" + file_name;
+                    
+                    if (file_name[0] == '.')
+                        continue;
 
-                if (file_name[0] == '.')
-                    continue;
+                    const bool is_directory = (st.st_mode & S_IFDIR) != 0;
 
-                //if (stat(full_file_name.c_str(), &st) == -1)
-                //    continue;
+                    if (is_directory)
+                        continue;
 
-                const bool is_directory = (st.st_mode & S_IFDIR) != 0;
-
-                if (is_directory)
-                    continue;
-
-                out.push_back(full_file_name);
+                    out.push_back(full_file_name);
+                }
+                closedir(dir);
             }
-            closedir(dir);
+            else
+            {
+                rmdir(directory.c_str());
+                mkdir(directory.c_str(), 755);
+            }
         }
 
         std::string urlencode(const std::string &value)

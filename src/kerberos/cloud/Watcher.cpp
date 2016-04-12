@@ -38,9 +38,7 @@ namespace kerberos
         
                 while(true)
                 {
-                    pthread_mutex_lock(&*m_cloudLock);
                     guard->look();
-                    pthread_mutex_unlock(&*m_cloudLock);
                     usleep(2500*1000);
                 }
             }

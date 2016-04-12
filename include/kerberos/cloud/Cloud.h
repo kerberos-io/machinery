@@ -18,7 +18,6 @@
 #ifndef __Cloud_H_INCLUDED__   // if Cloud.h hasn't been included yet...
 #define __Cloud_H_INCLUDED__   // #define this so the compiler knows it has been included
 
-#include "cloud/Watcher.h"
 #include "restclient-cpp/restclient.h"
 
 namespace kerberos

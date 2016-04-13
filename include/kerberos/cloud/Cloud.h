@@ -37,23 +37,17 @@ namespace kerberos
         public:
             pthread_t m_pollThread;
             pthread_t m_uploadThread;
-            pthread_t m_watchThread;
-            std::string m_watchDirectory;
         
             Cloud(){};
             virtual ~Cloud(){};
             virtual void setup(kerberos::StringMap & settings) = 0;
             virtual bool upload(std::string pathToImage) = 0;
-            static void addFile(const std::string & file);
-            void watch();
             void scan();
             void setLock(pthread_mutex_t & lock)
             {
                 m_cloudLock = lock;
             }
         
-            void startWatchThread();
-            void stopWatchThread();
             void startUploadThread();
             void stopUploadThread();
             void startPollThread();

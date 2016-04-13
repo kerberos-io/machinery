@@ -227,7 +227,6 @@ namespace kerberos
         if(cloud != 0)
         {
             LINFO << "Stopping cloud service";
-            cloud->stopWatchThread();
             cloud->stopUploadThread();
             cloud->stopPollThread();
             delete cloud;

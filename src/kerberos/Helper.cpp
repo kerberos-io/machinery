@@ -30,11 +30,6 @@ namespace kerberos
                 }
                 closedir(dir);
             }
-            else
-            {
-                rmdir(directory.c_str());
-                mkdir(directory.c_str(), 755);
-            }
         }
 
         std::string urlencode(const std::string &value)

@@ -10,54 +10,9 @@ namespace kerberos
         m_min = 1500;
         m_max = 256000;
         m_interval = m_min;
-        
-        m_watchDirectory = settings.at("ios.Disk.directory");
 
         startPollThread();
         startUploadThread();
-        startWatchThread();
-    }
-    
-    void Cloud::addFile(const std::string & file)
-    {
-        std::ifstream f(file.c_str());
-        if(f.good())
-        {
-            // Get filename
-            std::vector<std::string> tokens;
-            helper::tokenize(file, tokens, "/");
-            std::string fileName = tokens[tokens.size()-1];
-
-            // create a symbol link
-            std::string link = SYMBOL_DIRECTORY + fileName;
-            int beenCreated = symlink(file.c_str(), link.c_str());
-            
-            f.close();
-        }
-    }
-    
-    void Cloud::watch()
-    {
-        while(true)
-        {
-            try
-            {
-                guard = new FW::Guard();
-                guard->listenTo(m_watchDirectory);
-                guard->onChange(&Cloud::addFile);
-                guard->startLookingForNewFiles();
-        
-                while(true)
-                {
-                    pthread_mutex_lock(&m_cloudLock);
-                    guard->look();
-                    pthread_mutex_unlock(&m_cloudLock);
-                    usleep(2500*1000);
-                }
-            }
-            catch(FW::FileNotFoundException & ex){}
-            usleep(1000*1000);
-        }
     }
     
     void Cloud::scan()
@@ -122,33 +77,8 @@ namespace kerberos
     
     void Cloud::stopUploadThread()
     {
-        pthread_mutex_unlock(&m_cloudLock);
         pthread_cancel(m_uploadThread);
         pthread_join(m_uploadThread, NULL);
-    }
-    
-    // --------------
-    // Watch thread
-    
-    void * watchContinuously(void * self)
-    {
-        Cloud * cloud = (Cloud *) self;
-        cloud->watch();
-    }
-    
-    void Cloud::startWatchThread()
-    {
-        if(m_watchDirectory != "")
-        { 
-            pthread_create(&m_watchThread, NULL, watchContinuously, this);
-        }
-    }
-    
-    void Cloud::stopWatchThread()
-    {
-        pthread_mutex_unlock(&m_cloudLock);
-        pthread_cancel(m_watchThread);
-        pthread_join(m_watchThread, NULL);
     }
 
     // --------------

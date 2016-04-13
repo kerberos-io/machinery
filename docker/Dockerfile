@@ -41,7 +41,7 @@ RUN git clone https://github.com/FFmpeg/FFmpeg && \
     cd .. && rm -rf FFmpeg
     
 RUN	git clone https://github.com/kerberos-io/machinery /tmp/machinery && \
-    cd /tmp/machinery && git checkout $CHECKOUT && \
+    cd /tmp/machinery && git checkout develop && \
     mkdir build && cd build && \
     cmake .. && make && make check && make install && \
     rm -rf /tmp/machinery && \

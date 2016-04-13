@@ -32,7 +32,6 @@ namespace kerberos
             int m_interval;
             FW::Guard * guard;
             std::string m_captureDirectory;
-            pthread_mutex_t m_cloudLock;
         
         public:
             pthread_t m_pollThread;
@@ -43,10 +42,6 @@ namespace kerberos
             virtual void setup(kerberos::StringMap & settings) = 0;
             virtual bool upload(std::string pathToImage) = 0;
             void scan();
-            void setLock(pthread_mutex_t & lock)
-            {
-                m_cloudLock = lock;
-            }
         
             void startUploadThread();
             void stopUploadThread();

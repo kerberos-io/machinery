@@ -13,7 +13,6 @@ namespace kerberos
         // Initialize mutex
         
         pthread_mutex_init(&m_streamLock, NULL);
-        pthread_mutex_init(&m_cloudLock, NULL);
         
         // ---------------------
         // Initialize kerberos
@@ -223,7 +222,6 @@ namespace kerberos
         // ---------------------------
         // Initialize cloud service
         
-        pthread_mutex_lock(&m_cloudLock);
         if(cloud != 0)
         {
             LINFO << "Stopping cloud service";
@@ -234,8 +232,6 @@ namespace kerberos
 
         LINFO << "Starting cloud service: " + settings.at("cloud");
         cloud = Factory<Cloud>::getInstance()->create(settings.at("cloud"));
-        pthread_mutex_unlock(&m_cloudLock);
-        cloud->setLock(m_cloudLock);
         cloud->setup(settings);
     }
 
@@ -336,12 +332,10 @@ namespace kerberos
                         data.Parse(detection.t.c_str());
 
                         pthread_mutex_lock(&kerberos->m_ioLock);
-                        pthread_mutex_lock(&kerberos->m_cloudLock);
                         if(kerberos->machinery->save(detection.k, data))
                         {
                             kerberos->m_detections.erase(kerberos->m_detections.begin());
                         }
-                        pthread_mutex_unlock(&kerberos->m_cloudLock);
                         pthread_mutex_unlock(&kerberos->m_ioLock);
                     }
 
@@ -353,7 +347,6 @@ namespace kerberos
             catch(cv::Exception & ex)
             {
                 pthread_mutex_unlock(&kerberos->m_ioLock);
-                pthread_mutex_unlock(&kerberos->m_cloudLock);
             }
         }
     }

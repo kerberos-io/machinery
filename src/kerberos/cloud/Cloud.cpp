@@ -21,33 +21,17 @@ namespace kerberos
         for(;;)
         {
             std::vector<std::string> storage;
-            
-            pthread_mutex_lock(&m_cloudLock);
-            usleep(m_interval*1000);
             helper::getFilesInDirectory(storage, SYMBOL_DIRECTORY); // get all symbol links of directory
-            pthread_mutex_unlock(&m_cloudLock);
                 
             std::vector<std::string>::iterator it = storage.begin();
-            
             while(it != storage.end())
             { 
                 std::string file = *it;
-               
-                struct stat st;
-                if(stat(file.c_str(), &st) == -1)
-                {
-                    pthread_mutex_lock(&m_cloudLock);
-                    unlink(file.c_str()); // remove symbol link
-                    pthread_mutex_unlock(&m_cloudLock);
-                    continue;
-                }
                 
                 bool hasBeenUploaded = upload(file);
                 if(hasBeenUploaded)
                 {
-                    pthread_mutex_lock(&m_cloudLock);
                     unlink(file.c_str()); // remove symbol link
-                    pthread_mutex_unlock(&m_cloudLock);
                     m_interval = m_min; // reset interval
                 }
                 else
@@ -58,6 +42,8 @@ namespace kerberos
                 
                 it++;
             }
+            
+            usleep(m_interval*1000);
         }
     }
     

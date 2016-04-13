@@ -59,7 +59,6 @@ namespace kerberos
             pthread_mutex_t m_streamLock;
             pthread_t m_ioThread;
             pthread_mutex_t m_ioLock;
-            pthread_mutex_t m_cloudLock;
             DetectionVector m_detections;
             FW::Guard * guard;
 

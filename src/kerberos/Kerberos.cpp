@@ -332,10 +332,8 @@ namespace kerberos
                         data.Parse(detection.t.c_str());
 
                         pthread_mutex_lock(&kerberos->m_ioLock);
-                        if(kerberos->machinery->save(detection.k, data))
-                        {
-                            kerberos->m_detections.erase(kerberos->m_detections.begin());
-                        }
+                        kerberos->machinery->save(detection.k, data);
+                        kerberos->m_detections.erase(kerberos->m_detections.begin());
                         pthread_mutex_unlock(&kerberos->m_ioLock);
                     }
 

@@ -332,9 +332,16 @@ namespace kerberos
                         data.Parse(detection.t.c_str());
 
                         pthread_mutex_lock(&kerberos->m_ioLock);
-                        kerberos->machinery->save(detection.k, data);
-                        kerberos->m_detections.erase(kerberos->m_detections.begin());
+                        if(kerberos->machinery->save(detection.k, data))
+                        {
+                            kerberos->m_detections.erase(kerberos->m_detections.begin());
+                        }
+                        else
+                        {
+                            LERROR << "IO: can't execute";
+                        }
                         pthread_mutex_unlock(&kerberos->m_ioLock);
+                        usleep(500*1000);
                     }
 
                     timesEqual = 0;

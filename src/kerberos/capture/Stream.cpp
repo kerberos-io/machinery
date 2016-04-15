@@ -73,6 +73,9 @@ namespace kerberos
         if (client == SOCKET_ERROR)
         {
             LERROR << "Stream: couldn't accept connection on sock";
+            LINFO << "Stream: reopening master sock";
+            release();
+            open(8888);
             return false;
         }
 

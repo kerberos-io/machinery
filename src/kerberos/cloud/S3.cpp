@@ -51,7 +51,7 @@ namespace kerberos
         struct tm * tmTmp;
         tmTmp = gmtime(&lt);
 
-        char * buf = new char[37];
+        char buf[37];
         strftime(buf,37,"%a, %d %b  %Y %X GMT",tmTmp);
 
         std::string stringBuffer(buf);
@@ -142,7 +142,9 @@ namespace kerberos
             BINFO << "S3: uploading image to bucket.";
 
             result = curl_easy_perform(curlHandle);//Perform
-            curl_global_cleanup();
+            curl_easy_cleanup(curlHandle);
+            curl_slist_free_all(httpHeaders);
+            fclose(fd);
 
             return (result == CURLE_OK);
         }

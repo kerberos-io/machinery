@@ -48,7 +48,11 @@ namespace kerberos
         int _write( int sock, char *s, int len ) 
         { 
             if ( len < 1 ) { len = strlen(s); }
-            return send( sock, s, len, 0 );
+            #if defined(__APPLE_CC__) || defined(BSD)
+                return send(sock, s, len, 0);
+            #elif defined(__linux__)
+                return send(sock, s, len, MSG_NOSIGNAL);
+            #endif
         }
 
     public:

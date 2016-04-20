@@ -147,22 +147,20 @@ namespace kerberos
         // -------------------------------------------
         // Check if we need to disable verbose logging
 
+        
+        easyloggingpp::Logger * logger = easyloggingpp::Loggers::getLogger("business");
+        easyloggingpp::Configurations & config = logger->configurations();
         if(settings.at("logging") == "false")
         {
             LINFO << "Logging is set to info";
-
-            easyloggingpp::Configurations config;
             config.set(easyloggingpp::Level::Info, easyloggingpp::ConfigurationType::Enabled, "false");
-            easyloggingpp::Loggers::reconfigureLogger("business", config);
         }
         else
         {
             LINFO << "Logging is set to verbose";
-            
-            easyloggingpp::Configurations config;
             config.set(easyloggingpp::Level::Info, easyloggingpp::ConfigurationType::Enabled, "true");
-            easyloggingpp::Loggers::reconfigureLogger("business", config);
         }
+        logger->reconfigure();
 
         // -----------------
         // Configure cloud

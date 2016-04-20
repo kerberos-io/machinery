@@ -78,11 +78,7 @@ namespace kerberos
             open(8888);
             return false;
         }
-
-        int set = 1;
-        setsockopt(client, SOL_SOCKET, SO_RCVTIMEO, (char *) &to, sizeof(struct timeval));
-        setsockopt(client, SOL_SOCKET, SO_SNDTIMEO, (char *) &to, sizeof(struct timeval));
-              
+  
         maxfd=(maxfd>client?maxfd:client);
         FD_SET( client, &master );
         _write( client,"HTTP/1.0 200 OK\r\n"

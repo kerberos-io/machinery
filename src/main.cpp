@@ -16,7 +16,7 @@
 #include "Helper.h"
 #include <iostream>
 #include <fstream>
-#include <sys/signal.h>
+#include <signal.h>
 #include "easylogging++.h"
 
 _INITIALIZE_EASYLOGGINGPP
@@ -37,14 +37,18 @@ int main(int argc, char** argv)
     // ----------------
     // Disable SIGPIPE
     
-    signal(SIGPIPE, SIG_IGN);
+    // # old way  -> signal(SIGPIPE, SIG_IGN);
+    struct sigaction sa;
+    sa.sa_handler = SIG_IGN;
+    sa.sa_flags = 0;
+    sigaction(SIGPIPE, &sa, 0);
     
     // ----------------------------------
     // Get parameters from command line
     
     StringMap parameters = helper::getCommandOptions(argc, argv);
     
-    // ----------------------------------
+    // --------------------------z--------
     // Initialize logger
                   
     easyloggingpp::Configurations config;

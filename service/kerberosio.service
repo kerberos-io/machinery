@@ -5,6 +5,8 @@ Description=Kerberos.io - Machinery - video surveillance
 Type=oneshot
 ExecStart=/usr/bin/kerberosio &
 ExecReload=/bin/kill -HUP $MAINPID
+Restart=always
+RestartSec=3
 
 [Install]
 WantedBy=multi-user.target

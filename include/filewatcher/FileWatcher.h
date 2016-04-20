@@ -58,14 +58,20 @@ namespace FW
 	/// @class FileNotFoundException
 	class FileNotFoundException : public Exception
 	{
+    private:
+        String m_file;
+        
 	public:
 		FileNotFoundException()
 			: Exception("File not found")
 		{}
+        virtual ~FileNotFoundException() throw() {}
 
 		FileNotFoundException(const String& filename)
-			: Exception("File not found (" + filename + ")")
+			: Exception("File not found (" + filename + ")"), m_file(filename)
 		{}
+        
+        String getFile(){return m_file;}
 	};
 
 	/// Actions to listen for. Rename will send two events, one for

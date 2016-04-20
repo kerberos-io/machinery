@@ -18,6 +18,7 @@
 #include <string>
 #include <vector>
 #include <map>
+#include <writer.h>
 #include "document.h"
 
 namespace kerberos
@@ -42,12 +43,14 @@ namespace kerberos
     
     class Image;
     typedef std::vector<Image *> ImageVector;
-    
+    typedef tuple<std::string, Image> Detection;
+    typedef std::vector<Detection> DetectionVector;
     typedef std::map<std::string,std::string> StringMap;
-    
     typedef tuple<int,Rectangle> Region;
     typedef std::vector<Region> RegionVector;
     typedef rapidjson::Document JSON;
     typedef rapidjson::Value JSONValue;
+    typedef rapidjson::StringStream StringStream;
+    typedef rapidjson::Writer<StringStream> Writer;
 }
 #endif

@@ -4,7 +4,9 @@
 #   and test binary
 
     set(KERBEROS_SRC
+        cloud/Cloud.cpp
         capture/Capture.cpp
+        capture/Stream.cpp
         capture/Image.cpp
         machinery/Machinery.cpp
         machinery/condition/Condition.cpp
@@ -25,6 +27,8 @@
 #   or Io classes belong here.
 
     set(KERBEROS_FACTORY_ENTITIES
+        cloud/S3.cpp
+        cloud/GoogleDrive.cpp
         capture/USBCamera.cpp
         capture/IPCamera.cpp
         machinery/condition/Time.cpp
@@ -60,20 +64,6 @@
     endif()
 
 # -------------------------------------------
-# If mongoDB enabled
-#   - We can use mongoDB for IO operations
-
-    if(${INCLUDED_MONGODB})
-
-        set(MONGODB_SRC
-            ""
-        )
-        set(KERBEROS_DEPENDENCIES ${KERBEROS_DEPENDENCIES})
-        set(KERBEROS_LIBRARIES ${KERBEROS_LIBRARIES} ${BOOST_LIBRARIES})
-
-    endif()
-
-# -------------------------------------------
 # Write variables to parent CMakeLists.txt
 
     set(KERBEROS_SRC ${KERBEROS_SRC} PARENT_SCOPE)
@@ -84,7 +74,7 @@
 # -------------------------------------------
 # Create a library of the KERBEROS_SRC files
 
-    add_library(KERBEROS_CORE ${KERBEROS_SRC})
+    add_library(KERBEROS_CORE STATIC ${KERBEROS_SRC})
     target_link_libraries(KERBEROS_CORE ${KERBEROS_LIBRARIES})
     add_dependencies(KERBEROS_CORE ${KERBEROS_DEPENDENCIES})
     set(KERBEROS_CORE_LIBRARY ${KERBEROS_CORE_LIBRARY} KERBEROS_CORE PARENT_SCOPE)

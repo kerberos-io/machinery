@@ -45,10 +45,11 @@ namespace kerberos
         
         int isAllowedFrom = helper::compareTime(currentTime, from);
         int isAllowedTo = helper::compareTime(to, currentTime);
-        
         bool isAllowed = (isAllowedFrom >= 0 && isAllowedTo >= 0);
+
         if(!isAllowed)
         {
+            BINFO << "Condition: not in time interval.";
             usleep(getDelay()*1000);
         }
         

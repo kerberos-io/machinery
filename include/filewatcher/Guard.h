@@ -37,9 +37,10 @@ namespace FW
             void listenTo(const std::string & directory);
     		void listenTo(const std::string & directory, const std::string & file);
     		void onChange(void (* job)(const std::string &));
-
+            
     		void start();
-    		void stop();
+    		void startLookingForNewFiles();
+            void stop();
     };
 
     class TaskOnFileChange : public FileWatchListener
@@ -56,6 +57,30 @@ namespace FW
 	       		const std::string & file, Action action)
 	       	{
 	          	if((m_file == file || m_file == "") && action == Actions::Modified)
+	          	{
+                    #if defined(__APPLE_CC__) || defined(BSD)
+                        (*m_job)(file);
+                    #elif defined(__linux__)
+                        (*m_job)(m_directory + "/" + file);
+                    #endif
+	       		}
+	       	};
+    };
+    
+    class TaskOnFileAdded : public FileWatchListener
+    {
+        private:
+            std::string m_file;
+            std::string m_directory;
+            void (* m_job)(const std::string &);
+            
+	    public:
+            TaskOnFileAdded(std::string directory, std::string file, void (* job)(const std::string &)):m_directory(directory),m_file(file),m_job(job){};
+
+	       	void handleFileAction(WatchID watchid, const std::string & directory, 
+	       		const std::string & file, Action action)
+	       	{
+	          	if((m_file == file || m_file == "") && action == Actions::Add)
 	          	{
                     #if defined(__APPLE_CC__) || defined(BSD)
                         (*m_job)(file);

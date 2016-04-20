@@ -19,26 +19,53 @@
 #include "machinery/Machinery.h"
 #include "Guard.h"
 #include "document.h" // rapidjson
+#include "capture/Stream.h"
+#include "easylogging++.h"
 
 namespace kerberos
 {
     class Kerberos
     {
         private:
-            FW::Guard * guard;
-            Capture * capture;
-            Machinery * machinery;
-            ImageVector images;
-            int m_captureDelayTime;
 
             Kerberos(){};
             ~Kerberos(){delete guard; delete capture; delete machinery;};
 
-            void bootstrap(const std::string & configuration);
+            void bootstrap(StringMap & parameters);
             void configure(const std::string & configuration);
+            void configureCapture(StringMap & settings);
+            void configureCloud(StringMap & settings);
+            void startStreamThread();
+            void stopStreamThread();
+            void startIOThread();
+            void stopIOThread();
+
             void setCaptureDelayTime(int delay){m_captureDelayTime=delay;};
+            void setParameters(StringMap & parameters)
+            {
+                LINFO << helper::printStringMap("Parameters passed from commandline:", parameters);
+                m_parameters = parameters;
+            };
+            StringMap getParameters(){return m_parameters;}
+            std::string toJSON(JSON & data);
         
         public:
+
+            Cloud * cloud;
+            Machinery * machinery;
+            Capture * capture;
+            Stream * stream;
+            pthread_t m_streamThread;
+            pthread_mutex_t m_streamLock;
+            pthread_t m_ioThread;
+            pthread_mutex_t m_ioLock;
+            DetectionVector m_detections;
+            FW::Guard * guard;
+
+            ImageVector m_images;
+            int m_captureDelayTime;
+            StringMap m_parameters;
+
             // -----------
             // Singleton
 
@@ -51,9 +78,9 @@ namespace kerberos
             // ----------------
             // Run application
 
-            static void run(const std::string & configuration)
+            static void run(StringMap & parameters)
             {
-                getInstance()->bootstrap(configuration);
+                getInstance()->bootstrap(parameters);
             }
 
             // -----------------------------------

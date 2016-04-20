@@ -37,14 +37,15 @@ namespace kerberos
             void setImageSize(int width, int height);
             void setRotation(int angle);
             void setDelay(int msec);
-        
+            
+            void grab();
+            Image retrieve();
             Image * takeImage();
-            Image * grab();
         
             void open();
             void close();
-        
             void update();
+            bool isOpened();
     };
 }
 

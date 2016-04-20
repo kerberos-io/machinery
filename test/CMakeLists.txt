@@ -4,7 +4,7 @@
 	FILE(GLOB TEST_SRC test_*.cpp)
 
 # ----------------------------------------------
-# Add subdirectory
+# Include directories
 	
 	include_directories(${CMAKE_SOURCE_DIR}/exceptions)
 	include_directories(${CMAKE_SOURCE_DIR}/include/tinyxml)
@@ -13,7 +13,9 @@
 	include_directories(${CMAKE_SOURCE_DIR}/include/kerberos)
 	include_directories(${CMAKE_SOURCE_DIR}/include/rapidjson)
 	include_directories(${CMAKE_SOURCE_DIR}/include/mmapgpio)
-
+    include_directories(${CMAKE_SOURCE_DIR}/include/encode)
+    include_directories(${CMAKE_SOURCE_DIR}/include/easylogging)
+    
 # -----------------------------------
 # Mocks
 

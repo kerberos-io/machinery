@@ -18,6 +18,14 @@
 #ifndef __Capture_H_INCLUDED__   // if Capture.h hasn't been included yet...
 #define __Capture_H_INCLUDED__   // #define this so the compiler knows it has been included
 
+#include<stdio.h>
+#include<string.h>    //strlen
+#include<stdlib.h>    //strlen
+#include<sys/socket.h>
+#include<arpa/inet.h> //inet_addr
+#include<unistd.h>    //write
+#include<pthread.h> //for threading , link with lpthread
+
 namespace kerberos
 {
     class Capture
@@ -27,6 +35,9 @@ namespace kerberos
             const char * name;
         
         public:
+            pthread_mutex_t m_lock;
+            pthread_t m_captureThread;
+            
             int m_frameWidth, m_frameHeight;
             int m_angle; // 90, 180, 270
             int m_delay; // msec
@@ -38,13 +49,22 @@ namespace kerberos
             virtual void setImageSize(int width, int height);
             virtual void setRotation(int angle);
             virtual void setDelay(int msec);
+              
+            virtual void grab() = 0;
+            virtual Image retrieve() = 0;
             virtual Image * takeImage() = 0;
+
             ImageVector & takeImages(int numberOfImages);
             ImageVector & shiftImage();
             ImageVector & shiftImages(int numberOfImages);
         
             virtual void open() = 0;
             virtual void close() = 0;
+            virtual void update() = 0;
+            virtual bool isOpened() = 0;
+        
+            void startGrabThread();
+            void stopGrabThread();
     };
 
     template<const char * Alias, typename Class>

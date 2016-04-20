@@ -2,7 +2,7 @@ message("External project: OpenCV")
 
 ExternalProject_Add(opencv
   GIT_REPOSITORY ${git_protocol}://github.com/Itseez/opencv
-  GIT_TAG 2.4
+  GIT_TAG 177aef05b6b5e0b31143fd84ff66f44cd1295688 #3.1.0
   SOURCE_DIR opencv
   BINARY_DIR opencv-build
   UPDATE_COMMAND ""
@@ -35,11 +35,16 @@ ExternalProject_Add(opencv
     -DBUILD_opencv_superres=OFF
     -DBUILD_opencv_ts=OFF
     -DBUILD_opencv_videostab=OFF
-    -DBUILD_SHARED_LIBS:BOOL=ON
+    -DBUILD_SHARED_LIBS:BOOL=OFF
     -DBUILD_TESTS:BOOL=OFF
     -DBUILD_PERF_TESTS:BOOL=OFF
     -DCMAKE_BUILD_TYPE:STRING=Release
     -DWITH_FFMPEG:BOOL=ON
+    -DWITH_IPP:BOOL=OFF
+    -DBUILD_PNG:BOOL=OFF
+    -DBUILD_JPEG:BOOL=ON
+    -DBUILD_ZLIB:BOOL=ON
+    -DBUILD_WITH_STATIC_CRT:BOOL=ON
     -DBUILD_FAT_JAVA_LIB=OFF
     -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_BINARY_DIR}/thirdparty
 )
@@ -51,7 +56,14 @@ else()
   set(OPENCV_LIBRARY_DIR ${CMAKE_BINARY_DIR}/thirdparty/x86/vc12/lib)
 endif()
 
-set(OPENCV_LIBRARIES opencv_core opencv_highgui opencv_imgproc)
+set(OPENCV_LIBRARIES opencv_imgproc opencv_core opencv_highgui opencv_videoio opencv_imgcodecs)
 
 include_directories(${OPENCV_INCLUDE_DIR})
 link_directories(${OPENCV_LIBRARY_DIR})
+
+if(EXISTS "${CMAKE_BINARY_DIR}/thirdparty/share/OpenCV/OpenCVConfig.cmake")
+    include(${CMAKE_BINARY_DIR}/thirdparty/share/OpenCV/OpenCVConfig.cmake)
+    add_custom_target(rerun)
+else()
+    add_custom_target(rerun ${CMAKE_COMMAND} ${CMAKE_SOURCE_DIR} DEPENDS opencv)
+endif()

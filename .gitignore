@@ -30,6 +30,7 @@
 # Build and bin directory
 bin/*
 build/*
+build_xcode/*
 config/*
 ide/*
 test/bin/*

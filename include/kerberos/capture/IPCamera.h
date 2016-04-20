@@ -27,8 +27,10 @@ namespace kerberos
             cv::VideoCapture * m_camera;
             Executor<IPCamera> tryToUpdateCapture;
             std::string m_url;
+            std::string m_streamType;
         
-        public:
+        public:   
+        
             IPCamera()
             {
                 try
@@ -45,17 +47,20 @@ namespace kerberos
             virtual ~IPCamera(){};
             void setup(StringMap & settings);
             void setImageSize(int width, int height);
-            void setUrl(std::string url){m_url=url;}
+            void setUrl(std::string url);
             void setRotation(int angle);
             void setDelay(int msec);
         
+            void grab();
+            Image retrieve();
             Image * takeImage();
         
             void open();
             void open(const char * url);
+            void reopen();
             void close();
-        
             void update();
+            bool isOpened();
     };
 }
 

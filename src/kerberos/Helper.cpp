@@ -4,6 +4,99 @@ namespace kerberos
 {
     namespace helper
     {
+        void getFilesInDirectory(std::vector<std::string> &out, const std::string &directory)
+        {
+            DIR *dir;
+            struct dirent *ent;
+            struct stat st;
+
+            dir = opendir(directory.c_str());
+            if(dir)
+            {
+                while ((ent = readdir(dir)) != NULL)
+                {
+                    const std::string file_name = ent->d_name;
+                    const std::string full_file_name = directory + "/" + file_name;
+                    
+                    if (file_name[0] == '.')
+                        continue;
+                    
+                    if (stat(full_file_name.c_str(), &st) == -1)
+                    continue;
+                    const bool is_directory = (st.st_mode & S_IFDIR) != 0;
+
+                    if (is_directory)
+                        continue;
+
+                    out.push_back(full_file_name);
+                }
+                closedir(dir);
+            }
+        }
+
+        std::string urlencode(const std::string &value)
+        {
+            std::ostringstream escaped;
+            escaped.fill('0');
+            escaped << std::hex;
+
+            for (std::string::const_iterator i = value.begin(), n = value.end(); i != n; ++i) {
+                std::string::value_type c = (*i);
+
+                // Keep alphanumeric and other accepted characters intact
+                if (isalnum(c) || c == '-' || c == '_' || c == '.' || c == '~') {
+                    escaped << c;
+                    continue;
+                }
+
+                // Any other characters are percent-encoded
+                escaped << std::uppercase;
+                escaped << '%' << std::setw(2) << int((unsigned char) c);
+                escaped << std::nouppercase;
+            }
+
+            return escaped.str();
+        }
+        
+        const char * getValueByKey(kerberos::StringMap & map, const std::string & key)
+        {
+            if(map.find(key) != map.end())
+            {
+                return map.at(key).c_str();
+            }
+        
+            return 0;
+        }
+    
+        kerberos::StringMap getCommandOptions(int argc, char ** argv)
+        {
+            kerberos::StringMap parameters;
+            
+            char ** begin = argv;
+            char ** end = argv + argc;
+            
+            while(begin != end)
+            {
+                std::string option = *begin;
+                if(option.substr(0,2) == "--")
+                {
+                    option = option.substr(2,option.size());
+                    std::string value = *(++begin);
+                    if(value.substr(0,2) != "--")
+                    {
+                        parameters[option] = value;
+                    }
+                    else
+                    {
+                        --begin;
+                    }
+                }
+                begin++;
+            }
+            
+            return parameters;
+        }
+
         void getSettingsFromXML(TiXmlElement * root, std::string prefix, kerberos::StringMap & settings);
         kerberos::StringMap getSettingsFromXML(const std::string & path)
         {
@@ -67,6 +160,20 @@ namespace kerberos
                 }
                 node = node->NextSiblingElement();
             }
+        }
+        
+        std::string printStringMap(const std::string & prefix, const kerberos::StringMap & map)
+        {
+            std::string output = prefix + "\n";
+            
+            for(kerberos::StringMap::const_iterator it = map.begin(); it != map.end(); it++)
+            {
+                output += "- " + it->first + " = " + it->second + "\n";
+            }
+            
+            output.erase( output.end()-1, output.end());
+            
+            return output;
         }
         
         std::string to_string(const int & t)

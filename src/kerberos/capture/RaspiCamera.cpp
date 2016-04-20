@@ -23,38 +23,83 @@ namespace kerberos
         tryToUpdateCapture.setInterval("once at 1000 calls");
     }
     
+    void RaspiCamera::grab()
+    {
+        try
+        {
+            pthread_mutex_lock(&m_lock);
+            m_camera->grab();
+            pthread_mutex_unlock(&m_lock);
+        }
+        catch(cv::Exception & ex)
+        {
+            pthread_mutex_unlock(&m_lock);
+            throw OpenCVException(ex.msg.c_str());
+        }
+    }
+    
+    Image RaspiCamera::retrieve()
+    {
+        try
+        {
+            Image image;
+            pthread_mutex_lock(&m_lock);
+            m_camera->retrieve(image.getImage());
+            pthread_mutex_unlock(&m_lock);
+            return image;
+        }
+        catch(cv::Exception & ex)
+        {
+            pthread_mutex_unlock(&m_lock);
+            throw OpenCVException(ex.msg.c_str());
+        }
+    }
+    
     Image * RaspiCamera::takeImage()
     {
         // update the camera settings, with latest images
         //  - it's possible that we have to change the brightness, saturation, etc.
         tryToUpdateCapture();
         
-        // Delay camera for some time..
-        usleep(m_delay*1000);
-        
-        // take an image 
-        Image * image = grab();
-        
-        // Check if need to rotate the image
-        image->rotate(m_angle);
-                
-        return image;
-    }
-    
-    Image * RaspiCamera::grab()
-    {
         Image * image = new Image();
-        m_camera->grab();
-        m_camera->retrieve(image->getImage());
+
+        try
+        {
+            // Delay camera for some time..
+            usleep(m_delay*1000);
+
+            // take an image 
+            pthread_mutex_lock(&m_lock);
+            m_camera->grab();
+            m_camera->retrieve(image->getImage());
+            pthread_mutex_unlock(&m_lock);
+
+            // Check if need to rotate the image
+            image->rotate(m_angle);
+        }
+        catch(cv::Exception & ex)
+        {
+            pthread_mutex_unlock(&m_lock);
+            throw OpenCVException(ex.msg.c_str());
+        }
+        
         return image;
     }
     
     void RaspiCamera::setImageSize(int width, int height)
     {
         Capture::setImageSize(width, height);
-        m_camera->set(CV_CAP_PROP_FORMAT, CV_8UC3);
-        m_camera->set(CV_CAP_PROP_FRAME_WIDTH, m_frameWidth);
-        m_camera->set(CV_CAP_PROP_FRAME_HEIGHT, m_frameHeight);
+        try
+        {
+            m_camera->set(CV_CAP_PROP_FORMAT, CV_8UC3);
+            m_camera->set(CV_CAP_PROP_FRAME_WIDTH, m_frameWidth);
+            m_camera->set(CV_CAP_PROP_FRAME_HEIGHT, m_frameHeight);
+        }
+        catch(cv::Exception & ex)
+        {
+            pthread_mutex_unlock(&m_lock);
+            throw OpenCVException(ex.msg.c_str());
+        }
     }
     
     void RaspiCamera::setRotation(int angle)
@@ -78,4 +123,9 @@ namespace kerberos
     }
     
     void RaspiCamera::update(){}
+    
+    bool RaspiCamera::isOpened()
+    {
+        return m_camera->isOpened();
+    }
 }

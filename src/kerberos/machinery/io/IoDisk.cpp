@@ -27,16 +27,6 @@ namespace kerberos
         
         std::string instanceName = getInstanceName();
         kerberos::helper::replace(pathToImage, "instanceName", instanceName);
-        
-        std::string timestamp = kerberos::helper::getTimestamp();
-        kerberos::helper::replace(pathToImage, "timestamp", timestamp);
-
-        std::string microseconds = kerberos::helper::getMicroseconds();
-        std::string size = kerberos::helper::to_string((int)microseconds.length());
-        kerberos::helper::replace(pathToImage, "microseconds", size + "-" + microseconds);
-        
-        std::string token = kerberos::helper::to_string(rand()%1000);
-        kerberos::helper::replace(pathToImage, "token", token);
 
         return pathToImage;
     }
@@ -48,12 +38,22 @@ namespace kerberos
         // for the image.
         
         std::string pathToImage = getFileFormat();
-        
+
         // ---------------------
         // Replace variables
 
         pathToImage = buildPath(pathToImage);
-        
+
+        std::string timestamp = kerberos::helper::getTimestamp();
+        kerberos::helper::replace(pathToImage, "timestamp", timestamp);
+
+        std::string microseconds = kerberos::helper::getMicroseconds();
+        std::string size = kerberos::helper::to_string((int)microseconds.length());
+        kerberos::helper::replace(pathToImage, "microseconds", size + "-" + microseconds);
+
+        std::string token = kerberos::helper::to_string(rand()%1000);
+        kerberos::helper::replace(pathToImage, "token", token);
+
         // ---------------------------------------------------------------------
         // Save original version & generate unique timestamp for current image
         
@@ -114,7 +114,7 @@ namespace kerberos
         // Replace variables
 
         pathToImage = buildPath(pathToImage);
-        
+
         // -------------------------------------------------------
         // Add path to JSON object, so other IO devices can use it
         
@@ -126,6 +126,7 @@ namespace kerberos
         // ---------------------------------------------------------------------
         // Save original version & generate unique timestamp for current image
 
+        BINFO << "IoDisk: saving image " + pathToImage;
         return m_fileManager.save(image, pathToImage);
     }
 }

@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
 <kerberos>
     
-    <!-- Settings for instance -->
     <instance>
         <name type="text">frontdoor</name>
+        <logging type="bool">false</logging>
         <timezone type="timezone">Europe-Brussels</timezone>
         <capture file="capture.xml">RaspiCamera</capture>
         <condition file="condition.xml" type="multiple">Enabled</condition>
@@ -11,14 +11,7 @@
         <expositor file="expositor.xml">Hull</expositor>
         <heuristic file="heuristic.xml">Sequence</heuristic>
         <io file="io.xml" type="multiple">Disk</io>
+        <cloud file="cloud.xml">S3</cloud>
     </instance>
-
-    <!-- Settings for amazonS3 -->
-    <amazonS3>
-        <bucket type="text"/>
-        <folder type="text"/>
-        <publicKey type="text"/>
-        <privateKey type="text"/>
-    </amazonS3>
     
 </kerberos>

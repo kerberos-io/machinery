@@ -24,15 +24,16 @@ namespace kerberos
     class USBCamera : public CaptureCreator<USBCameraName, USBCamera>
     {
         private:
-            CvCapture * m_camera;
+            cv::VideoCapture * m_camera;
             Executor<USBCamera> tryToUpdateCapture;
+            int m_deviceNumber;
         
         public:
             USBCamera()
             {
                 try
                 {
-                    m_camera = cvCaptureFromCAM(CV_CAP_ANY);
+                    m_camera = new cv::VideoCapture();
                 }
                 catch(cv::Exception & ex)
                 {
@@ -44,15 +45,19 @@ namespace kerberos
             virtual ~USBCamera(){};
             void setup(StringMap & settings);
             void setImageSize(int width, int height);
-            void setRotation(int angle);
-            void setDelay(int msec);
-        
+            void setRotation(int angle){Capture::setRotation(angle);}
+            void setDelay(int msec){Capture::setDelay(msec);}
+            void setDeviceNumber(int number){m_deviceNumber=number;}
+            int getDeviceNumber(){return m_deviceNumber;}
+            
+            void grab();
+            Image retrieve();
             Image * takeImage();
         
             void open();
             void close();
-        
             void update();
+            bool isOpened();
     };
 }
 

@@ -16,45 +16,68 @@
 #include "Helper.h"
 #include <iostream>
 #include <fstream>
+#include <signal.h>
+#include "easylogging++.h"
+
+_INITIALIZE_EASYLOGGINGPP
 
 using namespace kerberos;
 
 int main(int argc, char** argv)
 {
-    // ----------------------------------
-    // Locate kerberos working directory
+    // ---------------------
+    // If requesting version
 
-    std::string workDirectory = helper::getRootDirectory(argv[0]);
+    if(argc == 2 && strcmp(argv[1],"-v")==0)
+    {
+        std::cout << "v" << VERSION << std::endl;
+        return 1;
+    }
+    
+    // ----------------
+    // Disable SIGPIPE
+    
+    // # old way  -> signal(SIGPIPE, SIG_IGN);
+    struct sigaction sa;
+    sa.sa_handler = SIG_IGN;
+    sa.sa_flags = 0;
+    sigaction(SIGPIPE, &sa, 0);
+    
+    // ----------------------------------
+    // Get parameters from command line
+    
+    StringMap parameters = helper::getCommandOptions(argc, argv);
+    
+    // --------------------------z--------
+    // Initialize logger
+                  
+    easyloggingpp::Configurations config;
+    config.setToDefault();
+    config.setAll(easyloggingpp::ConfigurationType::Enabled, "true");
+    config.setAll(easyloggingpp::ConfigurationType::ToFile, "true");
+    std::string logFile = (helper::getValueByKey(parameters, "log")) ?: LOG_PATH;
+    config.setAll(easyloggingpp::ConfigurationType::Filename, logFile);
+    config.setAll(easyloggingpp::ConfigurationType::RollOutSize, "100000"); // 100MB
+    easyloggingpp::Loggers::reconfigureAllLoggers(config);
+
+    LINFO << "Logging is written to: " + logFile;
     
     while(true)
     {
         try
         {
-            // ---------------------------------------------
-            // Bootstrap kerberos with a configuration file.
+            // ----------------------------------
+            // Bootstrap machinery with parameters
 
-            std::string configFile = (argc > 1) ? argv[1] : workDirectory + "config/config.xml";
-            Kerberos::run(configFile);
+            Kerberos::run(parameters);
+            
         }
         catch(Exception & ex)
         {
-            // ------------------------------------------
-            // Exceptions are logged in "log.stash" file.
-        
-            std::ofstream logstash;
-            std::string logFile = (argc > 2) ? argv[2] : workDirectory + "logs/log.stash";
-            logstash.open(logFile.c_str(), std::ios_base::app);
+            LERROR << ex.what();
             
-            if(logstash.is_open())
-            {
-                const char * error = ex.what();
-                logstash << helper::currentDateTime() << " - " << error << std::endl;
-                logstash.close();
-                delete (char *) error;
-            }
-        
-            // Try again in 10 seconds..
-            usleep(10 * 1000000);
+            // Try again in 3 seconds..
+            usleep(3 * 1000000);
         }
     }
 

@@ -15,10 +15,12 @@
 #ifndef __FileManager_H_INCLUDED__   // if FileManager.h hasn't been included yet...
 #define __FileManager_H_INCLUDED__   // #define this so the compiler knows it has been included
 
+#include "Factory.h"
 #include "capture/Image.h"
 #include <string>
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <iostream>
 
 namespace kerberos
 {

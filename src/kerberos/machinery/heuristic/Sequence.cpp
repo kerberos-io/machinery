@@ -22,6 +22,7 @@ namespace kerberos
             duration++;
             if(duration >= m_sequenceDuration)
             {
+                BINFO << "Heuristic is valid; numberOfChanges: " + helper::to_string(numberOfChanges) + ", Sequence duration: " + helper::to_string(m_sequenceDuration);
                 return true;
             }
         }

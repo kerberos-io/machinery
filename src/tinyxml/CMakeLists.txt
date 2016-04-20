@@ -1,6 +1,6 @@
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 # Build library
-add_library(TINYXML_LIBRARY 
+add_library(TINYXML_LIBRARY STATIC 
 	tinystr.cpp
 	tinyxml.cpp
 	tinyxmlerror.cpp

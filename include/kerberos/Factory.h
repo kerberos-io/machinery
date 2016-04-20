@@ -16,8 +16,10 @@
 #ifndef __Factory_H_INCLUDED__   // if Factory.h hasn't been included yet...
 #define __Factory_H_INCLUDED__   // #define this so the compiler knows it has been included
 
+#include "Globals.h"
 #include "Exception.hpp"
 #include "Helper.h"
+#include "cloud/Cloud.h"
 #include "capture/Capture.h"
 #include "machinery/condition/Condition.h"
 #include "machinery/algorithm/Algorithm.h"
@@ -75,6 +77,12 @@ namespace kerberos
         
             std::map<std::string, Method> creators;
     };
+    
+    // --------------------------------
+    // Registration of cloud classes
+
+    template <const char * Alias, typename Class>
+    const char * CloudCreator<Alias, Class>::ID = Factory<Cloud>::getInstance()->registerClass(Alias, &CloudCreator<Alias, Class>::create);
 
     // --------------------------------
     // Registration of capture classes

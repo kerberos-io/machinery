@@ -34,6 +34,17 @@ namespace FW
 
 		m_watchID = m_fw.addWatch(m_directory,  new TaskOnFileChange(m_directory, file, m_job));
 	}
+    
+    void Guard::startLookingForNewFiles()
+	{
+		#if defined(__APPLE_CC__) || defined(BSD)
+			std::string file = (m_file != "") ? m_directory + "/" + m_file : m_file;
+		#elif defined(__linux__)
+			std::string file = m_file;
+		#endif
+
+		m_watchID = m_fw.addWatch(m_directory,  new TaskOnFileAdded(m_directory, file, m_job));
+	}
 
 	void Guard::stop()
 	{

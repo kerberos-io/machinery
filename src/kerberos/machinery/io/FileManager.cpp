@@ -49,6 +49,7 @@ namespace kerberos
     {
         // -------------------------
         // Create filename and directories if not exist
+        
         unsigned long found = path.find("/");
         while(found != -1)
         {
@@ -58,7 +59,19 @@ namespace kerberos
         }
         // -------------------------
         // Call save method on image
+        
         std::string pathToImage = getBaseDirectory() + "/" + path;
-        return image.save(pathToImage);
+        if(image.save(pathToImage))
+        {
+            std::string link = SYMBOL_DIRECTORY + path;
+            symlink(pathToImage.c_str(), link.c_str());
+
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+            
     }
 }

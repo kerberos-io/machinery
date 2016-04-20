@@ -15,9 +15,10 @@ namespace kerberos
         setImageSize(width, height);
         setRotation(angle);
         setDelay(delay);
-        
+
         // Initialize URL to IP Camera
         setUrl(url);
+        reopen();
         
         // Initialize executor (update the usb camera at specific times).
         tryToUpdateCapture.setAction(this, &IPCamera::update);
@@ -36,6 +37,65 @@ namespace kerberos
         }
     };
     
+    void IPCamera::grab()
+    {
+        try
+        {
+            pthread_mutex_lock(&m_lock);
+
+            bool grabbed;
+            if(m_streamType == "rtsp")
+            {
+                grabbed = m_camera->grab();
+            }
+            else
+            {
+                grabbed = m_camera->grab();
+            }
+
+            if(!grabbed)
+            {
+                reopen();
+                usleep(1000*500);
+            }
+            pthread_mutex_unlock(&m_lock);
+        }
+        catch(cv::Exception & ex)
+        {
+            pthread_mutex_unlock(&m_lock);
+            pthread_mutex_destroy(&m_lock);
+            throw OpenCVException(ex.msg.c_str());
+        }
+    }
+    
+    Image IPCamera::retrieve()
+    {
+        try
+        {
+            Image image;
+            pthread_mutex_lock(&m_lock);
+
+            if(m_streamType == "rtsp")
+            {
+                m_camera->retrieve(image.getImage());
+            }
+            else
+            {
+                m_camera->read(image.getImage());
+            }
+
+            pthread_mutex_unlock(&m_lock);
+            return image;
+        }
+        catch(cv::Exception & ex)
+        {
+            pthread_mutex_unlock(&m_lock);
+            pthread_mutex_destroy(&m_lock);
+            throw OpenCVException(ex.msg.c_str());
+        }
+    }
+    
+    
     Image * IPCamera::takeImage()
     {
         // Update camera, call executor's functor.
@@ -44,24 +104,36 @@ namespace kerberos
         // Take image
         try
         {
-            // Delay camera for some time..
-            usleep(m_delay*1000);
-            
-            open(m_url.c_str());
-            cv::Mat img;
-            m_camera->read(img);
-            close();
-            
+            // Get image from RTSP or MJPEG stream
             Image * image = new Image();
-            image->setImage(img);
             
-            // Check if need to rotate the image
-            image->rotate(m_angle);
+            while(image->getColumns() == 0 || image->getRows() == 0)
+            {
+                // Delay camera for some time..
+                usleep(m_delay*1000);
+            
+                pthread_mutex_lock(&m_lock);
+                if(m_streamType == "rtsp")
+                {
+                    m_camera->retrieve(image->getImage());
+                }
+                else
+                {
+                    m_camera->read(image->getImage());
+                }
+
+                // Check if need to rotate the image
+                image->rotate(m_angle);
+
+                pthread_mutex_unlock(&m_lock);
+            }
             
             return image;
         }
         catch(cv::Exception & ex)
         {
+            pthread_mutex_unlock(&m_lock);
+            pthread_mutex_destroy(&m_lock);
             throw OpenCVException(ex.msg.c_str());
         }
     }
@@ -69,6 +141,21 @@ namespace kerberos
     void IPCamera::setImageSize(int width, int height)
     {
         Capture::setImageSize(width, height);
+        try
+        {
+            m_camera->set(CV_CAP_PROP_FRAME_WIDTH, m_frameWidth);
+            m_camera->set(CV_CAP_PROP_FRAME_HEIGHT, m_frameHeight);
+        }
+        catch(cv::Exception & ex)
+        {
+            throw OpenCVException(ex.msg.c_str());
+        }
+    }
+    
+    void IPCamera::setUrl(std::string url)
+    {
+        m_url=url;
+        m_streamType = url.substr(0, 4);
     }
     
     void IPCamera::setRotation(int angle)
@@ -84,13 +171,33 @@ namespace kerberos
     void IPCamera::open(){}
     void IPCamera::open(const char * url)
     {
-        m_camera->open(url);
+        try
+        {
+            m_camera->open(url);
+            setImageSize(m_frameWidth, m_frameHeight);
+        }
+        catch(cv::Exception & ex)
+        {
+            throw OpenCVException(ex.msg.c_str());
+        }
+    }
+    void IPCamera::reopen()
+    {
+        m_camera->release();
+        
+        while(!isOpened())
+        {
+            open(m_url.c_str());
+            usleep(1000*500);
+        }
     }
     
     void IPCamera::close()
     {
         try
         {
+            pthread_mutex_unlock(&m_lock);
+            pthread_mutex_destroy(&m_lock);
             m_camera->release();
         }
         catch(cv::Exception & ex)
@@ -100,4 +207,9 @@ namespace kerberos
     }
     
     void IPCamera::update(){}
+    
+    bool IPCamera::isOpened()
+    {
+        return m_camera->isOpened();
+    }
 }

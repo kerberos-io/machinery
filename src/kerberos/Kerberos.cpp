@@ -158,6 +158,10 @@ namespace kerberos
         else
         {
             LINFO << "Logging is set to verbose";
+            
+            easyloggingpp::Configurations config;
+            config.set(easyloggingpp::Level::Info, easyloggingpp::ConfigurationType::Enabled, "true");
+            easyloggingpp::Loggers::reconfigureLogger("business", config);
         }
 
         // -----------------

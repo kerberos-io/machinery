@@ -2,7 +2,7 @@
 Description=Kerberos.io - Machinery - video surveillance
 
 [Service]
-Type=oneshot
+Type=simple
 ExecStart=/usr/bin/kerberosio &
 ExecReload=/bin/kill -HUP $MAINPID
 Restart=always

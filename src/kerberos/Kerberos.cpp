@@ -162,6 +162,10 @@ namespace kerberos
         }
         logger->reconfigure();
 
+	 //-----------------	
+        // Configure stream thread
+	 configureStream(settings);
+
         // -----------------
         // Configure cloud
         
@@ -190,6 +194,23 @@ namespace kerberos
         machinery = new Machinery();
         machinery->setup(settings);
         machinery->initialize(m_images);
+    }
+
+    // ----------------------------------
+    // Configure stream thread settings
+
+    void Kerberos::configureStream(StringMap & settings)
+    {
+
+	if(stream != 0)
+        {
+            LINFO << "Stopping streaming...";
+            stream->release();
+            delete stream;
+        }
+       stream = new Stream();
+       stream->configureStream(settings);
+       
     }
     
     // ----------------------------------
@@ -274,11 +295,14 @@ namespace kerberos
         // ------------------------------------------------
         // Start a new thread that streams MJPEG's continuously.
         
-        if(stream == 0)
+        if(stream != 0)
         {
-            int port = 8888;
-            LINFO << "Starting stream on port " + helper::to_string(port);
-            stream = new Stream(port);
+            //int port = 8888;
+            //LINFO << "Starting stream on port " + port;
+            //stream = new Stream(port);
+
+	     //if stream object just exists try to open configured stream port	
+            stream->open(-1);
         }
         
         pthread_create(&m_streamThread, NULL, streamContinuously, this);

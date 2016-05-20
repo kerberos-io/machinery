@@ -2,6 +2,30 @@
 
 namespace kerberos
 {
+
+    // ----------------------------------
+    // Configure stream thread settings
+
+    void Stream::configureStream(StringMap & settings)
+    {
+	//read port from settings
+	int port = std::atoi(settings.at("captures.streamPort").c_str());
+     	//LINFO << "Configured stream on port " + helper::to_string(m_streamPort);  
+       //use port up to well known ports range
+       if(port >= 1024)
+	{
+	    //TODO: here it would be nice to check if port is valid and free
+           m_streamPort = port;
+	    
+	}
+	else
+	{
+	    //LERROR << "Settings: can't use invalid port";
+	    //TODO: manage invalid port error
+	}
+       
+    }
+
     bool Stream::release()
     {
         for(int i = 0; i < clients.size(); i++)
@@ -31,7 +55,9 @@ namespace kerberos
         SOCKADDR_IN address;       
         address.sin_addr.s_addr = INADDR_ANY;
         address.sin_family = AF_INET;
-        address.sin_port = htons(port);
+        //using m_streamPort instead of port 
+        //TODO: if m_streamPort unused it can be used input port parameter
+        address.sin_port = htons(m_streamPort);
         
         while(bind(sock, (SOCKADDR*) &address, sizeof(SOCKADDR_IN)) == SOCKET_ERROR)
         {

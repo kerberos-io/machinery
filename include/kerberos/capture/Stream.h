@@ -42,6 +42,7 @@ namespace kerberos
         std::vector<SOCKET> clients;
         SOCKET sock;
         fd_set master;
+        int m_streamPort;
         int timeout; // master sock timeout, shutdown after timeout millis.
         int quality; // jpeg compression [1..100]
 
@@ -57,7 +58,7 @@ namespace kerberos
 
     public:
 
-        Stream(int port = 0) : sock(INVALID_SOCKET), timeout(10), quality(50)
+        Stream(int port = 0) : sock(INVALID_SOCKET), timeout(10), quality(70)
         {
             FD_ZERO( &master );
             if (port) open(port);
@@ -67,7 +68,7 @@ namespace kerberos
         {
             release();
         }
-
+        void configureStream(StringMap & settings);
         bool release();
         bool open(int port);
         bool isOpened();

@@ -65,7 +65,6 @@ namespace kerberos
 
             ImageVector m_images;
             int m_captureDelayTime;
-	     int m_streamPort;
             StringMap m_parameters;
 
             // -----------

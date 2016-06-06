@@ -156,6 +156,18 @@ namespace kerberos
         }
     }
     
+    void Image::dilate(const Image & kernel)
+    {
+        try
+        {
+            cv::dilate(m_image, m_image, kernel.m_image);
+        }
+        catch(cv::Exception & ex)
+        {
+            throw OpenCVException(ex.msg.c_str());
+        }
+    }
+    
     int Image::brightness()
     {
         try

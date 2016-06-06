@@ -31,12 +31,15 @@
         cloud/GoogleDrive.cpp
         capture/USBCamera.cpp
         capture/IPCamera.cpp
+        capture/VideoCapture.cpp
         machinery/condition/Time.cpp
         machinery/condition/Enabled.cpp
         machinery/algorithm/DifferentialCollins.cpp
+        machinery/algorithm/BackgroundSubstraction.cpp
         machinery/expositor/RectangleExpositor.cpp
         machinery/expositor/HullExpositor.cpp
         machinery/heuristic/Sequence.cpp
+        machinery/heuristic/Counter.cpp
         machinery/io/IoDisk.cpp
         machinery/io/IoTCP.cpp
         machinery/io/IoWebhook.cpp

@@ -11,6 +11,19 @@ namespace kerberos
         
         std::string instanceName = settings.at("name");
         setInstanceName(instanceName);
+
+        // --------------------------
+        // Check if need to draw timestamp
+        
+        bool drawTimestamp = (settings.at("ios.Disk.markWithTimestamp") == "true");
+        setDrawTimestamp(drawTimestamp);
+        cv::Scalar color = getColor(settings.at("ios.Disk.timestampColor"));
+        setTimestampColor(color);
+        
+        std::string timezone = settings.at("timezone");
+        std::replace(timezone.begin(), timezone.end(), '-', '/');
+        std::replace(timezone.begin(), timezone.end(), '$', '_');
+        setTimezone(timezone);
         
         // -------------------------------------------------------------
         // Filemanager is mapped to a directory and is used by an image
@@ -18,6 +31,19 @@ namespace kerberos
         
         setFileFormat(settings.at("ios.Disk.fileFormat"));
         m_fileManager.setBaseDirectory(settings.at("ios.Disk.directory"));
+    }
+    
+    cv::Scalar IoDisk::getColor(const std::string name)
+    {
+        std::map<std::string, cv::Scalar> m_colors;
+        
+        m_colors["white"] = cv::Scalar(255,255,255);
+        m_colors["black"] = cv::Scalar(0,0,0);
+        m_colors["red"] = cv::Scalar(0,0,255);
+        m_colors["green"] = cv::Scalar(0,255,0);
+        m_colors["blue"] = cv::Scalar(255,0,0);
+        
+        return m_colors.at(name);
     }
 
     std::string IoDisk::buildPath(std::string pathToImage)
@@ -31,6 +57,29 @@ namespace kerberos
         return pathToImage;
     }
     
+    void IoDisk::drawDateOnImage(Image & image, std::string timestamp)
+    {
+        if(m_drawTimestamp)
+        {
+            struct tm tstruct;
+            char buf[80];
+            
+            time_t now = std::atoi(timestamp.c_str());
+            
+            char * timeformat = "%d-%m-%Y %X";
+            if(m_timezone != "")
+            {
+                setenv("TZ", m_timezone.c_str(), 1);
+                tzset();
+            }
+            
+            tstruct = *localtime(&now);
+            strftime(buf, sizeof(buf), timeformat, &tstruct);
+            
+            cv::putText(image.getImage(), buf, cv::Point(10,30), cv::FONT_HERSHEY_SIMPLEX, 0.5, getTimestampColor());
+        }
+    }
+
     bool IoDisk::save(Image & image)
     {
         // ----------------------------------------
@@ -46,6 +95,7 @@ namespace kerberos
 
         std::string timestamp = kerberos::helper::getTimestamp();
         kerberos::helper::replace(pathToImage, "timestamp", timestamp);
+        drawDateOnImage(image, timestamp);
 
         std::string microseconds = kerberos::helper::getMicroseconds();
         std::string size = kerberos::helper::to_string((int)microseconds.length());
@@ -123,8 +173,13 @@ namespace kerberos
         path.SetString(pathToImage.c_str(), allocator);
         data.AddMember("pathToImage", path, allocator);
         
-        // ---------------------------------------------------------------------
-        // Save original version & generate unique timestamp for current image
+        // ------------------
+        // Draw date on image
+        
+        drawDateOnImage(image, data["timestamp"].GetString());
+        
+        // -------------------------
+        // Save original version
 
         BINFO << "IoDisk: saving image " + pathToImage;
         return m_fileManager.save(image, pathToImage);

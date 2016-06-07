@@ -11,7 +11,7 @@
 	    <appearance type="number">5</appearance>
 	    <maxDistance type="number">90</maxDistance>
 	    <minArea type="number">1400</minArea>
-	    <onlyTrueWhenCounted type="number">true</onlyTrueWhenCounted>
+	    <onlyTrueWhenCounted type="bool">true</onlyTrueWhenCounted>
 	    <minimumChanges type="number">20</minimumChanges>
         <noMotionDelayTime type="number">1000</noMotionDelayTime>
 		<markers type="twolines">100,100|100,200|200,100|200,200</markers>

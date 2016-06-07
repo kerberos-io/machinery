@@ -25,16 +25,27 @@ namespace kerberos
         private:
             std::string m_instanceName;
             std::string m_fileFormat;
+            bool m_drawTimestamp;
+            cv::Scalar m_timestampColor;
+            std::string m_timezone;
             FileManager m_fileManager;
             
         public:
             IoDisk(){};
             void setup(const StringMap & settings);
-            void setInstanceName(std::string instanceName){m_instanceName=instanceName;};
+            cv::Scalar getColor(const std::string name);
+            bool getDrawTimestamp(){return m_drawTimestamp;};
+            void setDrawTimestamp(bool drawTimestamp){m_drawTimestamp=drawTimestamp;};
+            std::string getTimezone(){return m_timezone;};
+            void setTimezone(std::string timezone){m_timezone=timezone;};
+            cv::Scalar getTimestampColor(){return m_timestampColor;};
+            void setTimestampColor(cv::Scalar timestampColor){m_timestampColor=timestampColor;};
             std::string getInstanceName(){return m_instanceName;};
+            void setInstanceName(std::string instanceName){m_instanceName=instanceName;};
             std::string getFileFormat(){return m_fileFormat;};
             void setFileFormat(std::string fileFormat){m_fileFormat = fileFormat;};
             std::string buildPath(std::string pathToImage);
+            void drawDateOnImage(Image & image, std::string timestamp);
             bool save(Image & image);
             bool save(Image & image, JSON & data);
     };

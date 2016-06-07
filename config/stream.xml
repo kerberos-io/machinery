@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<streams>
+    <mjpg>
+     <streamPort type="number">8888</streamPort>
+    </mjpg>
+</streams>

@@ -6,7 +6,7 @@
     	<threshold type="number">15</threshold>
     </DifferentialCollins>
     
-	<BackgroundSubstraction>
+	<BackgroundSubtraction>
 		<shadows type="text">true</shadows>
 		<history type="number">50</history>
 		<nmixtures type="number">5</nmixtures>
@@ -14,6 +14,6 @@
 		<erode type="number">5</erode>
 		<dilate type="number">7</dilate>
     	<threshold type="number">20</threshold>
-    </BackgroundSubstraction>
+    </BackgroundSubtraction>
     
 </algorithms>

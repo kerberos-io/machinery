@@ -25,6 +25,7 @@
 #include <netdb.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
+#include <sys/ioctl.h>
 #define PORT        unsigned short
 #define SOCKET    int
 #define HOSTENT  struct hostent

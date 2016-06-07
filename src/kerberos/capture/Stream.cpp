@@ -8,9 +8,9 @@ namespace kerberos
 
     void Stream::configureStream(StringMap & settings)
     {
-	//read port from settings
-	int port = std::atoi(settings.at("captures.streamPort").c_str());
-     	//LINFO << "Configured stream on port " + helper::to_string(m_streamPort);  
+       //read port from settings
+       int port = std::atoi(settings.at("streams.mjpg.streamPort").c_str());
+       //LINFO << "Configured stream on port " + helper::to_string(m_streamPort);  
        //use port up to well known ports range
        if(port >= 1024)
 	{

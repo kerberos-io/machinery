@@ -21,11 +21,6 @@ namespace kerberos
         configure(configuration);
 
         // ------------------
-        // Open the stream
-
-        startStreamThread();
-
-        // ------------------
         // Open the io thread
 
         startIOThread();
@@ -161,10 +156,6 @@ namespace kerberos
         }
         logger->reconfigure();
 
-	 //-----------------	
-        // Configure stream thread
-	 configureStream(settings);
-
         // -----------------
         // Configure cloud
         
@@ -174,6 +165,11 @@ namespace kerberos
         // Configure capture
         
         configureCapture(settings);
+        
+        //-----------------
+        // Configure stream thread
+        
+        configureStream(settings);
         
         // -------------------
         // Take first images
@@ -200,16 +196,17 @@ namespace kerberos
 
     void Kerberos::configureStream(StringMap & settings)
     {
-
-	if(stream != 0)
+        if(stream != 0)
         {
             LINFO << "Stopping streaming...";
+            stopStreamThread();
             stream->release();
             delete stream;
         }
-       stream = new Stream();
-       stream->configureStream(settings);
-       
+        
+        stream = new Stream();
+        stream->configureStream(settings);
+        startStreamThread();
     }
     
     // ----------------------------------
@@ -296,12 +293,8 @@ namespace kerberos
         
         if(stream != 0)
         {
-            //int port = 8888;
-            //LINFO << "Starting stream on port " + port;
-            //stream = new Stream(port);
-
-	     //if stream object just exists try to open configured stream port	
-            stream->open(-1);
+            //if stream object just exists try to open configured stream port
+            stream->open();
         }
         
         pthread_create(&m_streamThread, NULL, streamContinuously, this);

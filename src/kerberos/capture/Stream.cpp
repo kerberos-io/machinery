@@ -8,22 +8,23 @@ namespace kerberos
 
     void Stream::configureStream(StringMap & settings)
     {
-       //read port from settings
-       int port = std::atoi(settings.at("streams.mjpg.streamPort").c_str());
-       //LINFO << "Configured stream on port " + helper::to_string(m_streamPort);  
-       //use port up to well known ports range
-       if(port >= 1024)
-	{
-	    //TODO: here it would be nice to check if port is valid and free
-           m_streamPort = port;
-	    
-	}
-	else
-	{
-	    //LERROR << "Settings: can't use invalid port";
-	    //TODO: manage invalid port error
-	}
+        //read port from settings
+        int port = std::atoi(settings.at("streams.Mjpg.streamPort").c_str());
+        int quality = std::atoi(settings.at("streams.Mjpg.quality").c_str());
        
+        //use port up to well known ports range
+       if(port >= 1024)
+       {
+           //TODO: here it would be nice to check if port is valid and free
+           m_streamPort = port;
+           m_quality = quality;
+           LINFO << "Configured stream on port " << helper::to_string(m_streamPort) << " with quality: " << helper::to_string(m_quality) ;
+       }
+       else
+       {
+           LERROR << "Settings: can't use invalid port";
+           //TODO: manage invalid port error
+       }
     }
 
     bool Stream::release()
@@ -39,13 +40,14 @@ namespace kerberos
         if (sock != INVALID_SOCKET)
         {
             shutdown(sock, 2);
+            close(sock);
         }
         sock = (INVALID_SOCKET);
         
         return false;
     }
 
-    bool Stream::open(int port)
+    bool Stream::open()
     {
         sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
         
@@ -55,8 +57,6 @@ namespace kerberos
         SOCKADDR_IN address;       
         address.sin_addr.s_addr = INADDR_ANY;
         address.sin_family = AF_INET;
-        //using m_streamPort instead of port 
-        //TODO: if m_streamPort unused it can be used input port parameter
         address.sin_port = htons(m_streamPort);
         
         while(bind(sock, (SOCKADDR*) &address, sizeof(SOCKADDR_IN)) == SOCKET_ERROR)
@@ -86,7 +86,7 @@ namespace kerberos
     bool Stream::connect()
     {
         fd_set rread = master;
-        struct timeval to = {0,timeout};
+        struct timeval to = {0,m_timeout};
         SOCKET maxfd = sock+1;
         
         if(select( maxfd, &rread, NULL, NULL, &to ) <= 0)
@@ -101,7 +101,7 @@ namespace kerberos
             LERROR << "Stream: couldn't accept connection on sock";
             LINFO << "Stream: reopening master sock";
             release();
-            open(8888);
+            open();
             return false;
         }
   
@@ -138,7 +138,7 @@ namespace kerberos
                 std::vector<uchar>outbuf;
                 std::vector<int> params;
                 params.push_back(cv::IMWRITE_JPEG_QUALITY);
-                params.push_back(quality);
+                params.push_back(m_quality);
                 cv::imencode(".jpg", frame, outbuf, params);
                 int outlen = outbuf.size();
 

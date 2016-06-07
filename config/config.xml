@@ -6,6 +6,7 @@
         <logging type="bool">false</logging>
         <timezone type="timezone">Europe-Brussels</timezone>
         <capture file="capture.xml">RaspiCamera</capture>
+        <stream file="stream.xml">Mjpg</stream>
         <condition file="condition.xml" type="multiple">Enabled</condition>
         <algorithm file="algorithm.xml">DifferentialCollins</algorithm>
         <expositor file="expositor.xml">Hull</expositor>

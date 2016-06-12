@@ -53,19 +53,11 @@ namespace kerberos
         
         int reuse = 1;
         setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, (const char*)&reuse, sizeof(reuse));
-        
-        int flags;
-        // If they have O_NONBLOCK, use the Posix way to do it
-        #if defined(O_NONBLOCK)
-            // Fixme: O_NONBLOCK is defined but broken on SunOS 4.1.x and AIX 3.2.5.
-            if (-1 == (flags = fcntl(fd, F_GETFL, 0)))
-                flags = 0;
-                fcntl(fd, F_SETFL, flags | O_NONBLOCK);
-        #else
-            // Otherwise, use the old way of doing it
-            flags = 1;
-            ioctl(sock, FIONBIO, &flags);
-        #endif
+
+        struct timeval timeout;
+        timeout.tv_sec = 3;
+        timeout.tv_usec = 0;
+        setsockopt(sock, SOL_SOCKET, SO_SNDTIMEO, (struct timeval *)&timeout,sizeof(timeout));
         
         SOCKADDR_IN address;       
         address.sin_addr.s_addr = INADDR_ANY;
@@ -108,15 +100,20 @@ namespace kerberos
         int addrlen = sizeof(SOCKADDR);
         SOCKADDR_IN address = {0};     
         SOCKET client = accept(sock, (SOCKADDR*)&address, (socklen_t*) &addrlen);
-
+            
         if (client == SOCKET_ERROR)
         {
             LERROR << "Stream: couldn't accept connection on sock";
-            LINFO << "Stream: reopening master sock";
+            LERROR << "Stream: reopening master sock";
             release();
             open();
             return false;
         }
+
+        struct timeval timeout;
+        timeout.tv_sec = 3;
+        timeout.tv_usec = 0;
+        setsockopt(client, SOL_SOCKET, SO_RCVTIMEO, (struct timeval *)&timeout, sizeof(timeout));
   
         maxfd=(maxfd>client?maxfd:client);
         FD_SET( client, &master );
@@ -129,6 +126,8 @@ namespace kerberos
             "Pragma: no-cache\r\n"
             "Content-Type: multipart/x-mixed-replace; boundary=mjpegstream\r\n"
             "\r\n",0);
+
+        LINFO << "Stream: opening socket for new client";
         
         clients.push_back(client);
         packetsSend[client] = 0;

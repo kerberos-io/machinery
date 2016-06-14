@@ -72,8 +72,6 @@ namespace kerberos
         int incoming = 0;
         int outgoing = 0;
         
-        //cv::waitKey(10); // this is needed for video files.
-        
         kerberos::Image image = evaluation;
         cv::Mat img = image.getImage();
         cv::dilate(img, img, cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(25,25)));
@@ -85,10 +83,6 @@ namespace kerberos
         cv::Point & inTop = m_in[0];
         cv::Point & inBottom = m_in[1];
         
-        //cv::Mat imgorg = images[2]->getImage();
-        //cv::line(imgorg, m_in[0],  m_in[1], cv::Scalar(255, 0, 0));
-        //cv::line(imgorg, m_out[0], m_out[1], cv::Scalar(0, 0, 255));
-
         std::vector<std::vector<cv::Point> > contours;
         std::vector<cv::Vec4i> hierarchy;
         cv::findContours(image.getImage(), contours, hierarchy, CV_RETR_TREE, CV_CHAIN_APPROX_NONE);
@@ -145,7 +139,6 @@ namespace kerberos
                 }
             
                 numberOfContours++;
-                //cv::drawContours( imgorg, contours, i, cv::Scalar(0,255,0), 2, 8, hierarchy, 0, cv::Point());
             }
         }
         
@@ -176,7 +169,6 @@ namespace kerberos
                 {
                     cv::Point2f prev((*it)[j-1].getX(),(*it)[j-1].getY());
                     cv::Point2f curr((*it)[j].getX(),(*it)[j].getY());
-                    //cv::line(imgorg, prev, curr, cv::Scalar(0, 0, 255));
                 }
                 
                 // Check if cross line
@@ -268,13 +260,11 @@ namespace kerberos
             }
         }
 
-        //cv::imshow("org", imgorg);
-        
         if(numberOfChanges >= m_minimumChanges)
         {
             JSON::AllocatorType& allocator = data.GetAllocator();
-            data.AddMember("in", incoming, allocator);
-            data.AddMember("out", outgoing, allocator);
+            data.AddMember("incoming", incoming, allocator);
+            data.AddMember("outgoing", outgoing, allocator);
             
             if(m_onlyTrueWhenCounted)
             {

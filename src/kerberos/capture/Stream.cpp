@@ -58,7 +58,7 @@ namespace kerberos
         timeout.tv_sec = 3;
         timeout.tv_usec = 0;
         setsockopt(sock, SOL_SOCKET, SO_SNDTIMEO, (struct timeval *)&timeout,sizeof(timeout));
-        
+
         SOCKADDR_IN address;       
         address.sin_addr.s_addr = INADDR_ANY;
         address.sin_family = AF_INET;

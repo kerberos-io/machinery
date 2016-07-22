@@ -2,6 +2,7 @@
 <streams>
 
     <Mjpg>
+    	<enabled>true</enabled>
     	<streamPort type="number">8888</streamPort>
     	<quality type="number">75</quality>
     </Mjpg>

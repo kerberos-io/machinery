@@ -9,6 +9,7 @@ namespace kerberos
     void Stream::configureStream(StringMap & settings)
     {
         //read port from settings
+        int enabled = (settings.at("streams.Mjpg.enabled") == "true");
         int port = std::atoi(settings.at("streams.Mjpg.streamPort").c_str());
         int quality = std::atoi(settings.at("streams.Mjpg.quality").c_str());
        
@@ -16,14 +17,14 @@ namespace kerberos
        if(port >= 1024)
        {
            //TODO: here it would be nice to check if port is valid and free
-           m_streamPort = port;
-           m_quality = quality;
-           LINFO << "Configured stream on port " << helper::to_string(m_streamPort) << " with quality: " << helper::to_string(m_quality) ;
+            m_enabled = enabled;
+            m_streamPort = port;
+            m_quality = quality;
        }
        else
        {
-           LERROR << "Settings: can't use invalid port";
-           //TODO: manage invalid port error
+            LERROR << "Settings: can't use invalid port";
+            //TODO: manage invalid port error
        }
     }
 
@@ -49,38 +50,46 @@ namespace kerberos
 
     bool Stream::open()
     {
-        sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-        
-        int reuse = 1;
-        setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, (const char*)&reuse, sizeof(reuse));
-
-        struct timeval timeout;
-        timeout.tv_sec = 3;
-        timeout.tv_usec = 0;
-        setsockopt(sock, SOL_SOCKET, SO_SNDTIMEO, (struct timeval *)&timeout,sizeof(timeout));
-
-        SOCKADDR_IN address;       
-        address.sin_addr.s_addr = INADDR_ANY;
-        address.sin_family = AF_INET;
-        address.sin_port = htons(m_streamPort);
-        
-        while(bind(sock, (SOCKADDR*) &address, sizeof(SOCKADDR_IN)) == SOCKET_ERROR)
+        if(m_enabled)
         {
-            LERROR << "Stream: couldn't bind sock";
-            release();
-            usleep(1000*10000);
-            sock = ::socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+            sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+            
+            int reuse = 1;
+            setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, (const char*)&reuse, sizeof(reuse));
+
+            struct timeval timeout;
+            timeout.tv_sec = 3;
+            timeout.tv_usec = 0;
+            setsockopt(sock, SOL_SOCKET, SO_SNDTIMEO, (struct timeval *)&timeout,sizeof(timeout));
+
+            SOCKADDR_IN address;       
+            address.sin_addr.s_addr = INADDR_ANY;
+            address.sin_family = AF_INET;
+            address.sin_port = htons(m_streamPort);
+            
+            while(bind(sock, (SOCKADDR*) &address, sizeof(SOCKADDR_IN)) == SOCKET_ERROR)
+            {
+                LERROR << "Stream: couldn't bind sock";
+                release();
+                usleep(1000*10000);
+                sock = ::socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+            }
+            
+            while(listen(sock, 2) == SOCKET_ERROR)
+            {
+                LERROR << "Stream: couldn't listen on sock";
+                usleep(1000*10000);
+            }
+            
+            FD_SET(sock, &master);    
+
+
+            LINFO << "Configured stream on port " << helper::to_string(m_streamPort) << " with quality: " << helper::to_string(m_quality);
+            
+            return true;
         }
-        
-        while(listen(sock, 2) == SOCKET_ERROR)
-        {
-            LERROR << "Stream: couldn't listen on sock";
-            usleep(1000*10000);
-        }
-        
-        FD_SET(sock, &master);    
-        
-        return true;
+
+        return false;
     }
 
     bool Stream::isOpened() 

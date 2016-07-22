@@ -161,8 +161,8 @@ namespace kerberos
         
         configureCapture(settings);
         
-        //-----------------
-        // Configure stream thread
+        //------------------------------------
+        // Configure stream thread, if enabled
         
         configureStream(settings);
         

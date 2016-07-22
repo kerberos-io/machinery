@@ -43,6 +43,7 @@ namespace kerberos
         std::vector<SOCKET> clients;
         SOCKET sock;
         fd_set master;
+        bool m_enabled;
         int m_streamPort;
         int m_timeout; // master sock timeout, shutdown after timeout millis.
         int m_quality; // jpeg compression [1..100]

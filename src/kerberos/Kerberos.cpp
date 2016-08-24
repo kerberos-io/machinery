@@ -193,7 +193,7 @@ namespace kerberos
     {
         if(stream != 0)
         {
-            LINFO << "Stopping streaming...";
+            LINFO << "Stopping streaming";
             stopStreamThread();
             stream->release();
             delete stream;
@@ -267,7 +267,7 @@ namespace kerberos
                     image.rotate(kerberos->capture->m_angle);
                 }
                 kerberos->stream->write(image);
-                usleep(800*100);
+                usleep(50*1000); // sleep 50ms
             }
             catch(cv::Exception & ex){}
         }

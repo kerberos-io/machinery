@@ -115,6 +115,13 @@ namespace kerberos
     void RaspiCamera::open()
     {
         m_camera->open();
+
+        // ----------
+        // sleep a second, to be sure the camera is enabled properly.
+        // when reconfiguring the machinery, the process get blocked, if 
+        // the raspicamera isn't enabled properly.
+        
+        usleep(1000*1000);
     }
     
     void RaspiCamera::close()

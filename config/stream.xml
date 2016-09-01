@@ -3,7 +3,7 @@
 
     <Mjpg>
     	<enabled type="bool">true</enabled>
-    	<streamPort type="number">8888</streamPort>
+    	<streamPort type="number">8889</streamPort>
     	<quality type="number">75</quality>
     </Mjpg>
 

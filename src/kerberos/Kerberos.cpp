@@ -281,7 +281,10 @@ namespace kerberos
                 pthread_mutex_unlock(&kerberos->m_streamLock);
                 usleep(200*1000); // sleep 200ms
             }
-            catch(cv::Exception & ex){}
+            catch(cv::Exception & ex)
+            {
+                pthread_mutex_unlock(&kerberos->m_streamLock);
+            }
         }
     }
     

@@ -35,7 +35,8 @@ namespace kerberos
             void configure(const std::string & configuration);
             void configureCapture(StringMap & settings);
             void configureCloud(StringMap & settings);
-            void startStreamThread();
+            void configureStream(StringMap & settings);
+	        void startStreamThread();
             void stopStreamThread();
             void startIOThread();
             void stopIOThread();

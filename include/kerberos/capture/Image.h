@@ -53,6 +53,7 @@ namespace kerberos
             void difference(const Image & image, Image & result);
             void bitwiseAnd(const Image & image, Image & result);
             void erode(const Image & kernel);
+            void dilate(const Image & kernel);
             void threshold(const int threshold);
             int brightness();
             static cv::Mat createKernel(int width, int height)

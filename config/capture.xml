@@ -18,10 +18,18 @@
     </USBCamera>
 
     <RaspiCamera>
-        <frameWidth type="number">800</frameWidth>
-        <frameHeight type="number">640</frameHeight>
+        <frameWidth type="number">1280</frameWidth>
+        <frameHeight type="number">720</frameHeight>
         <delay type="number">500</delay>
         <angle type="number">0</angle>
     </RaspiCamera>
+
+    <VideoCapture>
+        <frameWidth type="number">800</frameWidth>
+        <frameHeight type="number">640</frameHeight>
+        <path type="text">0</path>
+        <delay type="number">500</delay>
+        <angle type="number">0</angle>
+    </VideoCapture>
 
 </captures>

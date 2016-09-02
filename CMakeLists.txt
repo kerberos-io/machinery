@@ -40,7 +40,9 @@ project(Kerberos)
 # ---------------------------
 # XCode system library
 
-	link_directories("/usr/local/lib")
+	if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+		link_directories("/usr/local/lib")
+	endif()
 
 # ---------
 # Package

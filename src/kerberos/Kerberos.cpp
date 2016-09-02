@@ -9,21 +9,11 @@ namespace kerberos
         
         setParameters(parameters);
         
-        // ----------------
-        // Initialize mutex
-        
-        pthread_mutex_init(&m_streamLock, NULL);
-        
         // ---------------------
         // Initialize kerberos
         
         std::string configuration = (helper::getValueByKey(parameters, "config")) ?: CONFIGURATION_PATH;
         configure(configuration);
-
-        // ------------------
-        // Open the stream
-
-        startStreamThread();
 
         // ------------------
         // Open the io thread
@@ -95,7 +85,6 @@ namespace kerberos
             // Shift images
 
             m_images = capture->shiftImage();
-            usleep(250*1000);
         }
     }
 
@@ -193,14 +182,20 @@ namespace kerberos
     }
     
     // ----------------------------------
-    // Configure capture device + thread
+    // Configure capture device + stream
     
     void Kerberos::configureCapture(StringMap & settings)
     {
-        // ---------------------------
-        // Initialize capture device
+        // -----------------------
+        // Stop stream and capture
         
-        pthread_mutex_lock(&m_streamLock);
+        if(stream != 0)
+        {
+            LINFO << "Stopping streaming";
+            stopStreamThread();
+            delete stream;
+        }
+        
         if(capture != 0)
         {
             LINFO << "Stopping capture device";
@@ -209,11 +204,20 @@ namespace kerberos
             delete capture;
         }
         
+        // ---------------------------
+        // Initialize capture device
+        
         LINFO << "Starting capture device: " + settings.at("capture");
         capture = Factory<Capture>::getInstance()->create(settings.at("capture"));
         capture->setup(settings);
         capture->startGrabThread();
-        pthread_mutex_unlock(&m_streamLock);
+        
+        // ------------------
+        // Initialize stream
+        
+        stream = new Stream();
+        stream->configureStream(settings);
+        startStreamThread();
     }
     
     // ----------------------------------
@@ -249,7 +253,6 @@ namespace kerberos
         {
             try
             {
-                pthread_mutex_lock(&kerberos->m_streamLock);
                 kerberos->stream->connect();
 
                 Image image = kerberos->capture->retrieve();
@@ -258,14 +261,9 @@ namespace kerberos
                     image.rotate(kerberos->capture->m_angle);
                 }
                 kerberos->stream->write(image);
-
-                pthread_mutex_unlock(&kerberos->m_streamLock);
-                usleep(800*100);
+                usleep(200*1000); // sleep 200ms
             }
-            catch(cv::Exception & ex)
-            {
-                pthread_mutex_unlock(&kerberos->m_streamLock);
-            }
+            catch(cv::Exception & ex){}
         }
     }
     
@@ -274,11 +272,10 @@ namespace kerberos
         // ------------------------------------------------
         // Start a new thread that streams MJPEG's continuously.
         
-        if(stream == 0)
+        if(stream != 0)
         {
-            int port = 8888;
-            LINFO << "Starting stream on port " + helper::to_string(port);
-            stream = new Stream(port);
+            //if stream object just exists try to open configured stream port
+            stream->open();
         }
         
         pthread_create(&m_streamThread, NULL, streamContinuously, this);

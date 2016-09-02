@@ -4,6 +4,8 @@
 	<Disk>
         <fileFormat type="text">timestamp_microseconds_instanceName_regionCoordinates_numberOfChanges_token.jpg</fileFormat>
     	<directory type="text">/etc/opt/kerberosio/capture/</directory>
+        <markWithTimestamp type="bool">false</markWithTimestamp>
+        <timestampColor type="text">white</timestampColor>
     </Disk>
     <GPIO>
         <pin type="number">17</pin>

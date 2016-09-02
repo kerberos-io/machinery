@@ -18,14 +18,14 @@ ExternalProject_Add(opencv
     -DBUILD_opencv_core=ON
     -DBUILD_opencv_imgproc=ON
     -DBUILD_opencv_highgui=ON
-    -DBUILD_opencv_video=OFF
+    -DBUILD_opencv_video=ON
     -DBUILD_opencv_apps=OFF
-    -DBUILD_opencv_flann=OFF
+    -DBUILD_opencv_flann=ON
     -DBUILD_opencv_gpu=OFF
-    -DBUILD_opencv_ml=OFF
+    -DBUILD_opencv_ml=ON
     -DBUILD_opencv_legacy=OFF
     -DBUILD_opencv_calib3d=OFF
-    -DBUILD_opencv_features2d=OFF
+    -DBUILD_opencv_features2d=ON
     -DBUILD_opencv_java=OFF
     -DBUILD_opencv_objdetect=OFF
     -DBUILD_opencv_photo=OFF
@@ -38,6 +38,7 @@ ExternalProject_Add(opencv
     -DBUILD_SHARED_LIBS:BOOL=OFF
     -DBUILD_TESTS:BOOL=OFF
     -DBUILD_PERF_TESTS:BOOL=OFF
+    -DBUILD_opencv_contrib=ON
     -DCMAKE_BUILD_TYPE:STRING=Release
     -DWITH_FFMPEG:BOOL=ON
     -DWITH_IPP:BOOL=OFF
@@ -56,7 +57,7 @@ else()
   set(OPENCV_LIBRARY_DIR ${CMAKE_BINARY_DIR}/thirdparty/x86/vc12/lib)
 endif()
 
-set(OPENCV_LIBRARIES opencv_imgproc opencv_core opencv_highgui opencv_videoio opencv_imgcodecs)
+set(OPENCV_LIBRARIES opencv_imgproc opencv_core opencv_highgui opencv_video opencv_videoio opencv_imgcodecs opencv_features2d)
 
 include_directories(${OPENCV_INCLUDE_DIR})
 link_directories(${OPENCV_LIBRARY_DIR})

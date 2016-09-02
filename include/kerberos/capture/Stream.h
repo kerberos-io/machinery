@@ -25,6 +25,7 @@
 #include <netdb.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
+#include <sys/ioctl.h>
 #define PORT        unsigned short
 #define SOCKET    int
 #define HOSTENT  struct hostent
@@ -42,8 +43,10 @@ namespace kerberos
         std::vector<SOCKET> clients;
         SOCKET sock;
         fd_set master;
-        int timeout; // master sock timeout, shutdown after timeout millis.
-        int quality; // jpeg compression [1..100]
+        bool m_enabled;
+        int m_streamPort;
+        int m_timeout; // master sock timeout, shutdown after timeout millis.
+        int m_quality; // jpeg compression [1..100]
 
         int _write( int sock, char *s, int len ) 
         { 
@@ -57,10 +60,9 @@ namespace kerberos
 
     public:
 
-        Stream(int port = 0) : sock(INVALID_SOCKET), timeout(10), quality(50)
+        Stream() : sock(INVALID_SOCKET), m_timeout(10), m_quality(70)
         {
             FD_ZERO( &master );
-            if (port) open(port);
         }
 
         ~Stream() 
@@ -68,8 +70,9 @@ namespace kerberos
             release();
         }
 
+        void configureStream(StringMap & settings);
         bool release();
-        bool open(int port);
+        bool open();
         bool isOpened();
         bool connect();
         void write(Image image);

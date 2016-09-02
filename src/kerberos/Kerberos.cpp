@@ -196,10 +196,14 @@ namespace kerberos
             LINFO << "Stopping streaming";
             stopStreamThread();
             delete stream;
+            LINFO << "Stopped streaming";
         }
         
+        LINFO << "Creating streaming object";
         stream = new Stream();
+        LINFO << "Start configuring streaming";
         stream->configureStream(settings);
+        LINFO << "Streaming configured succesfuly";
         startStreamThread();
     }
     

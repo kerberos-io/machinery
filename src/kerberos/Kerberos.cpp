@@ -195,7 +195,6 @@ namespace kerberos
         {
             LINFO << "Stopping streaming";
             stopStreamThread();
-            stream->release();
             delete stream;
         }
         

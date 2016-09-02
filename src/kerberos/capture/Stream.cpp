@@ -44,6 +44,8 @@ namespace kerberos
             close(sock);
         }
         sock = (INVALID_SOCKET);
+
+        LINFO << "Stream: Succesfully closed streaming";
         
         return false;
     }
@@ -84,7 +86,7 @@ namespace kerberos
             FD_SET(sock, &master);    
 
 
-            LINFO << "Configured stream on port " << helper::to_string(m_streamPort) << " with quality: " << helper::to_string(m_quality);
+            LINFO << "Stream: Configured stream on port " << helper::to_string(m_streamPort) << " with quality: " << helper::to_string(m_quality);
             
             return true;
         }

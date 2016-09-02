@@ -15,6 +15,11 @@ namespace kerberos
         std::string configuration = (helper::getValueByKey(parameters, "config")) ?: CONFIGURATION_PATH;
         configure(configuration);
 
+        // ----------------
+        // Initialize mutex
+        
+        pthread_mutex_init(&m_streamLock, NULL);
+
         // ------------------
         // Open the io thread
 
@@ -215,6 +220,7 @@ namespace kerberos
         // ---------------------------
         // Initialize capture device
         
+        pthread_mutex_lock(&m_streamLock);
         if(capture != 0)
         {
             LINFO << "Stopping capture device";
@@ -227,6 +233,7 @@ namespace kerberos
         capture = Factory<Capture>::getInstance()->create(settings.at("capture"));
         capture->setup(settings);
         capture->startGrabThread();
+        pthread_mutex_unlock(&m_streamLock);
     }
     
     // ----------------------------------
@@ -262,6 +269,7 @@ namespace kerberos
         {
             try
             {
+                pthread_mutex_lock(&kerberos->m_streamLock);
                 kerberos->stream->connect();
 
                 Image image = kerberos->capture->retrieve();
@@ -270,6 +278,7 @@ namespace kerberos
                     image.rotate(kerberos->capture->m_angle);
                 }
                 kerberos->stream->write(image);
+                pthread_mutex_unlock(&kerberos->m_streamLock);
                 usleep(200*1000); // sleep 200ms
             }
             catch(cv::Exception & ex){}

@@ -36,7 +36,7 @@ namespace kerberos
             void configureCapture(StringMap & settings);
             void configureCloud(StringMap & settings);
             void configureStream(StringMap & settings);
-	     void startStreamThread();
+	        void startStreamThread();
             void stopStreamThread();
             void startIOThread();
             void stopIOThread();

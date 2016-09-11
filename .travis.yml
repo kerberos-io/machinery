@@ -1,15 +1,21 @@
 sudo:
     - false
     
+os:
+    - linux
+    
 language: 
     - cpp
 
+services:
+    - docker
+    
 compiler:
     - gcc
 
 before_install:
     - sudo apt-get update
-    - sudo apt-get install x264 v4l-utils ffmpeg
+    - sudo apt-get install x264 v4l-utils
 
 script: 
     mkdir build && cd build && cmake .. && make && make check && sudo make install
@@ -22,5 +28,15 @@ notifications:
         on_success: always
         on_failure: always
 
-os:
-    - linux
+after_success:
+    - if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then
+        cd ../docker;
+        docker login -e="$DOCKER_EMAIL" -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
+        if [ "$TRAVIS_BRANCH" == "master" ]; then
+            docker build -t kerberos/machinery:latest .;
+            docker push kerberos/machinery:latest;
+        else
+            docker build --build-arg APP_ENV="$TRAVIS_BRANCH" -t kerberos/machinery:$TRAVIS_BRANCH .;
+            docker push kerberos/machinery:$TRAVIS_BRANCH;
+        fi
+      fi

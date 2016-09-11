@@ -28,15 +28,11 @@ notifications:
         on_success: always
         on_failure: always
 
-before_install:
-  - cd docker
-  - docker build -t kerberos/machinery .
-  
 after_success:
-  - docker login -e="$DOCKER_EMAIL" -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
-  - if [ "$TRAVIS_BRANCH" == "develop" ]; then
-    docker push kerberos/machinery:develop;
-    fi
-  - if [ "$TRAVIS_BRANCH" == "master" ]; then
+    - cd ../docker
+    - docker build --build-arg APP_ENV="$TRAVIS_BRANCH" -t kerberos/machinery .
+    - docker login -e="$DOCKER_EMAIL" -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
+    - docker push kerberos/machinery:"$TRAVIS_BRANCH";
+    - if [ "$TRAVIS_BRANCH" == "master" ]; then
     docker push kerberos/machinery;
     fi

@@ -29,10 +29,10 @@ notifications:
         on_failure: always
 
 after_success:
-    - cd ../docker
-    - docker build --build-arg APP_ENV="$TRAVIS_BRANCH" -t kerberos/machinery .
+    - cd ../docker;
+    - docker build --build-arg APP_ENV="$TRAVIS_BRANCH" -t kerberos/machinery .;
     - docker login -e="$DOCKER_EMAIL" -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
     - docker push kerberos/machinery:"$TRAVIS_BRANCH";
     - if [ "$TRAVIS_BRANCH" == "master" ]; then
     docker push kerberos/machinery;
-    fi
+    fi;

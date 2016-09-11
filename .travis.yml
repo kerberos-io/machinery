@@ -15,7 +15,7 @@ compiler:
 
 before_install:
     - sudo apt-get update
-    - sudo apt-get install x264 v4l-utils ffmpeg
+    - sudo apt-get install x264 v4l-utils
 
 script: 
     mkdir build && cd build && cmake .. && make && make check && sudo make install

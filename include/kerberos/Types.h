@@ -38,7 +38,8 @@ namespace kerberos
         public:
             T t;
             K k;
-            tuple(T t, K k):k(k),t(t){};
+            tuple(T t, K k):t(t),k(k){};
+            ~tuple(){}
     };
     
     class Image;

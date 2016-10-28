@@ -98,18 +98,30 @@ namespace kerberos
     
     Image * IPCamera::takeImage()
     {
+        // ----------------------------------------
         // Update camera, call executor's functor.
+        
         tryToUpdateCapture();
         
+        // -----------
         // Take image
+
         try
         {
+            // -----------------------------------
             // Get image from RTSP or MJPEG stream
+
             Image * image = new Image();
+
+            int countTimesFailed = 0;
             
             while(image->getColumns() == 0 || image->getRows() == 0)
             {
+                countTimesFailed++;
+
+                // ----------------------------
                 // Delay camera for some time..
+
                 usleep(m_delay*1000);
             
                 pthread_mutex_lock(&m_lock);
@@ -122,8 +134,20 @@ namespace kerberos
                     m_camera->read(image->getImage());
                 }
 
+                // ---------------------------------
                 // Check if need to rotate the image
+
                 image->rotate(m_angle);
+
+                // ----------------------------------
+                // If we're getting an invalid image,
+                // 10 times in a row, reopen.
+
+                if(countTimesFailed > 10)
+                {
+                    reopen();
+                    countTimesFailed = 0;
+                }
 
                 pthread_mutex_unlock(&m_lock);
             }

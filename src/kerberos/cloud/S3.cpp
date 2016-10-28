@@ -134,6 +134,7 @@ namespace kerberos
             curl_easy_setopt(curlHandle, CURLOPT_CUSTOMREQUEST, "PUT");
             curl_easy_setopt(curlHandle, CURLOPT_UPLOAD, 1L); 
             curl_easy_setopt(curlHandle, CURLOPT_READDATA, fd);
+            curl_easy_setopt(curlHandle, CURLOPT_NOSIGNAL, 1L);
             curl_easy_setopt(curlHandle, CURLOPT_READFUNCTION, reader);
             curl_easy_setopt(curlHandle, CURLOPT_INFILESIZE_LARGE, (curl_off_t)file_info.st_size);
             curl_easy_setopt(curlHandle, CURLOPT_WRITEFUNCTION, write);

@@ -1,5 +1,5 @@
 #ifndef MMAPGPIO_H
-    #define MMAPGPIO_H
+#define MMAPGPIO_H
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -9,6 +9,9 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
+
+// uncomment to compile for Raspberry Pi 2
+#define RASPBERRYPI2
 
 /***********************************************************************
  * Author: Hussam Al-Hertani (Hertaville.com)
@@ -73,7 +76,12 @@ public:
 	static const unsigned int HIGH = 1;
 
 private:
-	static const unsigned int GPIO_BASE = 0x20200000;// gpio registers base address
+#ifdef RASPBERRYPI2
+	static const unsigned int GPIO_BASE = 0x3f200000;// gpio registers base address PI2
+#else
+	static const unsigned int GPIO_BASE = 0x20200000;// gpio registers base address PI1
+#endif
+	
 	static const unsigned int GPIO_LEN =   0xB4;// need only map B4 registers
 
 	volatile unsigned int *mapRegAddr(unsigned long baseAddr);//performs mmaping into '/dev/mem'
@@ -82,4 +90,3 @@ private:
 };
 
 #endif
-

@@ -7,13 +7,13 @@
     </DifferentialCollins>
     
 	<BackgroundSubtraction>
-		<shadows type="text">true</shadows>
-		<history type="number">50</history>
+		<shadows type="text">false</shadows>
+		<history type="number">15</history>
 		<nmixtures type="number">5</nmixtures>
 		<ratio type="number">1</ratio>
 		<erode type="number">5</erode>
 		<dilate type="number">7</dilate>
-    	<threshold type="number">20</threshold>
+    	<threshold type="number">10</threshold>
     </BackgroundSubtraction>
     
 </algorithms>

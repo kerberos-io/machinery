@@ -21,6 +21,7 @@
 #include "machinery/expositor/Expositor.h"
 #include "machinery/io/Io.h"
 #include "easylogging++.h"
+#include "capture/Capture.h";
 
 namespace kerberos
 {
@@ -32,6 +33,7 @@ namespace kerberos
             Expositor * m_expositor;
             Heuristic * m_heuristic;
             std::vector<Io *> m_ios;
+            Capture * m_capture;
 
 		public:
             Machinery():m_conditions(0),m_algorithm(0),m_expositor(0),m_heuristic(0),m_ios(0){};
@@ -53,6 +55,9 @@ namespace kerberos
             };
                     
             void setup(const StringMap & settings);
+            void fire();
+            void setCapture(Capture * capture){m_capture = capture;};
+            void disableCapture();
             void setCondition(std::vector<Condition *> conditions){m_conditions = conditions;};
             void setAlgorithm(Algorithm * algorithm){m_algorithm = algorithm;};
             void setExpositor(Expositor * expositor){m_expositor = expositor;};

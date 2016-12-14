@@ -177,6 +177,7 @@ namespace kerberos
 
         if(machinery != 0) delete machinery;
         machinery = new Machinery();
+        machinery->setCapture(capture);
         machinery->setup(settings);
         machinery->initialize(m_images);
     }
@@ -199,6 +200,7 @@ namespace kerberos
         if(capture != 0)
         {
             LINFO << "Stopping capture device";
+            machinery->disableCapture();
             capture->stopGrabThread();
             capture->close();
             delete capture;
@@ -261,7 +263,7 @@ namespace kerberos
                     image.rotate(kerberos->capture->m_angle);
                 }
                 kerberos->stream->write(image);
-                usleep(200*1000); // sleep 200ms
+                usleep(100*1000); // sleep 100ms
             }
             catch(cv::Exception & ex){}
         }

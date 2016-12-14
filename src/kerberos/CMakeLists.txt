@@ -41,6 +41,7 @@
         machinery/heuristic/Sequence.cpp
         machinery/heuristic/Counter.cpp
         machinery/io/IoDisk.cpp
+        machinery/io/IoVideo.cpp
         machinery/io/IoTCP.cpp
         machinery/io/IoWebhook.cpp
     )

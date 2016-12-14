@@ -3,10 +3,20 @@
 
 	<Disk>
         <fileFormat type="text">timestamp_microseconds_instanceName_regionCoordinates_numberOfChanges_token.jpg</fileFormat>
-    	<directory type="text">/etc/opt/kerberosio/capture/</directory>
+        <directory type="text">/etc/opt/kerberosio/capture/</directory>
         <markWithTimestamp type="bool">false</markWithTimestamp>
         <timestampColor type="text">white</timestampColor>
     </Disk>
+    <Video>
+        <fps type="number">5</fps>
+        <recordAfter type="number">60</recordAfter>
+        <extension type="number">mkv</extension>
+        <codec type="number">h264</codec>
+        <fileFormat type="text">timestamp_microseconds_instanceName_token.jpg</fileFormat>
+        <directory type="text">/etc/opt/kerberosio/capture/</directory>
+        <markWithTimestamp type="bool">false</markWithTimestamp>
+        <timestampColor type="text">white</timestampColor>
+    </Video>
     <GPIO>
         <pin type="number">17</pin>
         <periods type="number">5</periods>

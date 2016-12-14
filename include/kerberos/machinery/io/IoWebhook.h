@@ -32,6 +32,8 @@ namespace kerberos
         public:
             IoWebhook(){};
             void setup(const StringMap & settings);
+            void fire(){};
+            void disableCapture(){};
             
             void setUrl(std::string url){m_url=url;};
             const char * getUrl(){return m_url.c_str();};

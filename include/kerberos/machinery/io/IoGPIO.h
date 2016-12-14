@@ -33,6 +33,8 @@ namespace kerberos
         public:
             IoGPIO(){};
             void setup(const StringMap & settings);
+            void fire(){};
+            void disableCapture(){};
             void setOutputPin(unsigned int pin);
             void setInputPin(unsigned int pin);
             void setHigh();

@@ -38,7 +38,7 @@ namespace kerberos
         h_d1.bitwiseAnd(h_d2, evaluation);
         evaluation.threshold(m_threshold);
         evaluation.erode(m_erodeKernel);
-        
+
         return evaluation;
     }
     

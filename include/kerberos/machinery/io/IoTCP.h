@@ -39,6 +39,8 @@ namespace kerberos
         public:
             IoTCP(){};
             void setup(const StringMap & settings);
+            void fire(){};
+            void disableCapture(){};
         
             void setIp(const std::string server_ip){m_server_ip=server_ip;};
             const char * getIp(){return m_server_ip.c_str();};

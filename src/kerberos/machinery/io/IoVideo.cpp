@@ -17,10 +17,10 @@ namespace kerberos
         std::string instanceName = settings.at("name");
         setInstanceName(instanceName);
 
-        m_fps = std::stoi(settings.at("ios.Video.fps"));
-        m_width = std::stoi(settings.at("capture.width"));
-        m_height = std::stoi(settings.at("capture.height"));
-        m_recordingTimeAfter = std::stoi(settings.at("ios.Video.recordAfter")); // in seconds
+        m_fps = std::atoi(settings.at("ios.Video.fps").c_str());
+        m_width = std::atoi(settings.at("capture.width").c_str());
+        m_height = std::atoi(settings.at("capture.height").c_str());
+        m_recordingTimeAfter = std::atoi(settings.at("ios.Video.recordAfter").c_str()); // in seconds
         m_extension = settings.at("ios.Video.extension");
         std::string codec = settings.at("ios.Video.codec");
         

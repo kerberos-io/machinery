@@ -9,6 +9,7 @@ namespace kerberos
         m_writer = 0;
         m_recording = false;
         pthread_mutex_init(&m_lock, NULL);
+        pthread_mutex_init(&m_time_lock, NULL);
         startRetrieveThread();
         
         // --------------------------
@@ -36,7 +37,7 @@ namespace kerberos
         // --------------------------
         // Check if need to draw timestamp
         
-        bool drawTimestamp = (settings.at("ios.Video.markWithTimestamp") == "true");
+        /*bool drawTimestamp = (settings.at("ios.Video.markWithTimestamp") == "true");
         setDrawTimestamp(drawTimestamp);
         cv::Scalar color = getColor(settings.at("ios.Video.timestampColor"));
         setTimestampColor(color);
@@ -44,7 +45,7 @@ namespace kerberos
         std::string timezone = settings.at("timezone");
         std::replace(timezone.begin(), timezone.end(), '-', '/');
         std::replace(timezone.begin(), timezone.end(), '$', '_');
-        setTimezone(timezone);
+        setTimezone(timezone);*/
         
         // -------------------------------------------------------------
         // Filemanager is mapped to a directory and is used by an image
@@ -67,6 +68,27 @@ namespace kerberos
         return m_colors.at(name);
     }
 
+    std::string IoVideo::buildPath(std::string pathToVideo)
+    {
+        // -----------------------------------------------
+        // Get timestamp, microseconds, random token, and instance name
+        
+        std::string instanceName = getInstanceName();
+        kerberos::helper::replace(pathToVideo, "instanceName", instanceName);
+
+        std::string timestamp = kerberos::helper::getTimestamp();
+        kerberos::helper::replace(pathToVideo, "timestamp", timestamp);
+
+        std::string microseconds = kerberos::helper::getMicroseconds();
+        std::string size = kerberos::helper::to_string((int)microseconds.length());
+        kerberos::helper::replace(pathToVideo, "microseconds", size + "-" + microseconds);
+
+        std::string token = kerberos::helper::to_string(rand()%1000);
+        kerberos::helper::replace(pathToVideo, "token", token);
+
+        return pathToVideo;
+    }
+
     void IoVideo::fire()
     {
         m_recording = true;
@@ -75,16 +97,22 @@ namespace kerberos
         // If a video is recording, and a new detection is coming in,
         // we'll reset the timer. So the video is expaned.
         // timer = ...
-        
+
+        pthread_mutex_lock(&m_time_lock);
+        m_timeStartedRecording = (double)cvGetTickCount() / (cvGetTickFrequency()*1000.*1000.);
+        pthread_mutex_unlock(&m_time_lock);
         
         // -----------------------------------------------------
         // Check if already recording, if not start a new video
         
         if(m_writer == 0)
         {
-            srand(time(NULL));
-            std::string timestamp = kerberos::helper::getTimestamp();
-            std::string file = timestamp + "_" + helper::to_string(rand());
+            // ----------------------------------------
+            // The naming convention that will be used
+            // for the image.
+            
+            std::string pathToVideo = getFileFormat();
+            std::string file = buildPath(pathToVideo);
             
             m_writer = new cv::VideoWriter();
             m_writer->open(m_directory + file + "." + m_extension, CV_FOURCC('H','2','6','4'), m_fps, cv::Size(m_width, m_height), true);
@@ -98,6 +126,8 @@ namespace kerberos
     {
         stopRecordThread();
         stopRetrieveThread();
+        pthread_mutex_unlock(&m_lock);
+        pthread_mutex_unlock(&m_time_lock);
         m_capture = 0;
     }
 
@@ -123,9 +153,20 @@ namespace kerberos
         Image image = video->m_capture->retrieve();
         pthread_mutex_unlock(&(video->m_lock));
         
-        int i = 0;
-        while(i < video->m_recordingTimeAfter * video->m_fps) // this will need to be replaced by realtime.
+        double cronoPause = (double)cvGetTickCount();
+        double cronoFPS = cronoPause;
+        double cronoTime = 0;
+        double timeElapsed = 0;
+        double timeToSleep = 0;
+
+        pthread_mutex_lock(&video->m_time_lock);
+        double timeToRecord = video->m_timeStartedRecording + video->m_recordingTimeAfter;
+        pthread_mutex_unlock(&video->m_time_lock);
+        
+        while(cronoTime < timeToRecord)
         {
+            cronoFPS = (double)cvGetTickCount();
+            
             try
             {
                 // -----------------------------
@@ -135,15 +176,31 @@ namespace kerberos
                 Image image = video->m_mostRecentImage;
                 video->m_writer->write(image.getImage());
                 pthread_mutex_unlock(&video->m_lock);
-                
-                i++;
             }
             catch(cv::Exception & ex)
             {
                 LERROR << ex.what();
             }
 
-            usleep((int)(1000*1000/video->m_fps)); // check how long need to sleep depends on time that can be writter to video.
+            // update time to record; (locking)
+            pthread_mutex_lock(&video->m_time_lock);
+            timeToRecord = video->m_timeStartedRecording + video->m_recordingTimeAfter;
+            pthread_mutex_unlock(&video->m_time_lock);
+            
+            cronoPause = (double)cvGetTickCount();
+            
+            cronoTime = cronoPause / (cvGetTickFrequency()*1000.*1000.);
+            timeElapsed = (cronoPause - cronoFPS) / (cvGetTickFrequency()*1000.*1000.);
+            timeToSleep = (1000 * 1000 / video->m_fps) - timeElapsed;
+            
+            if(timeToSleep > 0)
+            {
+                usleep(timeToSleep);
+            }
+            else
+            {
+                LINFO << "IoVideo: framerate is too fast, can't record video at this speed";
+            }
         }
         
         video->m_recording = false;

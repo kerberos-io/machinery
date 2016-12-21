@@ -8,14 +8,12 @@
         <timestampColor type="text">white</timestampColor>
     </Disk>
     <Video>
-        <fps type="number">5</fps>
-        <recordAfter type="number">60</recordAfter>
+        <fps type="number">3</fps>
+        <recordAfter type="number">5</recordAfter>
         <extension type="number">mkv</extension>
         <codec type="number">h264</codec>
-        <fileFormat type="text">timestamp_microseconds_instanceName_token.jpg</fileFormat>
+        <fileFormat type="text">timestamp_microseconds_instanceName_token</fileFormat>
         <directory type="text">/etc/opt/kerberosio/capture/</directory>
-        <markWithTimestamp type="bool">false</markWithTimestamp>
-        <timestampColor type="text">white</timestampColor>
     </Video>
     <GPIO>
         <pin type="number">17</pin>

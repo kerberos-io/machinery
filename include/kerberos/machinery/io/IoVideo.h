@@ -43,6 +43,7 @@ namespace kerberos
             void setup(const StringMap & settings);
             void fire();
             void disableCapture();
+            std::string buildPath(std::string pathToVideo);
             cv::Scalar getColor(const std::string name);
             bool getDrawTimestamp(){return m_drawTimestamp;};
             void setDrawTimestamp(bool drawTimestamp){m_drawTimestamp=drawTimestamp;};
@@ -63,8 +64,10 @@ namespace kerberos
             Image m_mostRecentImage;
             bool m_recording;
             pthread_mutex_t m_lock;
+            pthread_mutex_t m_time_lock;
             pthread_t m_recordThread;
             pthread_t m_retrieveThread;
+            double m_timeStartedRecording;
             void startRecordThread();
             void stopRecordThread();
             void startRetrieveThread();

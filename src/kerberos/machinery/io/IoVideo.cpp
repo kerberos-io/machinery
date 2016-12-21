@@ -115,7 +115,7 @@ namespace kerberos
             std::string file = buildPath(pathToVideo);
             
             m_writer = new cv::VideoWriter();
-            m_writer->open(m_directory + file + "." + m_extension, CV_FOURCC('H','2','6','4'), m_fps, cv::Size(m_width, m_height), true);
+            m_writer->open(m_directory + file + "." + m_extension, CV_FOURCC('H','2','6','4'), m_fps, cv::Size(m_width, m_height));
             
             stopRecordThread();
             startRecordThread();

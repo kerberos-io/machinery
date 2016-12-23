@@ -27,11 +27,11 @@ namespace kerberos
         
         if(codec == "h264")
         {
-            m_codec = CV_FOURCC('H','2','6','4');
+            m_codec = 0x00000021; //CV_FOURCC('X','2','6','4');
         }
         else
         {
-            m_codec = CV_FOURCC('M','J','P','G');
+            m_codec = -1;
         }
 
         // --------------------------
@@ -203,7 +203,7 @@ namespace kerberos
             }
         }
         
-         video->m_recording = false;
+        video->m_recording = false;
         video->m_writer->release();
         delete video->m_writer;
         video->m_writer = 0;

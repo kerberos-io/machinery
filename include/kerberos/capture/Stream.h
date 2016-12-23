@@ -76,6 +76,7 @@ namespace kerberos
         bool isOpened();
         bool connect();
         void write(Image image);
+        double wait;
     };
 }
 #endif

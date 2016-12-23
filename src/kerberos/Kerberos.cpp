@@ -263,7 +263,7 @@ namespace kerberos
                     image.rotate(kerberos->capture->m_angle);
                 }
                 kerberos->stream->write(image);
-                usleep(100*1000); // sleep 100ms
+                usleep(kerberos->stream->wait * 1000 * 1000); // sleep x microsec.
             }
             catch(cv::Exception & ex){}
         }

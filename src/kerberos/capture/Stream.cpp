@@ -12,6 +12,7 @@ namespace kerberos
         int enabled = (settings.at("streams.Mjpg.enabled") == "true");
         int port = std::atoi(settings.at("streams.Mjpg.streamPort").c_str());
         int quality = std::atoi(settings.at("streams.Mjpg.quality").c_str());
+        int fps = std::atoi(settings.at("streams.Mjpg.fps").c_str());
        
         //use port up to well known ports range
        if(port >= 1024)
@@ -20,6 +21,7 @@ namespace kerberos
             m_enabled = enabled;
             m_streamPort = port;
             m_quality = quality;
+            wait = 1. / fps;
        }
        else
        {

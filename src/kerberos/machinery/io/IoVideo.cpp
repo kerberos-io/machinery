@@ -99,7 +99,7 @@ namespace kerberos
         // timer = ...
 
         pthread_mutex_lock(&m_time_lock);
-        m_timeStartedRecording = (double)cvGetTickCount() / (cvGetTickFrequency()*1000.*1000.);
+        m_timeStartedRecording = (double) (cv::getTickCount() / cv::getTickFrequency());
         pthread_mutex_unlock(&m_time_lock);
         
         // -----------------------------------------------------
@@ -115,7 +115,7 @@ namespace kerberos
             std::string file = buildPath(pathToVideo);
             
             m_writer = new cv::VideoWriter();
-            m_writer->open(m_directory + file + "." + m_extension, CV_FOURCC('H','2','6','4'), m_fps, cv::Size(m_width, m_height));
+            m_writer->open(m_directory + file + "." + m_extension, m_codec, m_fps, cv::Size(m_width, m_height));
             
             stopRecordThread();
             startRecordThread();
@@ -165,7 +165,7 @@ namespace kerberos
         
         while(cronoTime < timeToRecord)
         {
-            cronoFPS = (double)cvGetTickCount();
+            cronoFPS = (double) cv::getTickCount();
             
             try
             {
@@ -187,23 +187,23 @@ namespace kerberos
             timeToRecord = video->m_timeStartedRecording + video->m_recordingTimeAfter;
             pthread_mutex_unlock(&video->m_time_lock);
             
-            cronoPause = (double)cvGetTickCount();
-            
-            cronoTime = cronoPause / (cvGetTickFrequency()*1000.*1000.);
-            timeElapsed = (cronoPause - cronoFPS) / (cvGetTickFrequency()*1000.*1000.);
-            timeToSleep = (1000 * 1000 / video->m_fps) - timeElapsed;
+            cronoPause = (double) cv::getTickCount();
+            cronoTime = cronoPause / cv::getTickFrequency();
+            timeElapsed = (cronoPause - cronoFPS) / cv::getTickFrequency();
+            double fpsToTime = 1. / video->m_fps;
+            timeToSleep = fpsToTime - timeElapsed;
             
             if(timeToSleep > 0)
             {
-                usleep(timeToSleep);
+                usleep(timeToSleep * 1000 * 1000);
             }
             else
             {
-                LINFO << "IoVideo: framerate is too fast, can't record video at this speed";
+                LINFO << "IoVideo: framerate is too fast, can't record video at this speed (" << video->m_fps << "/FPS)";
             }
         }
         
-        video->m_recording = false;
+         video->m_recording = false;
         video->m_writer->release();
         delete video->m_writer;
         video->m_writer = 0;

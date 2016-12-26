@@ -160,6 +160,11 @@ namespace kerberos
         pthread_mutex_lock(&video->m_time_lock);
         double timeToRecord = video->m_timeStartedRecording + video->m_recordingTimeAfter;
         pthread_mutex_unlock(&video->m_time_lock);
+
+        pthread_mutex_lock(&video->m_lock);
+        Image image = video->m_capture->retrieve();
+        video->m_mostRecentImage = image;
+        pthread_mutex_unlock(&video->m_lock);
         
         while(video->m_capture && cronoTime < timeToRecord)
         {

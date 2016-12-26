@@ -151,10 +151,6 @@ namespace kerberos
     {
         IoVideo * video = (IoVideo *) self;
         
-        pthread_mutex_lock(&(video->m_lock));
-        Image image = video->m_capture->retrieve();
-        pthread_mutex_unlock(&(video->m_lock));
-        
         double cronoPause = (double)cvGetTickCount();
         double cronoFPS = cronoPause;
         double cronoTime = 0;
@@ -221,10 +217,10 @@ namespace kerberos
 
         while(video->m_capture != 0)
         {
-            pthread_mutex_lock(&video->m_capture_lock);
-
-            if(video->m_capture && video->m_recording)
+            if(video->m_recording)
             {
+                pthread_mutex_lock(&video->m_capture_lock);
+
                 // -----------------------------
                 // Write the frames to the video
                 Image image = video->m_capture->retrieve();
@@ -233,13 +229,13 @@ namespace kerberos
                 video->m_mostRecentImage = image;
                 pthread_mutex_unlock(&video->m_lock);
                 usleep((int)(1000*1000/video->m_fps));
+
+                pthread_mutex_unlock(&video->m_capture_lock);
             }
             else
             {
                 usleep(500*1000);
             }
-
-            pthread_mutex_unlock(&video->m_capture_lock);
         }
     }
     

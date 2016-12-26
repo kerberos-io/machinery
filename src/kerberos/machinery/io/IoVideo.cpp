@@ -10,6 +10,7 @@ namespace kerberos
         m_recording = false;
         pthread_mutex_init(&m_lock, NULL);
         pthread_mutex_init(&m_time_lock, NULL);
+        pthread_mutex_init(&m_capture_lock, NULL);
         startRetrieveThread();
         
         // --------------------------
@@ -124,7 +125,10 @@ namespace kerberos
 
     void IoVideo::disableCapture()
     {
+        pthread_mutex_lock(&video->m_capture_lock);
         m_capture = 0;
+        pthread_mutex_unlock(&video->m_capture_lock);
+
         stopRecordThread();
         stopRetrieveThread();
     }
@@ -217,6 +221,8 @@ namespace kerberos
 
         while(video->m_capture != 0)
         {
+            pthread_mutex_lock(&video->m_capture_lock);
+
             if(video->m_capture && video->m_recording)
             {
                 // -----------------------------
@@ -232,6 +238,8 @@ namespace kerberos
             {
                 usleep(500*1000);
             }
+
+            pthread_mutex_unlock(&video->m_capture_lock);
         }
     }
     

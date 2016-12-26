@@ -124,11 +124,9 @@ namespace kerberos
 
     void IoVideo::disableCapture()
     {
+        m_capture = 0;
         stopRecordThread();
         stopRetrieveThread();
-        pthread_mutex_unlock(&m_lock);
-        pthread_mutex_unlock(&m_time_lock);
-        m_capture = 0;
     }
 
     bool IoVideo::save(Image & image)
@@ -163,7 +161,7 @@ namespace kerberos
         double timeToRecord = video->m_timeStartedRecording + video->m_recordingTimeAfter;
         pthread_mutex_unlock(&video->m_time_lock);
         
-        while(cronoTime < timeToRecord)
+        while(video->m_capture && cronoTime < timeToRecord)
         {
             cronoFPS = (double) cv::getTickCount();
             
@@ -217,7 +215,7 @@ namespace kerberos
     {
         IoVideo * video = (IoVideo *) self;
 
-        for(;;)
+        while(video->m_capture != 0)
         {
             if(video->m_capture && video->m_recording)
             {

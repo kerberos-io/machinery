@@ -125,8 +125,9 @@ namespace kerberos
 
     void IoVideo::disableCapture()
     {
+        m_recording = false; // stop recording
         pthread_mutex_lock(&m_capture_lock);
-        m_capture = 0;
+        m_capture = 0; // remove capture device
         pthread_mutex_unlock(&m_capture_lock);
     }
 

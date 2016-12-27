@@ -118,7 +118,6 @@ namespace kerberos
             m_writer = new cv::VideoWriter();
             m_writer->open(m_directory + file + "." + m_extension, m_codec, m_fps, cv::Size(m_width, m_height));
             
-            stopRecordThread();
             startRecordThread();
         }
     }

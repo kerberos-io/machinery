@@ -28,7 +28,7 @@ namespace kerberos
         
         if(codec == "h264")
         {
-            m_codec = 0x00000021; //CV_FOURCC('X','2','6','4');
+            m_codec = 0x00000021;//CV_FOURCC('H','2','6','4');
         }
         else
         {
@@ -106,7 +106,7 @@ namespace kerberos
         // -----------------------------------------------------
         // Check if already recording, if not start a new video
         
-        if(m_writer == 0)
+        if(m_capture && m_writer == 0)
         {
             // ----------------------------------------
             // The naming convention that will be used
@@ -114,9 +114,10 @@ namespace kerberos
             
             std::string pathToVideo = getFileFormat();
             std::string file = buildPath(pathToVideo);
+            Image image = m_capture->retrieve();
             
             m_writer = new cv::VideoWriter();
-            m_writer->open(m_directory + file + "." + m_extension, m_codec, m_fps, cv::Size(m_width, m_height));
+            m_writer->open(m_directory + file + "." + m_extension, m_codec, m_fps, cv::Size(image.getColumns(), image.getRows()));
             
             startRecordThread();
         }
@@ -216,15 +217,18 @@ namespace kerberos
             if(video->m_recording)
             {
                 pthread_mutex_lock(&video->m_capture_lock);
-
-                // -----------------------------
-                // Write the frames to the video
-                Image image = video->m_capture->retrieve();
                 
-                pthread_mutex_lock(&video->m_lock);
-                video->m_mostRecentImage = image;
-                pthread_mutex_unlock(&video->m_lock);
-                usleep((int)(1000*1000/video->m_fps));
+                if(video->m_capture != 0)
+                {
+                    // -----------------------------
+                    // Write the frames to the video
+                    Image image = video->m_capture->retrieve();
+                
+                    pthread_mutex_lock(&video->m_lock);
+                    video->m_mostRecentImage = image;
+                    pthread_mutex_unlock(&video->m_lock);
+                    usleep((int)(1000*1000/video->m_fps));
+                }
 
                 pthread_mutex_unlock(&video->m_capture_lock);
             }

@@ -128,10 +128,8 @@ namespace kerberos
         pthread_mutex_lock(&m_capture_lock);
         
         m_capture = 0; // remove capture device
-        stopRecordThread();
-        stopRetrieveThread();
 
-        pthread_mutex_lock(&m_capture_lock);
+        pthread_mutex_unlock(&m_capture_lock);
     }
 
     bool IoVideo::save(Image & image)

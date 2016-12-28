@@ -126,8 +126,12 @@ namespace kerberos
     void IoVideo::disableCapture()
     {
         m_recording = false; // stop recording
-        stopRetrieveThread();
+        std::cout << "wait1" << std::endl;
+        pthread_cancel(m_retrieveThread);
+        std::cout << "wait2" << std::endl;
         m_capture = 0; // remove capture device
+        std::cout << "wait3" << std::endl;
+        pthread_join(m_retrieveThread, NULL);
     }
 
     bool IoVideo::save(Image & image)

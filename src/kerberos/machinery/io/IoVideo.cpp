@@ -129,9 +129,7 @@ namespace kerberos
         std::cout << "wait1" << std::endl;
         pthread_cancel(m_retrieveThread);
         std::cout << "wait2" << std::endl;
-        pthread_mutex_lock(&m_capture_lock);
         m_capture = 0; // remove capture device
-        pthread_mutex_unlock(&m_capture_lock);
         std::cout << "wait3" << std::endl;
     }
 
@@ -254,6 +252,8 @@ namespace kerberos
             {
                 usleep(500*1000);
             }
+            
+            usleep(1000);
         }
     }
     

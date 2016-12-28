@@ -35,10 +35,7 @@ namespace kerberos
 
         public:
             IoVideo(){};
-            ~IoVideo()
-            {
-                stopRecordThread();
-            }; 
+            ~IoVideo(){}; 
 
             void setup(const StringMap & settings);
             void fire();

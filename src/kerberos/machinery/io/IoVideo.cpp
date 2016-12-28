@@ -126,6 +126,8 @@ namespace kerberos
     void IoVideo::disableCapture()
     {
         m_recording = false; // stop recording
+        stopRetrieveThread();
+        
         pthread_mutex_lock(&m_capture_lock);
         m_capture = 0; // remove capture device
         pthread_mutex_unlock(&m_capture_lock);
@@ -175,6 +177,8 @@ namespace kerberos
             }
             catch(cv::Exception & ex)
             {
+                pthread_mutex_unlock(&video->m_lock);
+                pthread_mutex_destroy(&video->m_lock);
                 LERROR << ex.what();
             }
 
@@ -217,21 +221,32 @@ namespace kerberos
         {
             if(video->m_recording)
             {
-                pthread_mutex_lock(&video->m_capture_lock);
-                
-                if(video->m_capture != 0)
+                try
                 {
-                    // -----------------------------
-                    // Write the frames to the video
-                    Image image = video->m_capture->retrieve();
-                
-                    pthread_mutex_lock(&video->m_lock);
-                    video->m_mostRecentImage = image;
-                    pthread_mutex_unlock(&video->m_lock);
-                    usleep((int)(1000*1000/video->m_fps));
-                }
+                    pthread_mutex_lock(&video->m_capture_lock);
+                    
+                    if(video->m_capture != 0)
+                    {
+                        // -----------------------------
+                        // Write the frames to the video
+                        Image image = video->m_capture->retrieve();
+                    
+                        pthread_mutex_lock(&video->m_lock);
+                        video->m_mostRecentImage = image;
+                        pthread_mutex_unlock(&video->m_lock);
+                        usleep((int)(1000*1000/video->m_fps));
+                    }
 
-                pthread_mutex_unlock(&video->m_capture_lock);
+                    pthread_mutex_unlock(&video->m_capture_lock);
+                }
+                catch(cv::Exception & ex)
+                {
+                    pthread_mutex_unlock(&video->m_capture_lock);
+                    pthread_mutex_destroy(&video->m_capture_lock);
+                    pthread_mutex_unlock(&video->m_lock);
+                    pthread_mutex_destroy(&video->m_lock);
+                    throw OpenCVException(ex.msg.c_str());
+                }
             }
             else
             {

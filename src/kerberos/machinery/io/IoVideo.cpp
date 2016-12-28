@@ -125,9 +125,13 @@ namespace kerberos
 
     void IoVideo::disableCapture()
     {
-        pthread_cancel(m_retrieveThread);
-        pthread_cancel(m_recordThread);
+        pthread_mutex_lock(&m_capture_lock);
+        
         m_capture = 0; // remove capture device
+        stopRecordThread();
+        stopRetrieveThread();
+
+        pthread_mutex_lock(&m_capture_lock);
     }
 
     bool IoVideo::save(Image & image)
@@ -261,7 +265,6 @@ namespace kerberos
 
     void IoVideo::stopRecordThread()
     {
-        pthread_cancel(m_recordThread);
         pthread_join(m_recordThread, NULL);
     }
 
@@ -272,7 +275,6 @@ namespace kerberos
     
     void IoVideo::stopRetrieveThread()
     {
-        pthread_cancel(m_retrieveThread);
         pthread_join(m_recordThread, NULL);
     }
 }

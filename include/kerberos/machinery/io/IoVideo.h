@@ -77,6 +77,7 @@ namespace kerberos
             int m_width;
             int m_height;
             std::string m_extension;
+            std::string m_fileName;
             std::string m_directory; 
     };
 }

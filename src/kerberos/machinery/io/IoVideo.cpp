@@ -113,11 +113,11 @@ namespace kerberos
             // for the image.
             
             std::string pathToVideo = getFileFormat();
-            std::string file = buildPath(pathToVideo);
+            m_fileName = buildPath(pathToVideo) + "." + m_extension;
             Image image = m_capture->retrieve();
             
             m_writer = new cv::VideoWriter();
-            m_writer->open(m_directory + file + "." + m_extension, m_codec, m_fps, cv::Size(image.getColumns(), image.getRows()));
+            m_writer->open(m_directory + m_fileName, m_codec, m_fps, cv::Size(image.getColumns(), image.getRows()));
             
             startRecordThread();
         }
@@ -206,6 +206,10 @@ namespace kerberos
         video->m_writer->release();
         delete video->m_writer;
         video->m_writer = 0;
+        
+        std::string link = SYMBOL_DIRECTORY + video->m_fileName;
+        std::string pathToVideo = video->m_directory + video->m_fileName;
+        symlink(pathToVideo.c_str(), link.c_str());
     }
     
     // -------------------------------------------

@@ -14,7 +14,7 @@
 #ifndef __Version_H_INCLUDED__   // if Version.h hasn't been included yet...
 #define __Version_H_INCLUDED__   // #define this so the compiler knows it has been included
 
-    #define VERSION "2.1.0"
+    #define VERSION "2.2.0"
     #define HADES "https://hades.kerberos.io"
     #define SYMBOL_DIRECTORY "/etc/opt/kerberosio/symbols/"
     #define CONFIGURATION_PATH "/etc/opt/kerberosio/config/config.xml"

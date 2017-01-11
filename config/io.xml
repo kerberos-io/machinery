@@ -12,7 +12,7 @@
         <recordAfter type="number">5</recordAfter>
         <extension type="number">mp4</extension>
         <codec type="number">h264</codec>
-        <fileFormat type="text">timestamp_microseconds_instanceName_token</fileFormat>
+        <fileFormat type="text">timestamp_microseconds_instanceName_regionCoordinates_numberOfChanges_token</fileFormat>
         <directory type="text">/etc/opt/kerberosio/capture/</directory>
     </Video>
     <GPIO>

@@ -69,8 +69,49 @@ namespace kerberos
         return m_colors.at(name);
     }
 
-    std::string IoVideo::buildPath(std::string pathToVideo)
+    std::string IoVideo::buildPath(std::string pathToVideo, JSON & data)
     {
+         // ------------------------------------------
+        // Stringify data object: build image path
+        // with data information.
+        
+        static const std::string kTypeNames[] = { "Null", "False", "True", "Object", "Array", "String", "Number" };
+        for (JSONValue::ConstMemberIterator itr = data.MemberBegin(); itr != data.MemberEnd(); ++itr)
+        {
+            std::string name = itr->name.GetString();
+            std::string type = kTypeNames[itr->value.GetType()];
+            
+            if(type == "String")
+            {
+                std::string value = itr->value.GetString();
+                kerberos::helper::replace(pathToVideo, name, value);
+            }
+            else if(type == "Number")
+            {
+                std::string value = kerberos::helper::to_string(itr->value.GetInt());
+                kerberos::helper::replace(pathToVideo, name, value);
+            }
+            else if(type == "Array")
+            {
+                std::string arrayString = "";
+                for (JSONValue::ConstValueIterator itr2 = itr->value.Begin(); itr2 != itr->value.End(); ++itr2)
+                {
+                    type = kTypeNames[itr2->GetType()];
+                    
+                    if(type == "String")
+                    {
+                        arrayString += itr2->GetString();
+                    }
+                    else if(type == "Number")
+                    {
+                       arrayString += kerberos::helper::to_string(itr2->GetInt());
+                    }
+                    
+                    arrayString += "-";
+                }
+                kerberos::helper::replace(pathToVideo, name, arrayString.substr(0, arrayString.size()-1));
+            }
+        }
         // -----------------------------------------------
         // Get timestamp, microseconds, random token, and instance name
         
@@ -90,7 +131,7 @@ namespace kerberos
         return pathToVideo;
     }
 
-    void IoVideo::fire()
+    void IoVideo::fire(JSON & data)
     {
         m_recording = true;
 
@@ -113,7 +154,7 @@ namespace kerberos
             // for the image.
             
             std::string pathToVideo = getFileFormat();
-            m_fileName = buildPath(pathToVideo) + "." + m_extension;
+            m_fileName = buildPath(pathToVideo, data) + "." + m_extension;
             Image image = m_capture->retrieve();
             
             m_writer = new cv::VideoWriter();

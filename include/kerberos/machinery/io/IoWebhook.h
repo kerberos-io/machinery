@@ -32,7 +32,7 @@ namespace kerberos
         public:
             IoWebhook(){};
             void setup(const StringMap & settings);
-            void fire(){};
+            void fire(JSON & data){};
             void disableCapture(){};
             
             void setUrl(std::string url){m_url=url;};

@@ -36,7 +36,7 @@ namespace kerberos
             virtual ~Io(){};
             virtual void setup(const StringMap & settings);
             void setCapture(Capture * capture){m_capture = capture;};
-            virtual void fire() = 0;
+            virtual void fire(JSON & data) = 0;
             virtual void disableCapture() = 0;
             virtual bool save(Image & image) = 0;
             virtual bool save(Image & image, JSON & data) = 0;

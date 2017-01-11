@@ -55,7 +55,7 @@ namespace kerberos
             };
                     
             void setup(const StringMap & settings);
-            void fire();
+            void fire(JSON & data);
             void setCapture(Capture * capture){m_capture = capture;};
             void disableCapture();
             void setCondition(std::vector<Condition *> conditions){m_conditions = conditions;};

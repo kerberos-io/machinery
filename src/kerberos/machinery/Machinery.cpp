@@ -55,11 +55,11 @@ namespace kerberos
         
     }
 
-    void Machinery::fire()
+    void Machinery::fire(JSON & data)
     {
         for(int i = 0; i < m_ios.size(); i++)
         {
-            m_ios[i]->fire();
+            m_ios[i]->fire(data);
         }
     }
 
@@ -108,7 +108,7 @@ namespace kerberos
 
         if(detectMotion(images, data))
         {
-            fire();
+            fire(data);
             return true;
         }
 

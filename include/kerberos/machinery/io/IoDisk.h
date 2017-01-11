@@ -33,7 +33,7 @@ namespace kerberos
         public:
             IoDisk(){};
             void setup(const StringMap & settings);
-            void fire(){};
+            void fire(JSON & data){};
             void disableCapture(){};
             cv::Scalar getColor(const std::string name);
             bool getDrawTimestamp(){return m_drawTimestamp;};

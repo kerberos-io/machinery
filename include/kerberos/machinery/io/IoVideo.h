@@ -38,9 +38,9 @@ namespace kerberos
             ~IoVideo(){}; 
 
             void setup(const StringMap & settings);
-            void fire();
+            void fire(JSON & data);
             void disableCapture();
-            std::string buildPath(std::string pathToVideo);
+            std::string buildPath(std::string pathToVideo, JSON & data);
             cv::Scalar getColor(const std::string name);
             bool getDrawTimestamp(){return m_drawTimestamp;};
             void setDrawTimestamp(bool drawTimestamp){m_drawTimestamp=drawTimestamp;};

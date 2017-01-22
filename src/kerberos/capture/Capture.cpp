@@ -2,13 +2,14 @@
     
 namespace kerberos
 {
-    void Capture::setup(kerberos::StringMap & settings, int width, int height)
+    void Capture::setup(kerberos::StringMap & settings, int width, int height, int angle)
     {
         // --------------------------
         // Make width & height global.
         
         settings["capture.width"] = helper::to_string(width);
         settings["capture.height"] = helper::to_string(height);
+        settings["capture.angle"] = helper::to_string(angle);
         
         // ----------------
         // Initialize mutex

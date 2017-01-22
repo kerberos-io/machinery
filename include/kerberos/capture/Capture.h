@@ -45,7 +45,7 @@ namespace kerberos
             Capture(){};
             virtual ~Capture(){};
             virtual void setup(kerberos::StringMap & settings) = 0;
-            void setup(kerberos::StringMap & settings, int width, int height);
+            void setup(kerberos::StringMap & settings, int width, int height, int angle);
             virtual void setImageSize(int width, int height);
             virtual void setRotation(int angle);
             virtual void setDelay(int msec);

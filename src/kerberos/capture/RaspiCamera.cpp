@@ -10,7 +10,7 @@ namespace kerberos
         int delay = std::atoi(settings.at("captures.RaspiCamera.delay").c_str());
 
         // Save width and height in settings.
-        Capture::setup(settings, width, height);
+        Capture::setup(settings, width, height, angle);
         setImageSize(width, height);
         setRotation(angle);
         setDelay(delay);

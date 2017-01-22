@@ -201,6 +201,16 @@ namespace kerberos
         double timeToRecord = video->m_timeStartedRecording + video->m_recordingTimeAfter;
         pthread_mutex_unlock(&video->m_time_lock);
         
+        Image image = video->m_capture->retrieve();
+        if(video->m_capture->m_angle != 0)
+        {
+            image.rotate(video->m_capture->m_angle);
+        }
+        
+        pthread_mutex_lock(&video->m_lock);
+        video->m_mostRecentImage = image;
+        pthread_mutex_unlock(&video->m_lock);
+        
         while(video->m_capture && cronoTime < timeToRecord)
         {
             cronoFPS = (double) cv::getTickCount();
@@ -274,6 +284,10 @@ namespace kerberos
                         // -----------------------------
                         // Write the frames to the video
                         Image image = video->m_capture->retrieve();
+                        if(video->m_capture->m_angle != 0)
+                        {
+                            image.rotate(video->m_capture->m_angle);
+                        }
                     
                         pthread_mutex_lock(&video->m_lock);
                         video->m_mostRecentImage = image;

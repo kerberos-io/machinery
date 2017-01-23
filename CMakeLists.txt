@@ -9,7 +9,7 @@ project(Kerberos)
 		FIND_LIBRARY(mmalutil_LIBS NAMES mmal_util PATHS /opt/vc/lib)
 		FIND_LIBRARY(mmal_LIBS NAMES mmal PATHS /opt/vc/lib)
 
-		if( ( mmal_LIBS ) AND ( mmalutil_LIBS) AND ( mmalcore_LIBS) )
+		if( ( mmal_LIBS ) AND ( mmalutil_LIBS ) AND ( mmalcore_LIBS ) )
 	    	set(IS_RASPBERRYPI 1)
 	    endif()
 	endif()

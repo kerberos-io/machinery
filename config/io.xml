@@ -28,5 +28,8 @@
     <Webhook>
         <url type="text">http://localhost/api/v1/webhook</url>
     </Webhook>
+    <Script>
+        <path type="text">/etc/opt/kerberosio/scripts/run.sh</path>
+    </Script>
     
 </ios>

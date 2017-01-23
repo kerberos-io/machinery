@@ -22,6 +22,7 @@
 # Get configuration files
 
     FILE(GLOB CONFIG_FILES ${CMAKE_SOURCE_DIR}/config/*)
+    FILE(GLOB SCRIPTS ${CMAKE_SOURCE_DIR}/scripts/*)
     FILE(GLOB LOG_FILE ${CMAKE_SOURCE_DIR}/logs/log.stash)
     
 # ----------------------------------------------
@@ -68,8 +69,16 @@
 # Install
 
 	# copy configuration files
-	INSTALL(FILES ${CONFIG_FILES}
+    INSTALL(FILES ${CONFIG_FILES}
         DESTINATION "/etc/opt/kerberosio/config"
+        PERMISSIONS
+        OWNER_EXECUTE OWNER_WRITE OWNER_READ
+        GROUP_EXECUTE GROUP_WRITE GROUP_READ
+        WORLD_EXECUTE WORLD_WRITE WORLD_READ)
+
+    # copy script
+    INSTALL(FILES ${SCRIPTS}
+        DESTINATION "/etc/opt/kerberosio/scripts"
         PERMISSIONS
         OWNER_EXECUTE OWNER_WRITE OWNER_READ
         GROUP_EXECUTE GROUP_WRITE GROUP_READ

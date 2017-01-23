@@ -3,12 +3,15 @@
 //  Description: Streaming images from Capture Devices as MJPEG.
 //  Created:     15/02/2015
 //  Author:      Cédric Verstraeten
-//  Mail:        hello@cedric.ws
-//	Website:	 www.cedric.ws
+//  Mail:        cedric@verstraeten.io
+//  Website:     www.verstraeten.io
 //
 //  The copyright to the computer program(s) herein
-//  is the property of Cédric Verstraeten, Belgium.
-//  The program(s) may be used and/or copied .
+//  is the property of Verstraeten.io, Belgium.
+//  The program(s) may be used and/or copied under 
+//  the CC-NC-ND license model.
+//
+//  https://doc.kerberos.io/license
 //
 /////////////////////////////////////////////////////
 

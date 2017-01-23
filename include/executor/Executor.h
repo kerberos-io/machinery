@@ -23,12 +23,12 @@
 //
 //  Created:     28/11/2014
 //  Author:      Cédric Verstraeten
-//  Mail:        hello@cedric.ws
-//  Website:     www.cedric.ws
+//  Mail:        cedric@verstraeten.io
+//  Website:     www.verstraeten.io
 //
 //  The copyright to the computer program(s) herein
-//  is the property of cedric.ws, Belgium.
-//  The program(s) may be used and/or copied .
+//  is the property of Verstraeten.io, Belgium.
+//  The program(s) may be used and/or copied.
 //
 /////////////////////////////////////////////////////
 

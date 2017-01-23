@@ -3,12 +3,14 @@
 //  Description: An image for simple image manipulations, an OpenCV wrapper.
 //  Created:     17/07/2014
 //  Author:      Cédric Verstraeten
-//  Mail:        hello@cedric.ws
-//  Website:     www.kerberos.io
+//  Mail:        cedric@verstraeten.io
+//  Website:     www.verstraeten.io
 //
 //  The copyright to the computer program(s) herein
-//  is the property of kerberos.io, Belgium.
-//  The program(s) may be used and/or copied .
+//  is the property of Verstraeten.io, Belgium. 
+//  the CC-NC-ND license model.
+//
+//  https://doc.kerberos.io/license
 //
 /////////////////////////////////////////////////////
 

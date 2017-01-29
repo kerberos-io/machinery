@@ -10,6 +10,10 @@ namespace kerberos
         int angle = std::atoi(settings.at("captures.IPCamera.angle").c_str());
         int delay = std::atoi(settings.at("captures.IPCamera.delay").c_str());
         
+        // Initialize executor (update the usb camera at specific times).
+        tryToUpdateCapture.setAction(this, &IPCamera::update);
+        tryToUpdateCapture.setInterval("thrice in 10 functions calls");
+        
         // Save width and height in settings
         Capture::setup(settings, width, height, angle);
         setImageSize(width, height);
@@ -19,10 +23,6 @@ namespace kerberos
         // Initialize URL to IP Camera
         setUrl(url);
         reopen();
-        
-        // Initialize executor (update the usb camera at specific times).
-        tryToUpdateCapture.setAction(this, &IPCamera::update);
-        tryToUpdateCapture.setInterval("thrice in 10 functions calls");
     }
     
     IPCamera::IPCamera(int width, int height)
@@ -113,12 +113,9 @@ namespace kerberos
 
             Image * image = new Image();
 
-            int countTimesFailed = 0;
-            
+
             while(image->getColumns() == 0 || image->getRows() == 0)
             {
-                countTimesFailed++;
-
                 // ----------------------------
                 // Delay camera for some time..
 
@@ -138,17 +135,7 @@ namespace kerberos
                 // Check if need to rotate the image
 
                 image->rotate(m_angle);
-
-                // ----------------------------------
-                // If we're getting an invalid image,
-                // 10 times in a row, reopen.
-
-                if(countTimesFailed > 10)
-                {
-                    reopen();
-                    countTimesFailed = 0;
-                }
-
+                
                 pthread_mutex_unlock(&m_lock);
             }
             
@@ -208,11 +195,11 @@ namespace kerberos
     void IPCamera::reopen()
     {
         m_camera->release();
+        open(m_url.c_str());
         
-        while(!isOpened())
+        if(!m_camera->isOpened())
         {
-            open(m_url.c_str());
-            usleep(1000*500);
+            throw OpenCVException("can't open url of ip camera");
         }
     }
     

@@ -45,7 +45,7 @@ namespace kerberos
         return createDirectory(path.c_str());
     }
 
-    bool FileManager::save(Image & image, const std::string & path)
+    bool FileManager::save(Image & image, const std::string & path, bool createSymbol)
     {
         // -------------------------
         // Create filename and directories if not exist
@@ -63,8 +63,11 @@ namespace kerberos
         std::string pathToImage = getBaseDirectory() + "/" + path;
         if(image.save(pathToImage))
         {
-            std::string link = SYMBOL_DIRECTORY + path;
-            symlink(pathToImage.c_str(), link.c_str());
+            if(createSymbol)
+            {
+                std::string link = SYMBOL_DIRECTORY + path;
+                symlink(pathToImage.c_str(), link.c_str());
+            }
 
             return true;
         }

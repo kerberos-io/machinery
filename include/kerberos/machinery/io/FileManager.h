@@ -44,7 +44,7 @@ namespace kerberos
             bool createDirectoryIfNotExists(char * dir);
             bool createDirectory(std::string & path);
             bool createDirectory(const char * path);
-            bool save(Image & image, const std::string & path);
+            bool save(Image & image, const std::string & path, bool createSymbol);
     };
 }
 #endif 

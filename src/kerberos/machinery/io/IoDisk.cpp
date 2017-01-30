@@ -25,6 +25,15 @@ namespace kerberos
         std::replace(timezone.begin(), timezone.end(), '$', '_');
         setTimezone(timezone);
         
+        m_publicKey = settings.at("clouds.S3.publicKey");
+        m_privateKey = settings.at("clouds.S3.privateKey");
+        
+        m_createSymbol = false;
+        if(m_privateKey != "" && m_publicKey != "")
+        {
+            m_createSymbol = true;
+        }
+        
         // -------------------------------------------------------------
         // Filemanager is mapped to a directory and is used by an image
         // to save to the correct directory.
@@ -114,7 +123,7 @@ namespace kerberos
         // ---------------------------------------------------------------------
         // Save original version & generate unique timestamp for current image
         
-        return m_fileManager.save(image, pathToImage);
+        return m_fileManager.save(image, pathToImage, false);
     }
     
     bool IoDisk::save(Image & image, JSON & data)
@@ -189,6 +198,7 @@ namespace kerberos
         // Save original version
 
         BINFO << "IoDisk: saving image " + pathToImage;
-        return m_fileManager.save(image, pathToImage);
+        
+        return m_fileManager.save(image, pathToImage, m_createSymbol);
     }
 }

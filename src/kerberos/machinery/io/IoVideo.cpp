@@ -26,6 +26,15 @@ namespace kerberos
         m_extension = settings.at("ios.Video.extension");
         std::string codec = settings.at("ios.Video.codec");
         
+        m_publicKey = settings.at("clouds.S3.publicKey");
+        m_privateKey = settings.at("clouds.S3.privateKey");
+        
+        m_createSymbol = false;
+        if(m_privateKey != "" && m_publicKey != "")
+        {
+            m_createSymbol = true;
+        }
+        
         if(codec == "h264")
         {
             m_codec = 0x00000021;//CV_FOURCC('H','2','6','4');
@@ -258,9 +267,12 @@ namespace kerberos
         delete video->m_writer;
         video->m_writer = 0;
         
-        std::string link = SYMBOL_DIRECTORY + video->m_fileName;
-        std::string pathToVideo = video->m_directory + video->m_fileName;
-        symlink(pathToVideo.c_str(), link.c_str());
+        if(video->m_createSymbol)
+        {
+            std::string link = SYMBOL_DIRECTORY + video->m_fileName;
+            std::string pathToVideo = video->m_directory + video->m_fileName;
+            symlink(pathToVideo.c_str(), link.c_str());
+        }
     }
     
     // -------------------------------------------

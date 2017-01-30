@@ -32,6 +32,9 @@ namespace kerberos
             cv::Scalar m_timestampColor;
             std::string m_timezone;
             FileManager m_fileManager;
+            std::string m_publicKey;
+            std::string m_privateKey;
+            bool m_createSymbol;
             
         public:
             IoDisk(){};

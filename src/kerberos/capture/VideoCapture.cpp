@@ -121,7 +121,12 @@ namespace kerberos
             {
                 m_video->release();
                 m_video->open(getPath());
-                //m_video->set(CV_CAP_PROP_POS_FRAMES, 1850);
+                
+                if(!isOpened())
+                {
+                    throw OpenCVException("can't open raspberry pi camera");
+                }
+
                 setImageSize(m_frameWidth, m_frameHeight);
             }
         }

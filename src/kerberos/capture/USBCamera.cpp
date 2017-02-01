@@ -9,6 +9,10 @@ namespace kerberos
         int deviceNumber = std::atoi(settings.at("captures.USBCamera.deviceNumber").c_str());
         int angle = std::atoi(settings.at("captures.USBCamera.angle").c_str());
         int delay = std::atoi(settings.at("captures.USBCamera.delay").c_str());
+
+        // Initialize executor (update the usb camera at specific times).
+        tryToUpdateCapture.setAction(this, &USBCamera::update);
+        tryToUpdateCapture.setInterval("thrice in 10 functions calls");
         
         // Save width and height in settings
         Capture::setup(settings, width, height, angle);
@@ -19,10 +23,6 @@ namespace kerberos
         
         // Initialize USB Camera
         open();
-        
-        // Initialize executor (update the usb camera at specific times).
-        tryToUpdateCapture.setAction(this, &USBCamera::update);
-        tryToUpdateCapture.setInterval("thrice in 10 functions calls");
     }
     
     USBCamera::USBCamera(int width, int height)
@@ -127,6 +127,11 @@ namespace kerberos
                 m_camera->release();
                 m_camera->open(getDeviceNumber());
                 setImageSize(m_frameWidth, m_frameHeight);
+                
+                if(!isOpened())
+                {
+                    throw OpenCVException("can't open usb camera");
+                }
             }
         }
         catch(cv::Exception & ex)

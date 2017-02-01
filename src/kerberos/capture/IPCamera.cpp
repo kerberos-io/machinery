@@ -199,7 +199,14 @@ namespace kerberos
         
         if(!m_camera->isOpened())
         {
-            throw OpenCVException("can't open url of ip camera");
+            m_url += "?"; // retry with ?
+
+            open(m_url.c_str());
+        
+            if(!m_camera->isOpened())
+            {
+                throw OpenCVException("can't open url of ip camera");
+            }
         }
     }
     

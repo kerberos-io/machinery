@@ -9,6 +9,10 @@ namespace kerberos
         int angle = std::atoi(settings.at("captures.RaspiCamera.angle").c_str());
         int delay = std::atoi(settings.at("captures.RaspiCamera.delay").c_str());
 
+        // Initialize executor
+        tryToUpdateCapture.setAction(this, &RaspiCamera::update);
+        tryToUpdateCapture.setInterval("once at 1000 calls");
+
         // Save width and height in settings.
         Capture::setup(settings, width, height, angle);
         setImageSize(width, height);
@@ -17,10 +21,6 @@ namespace kerberos
         
         // Open camera
         open();
-        
-        // Initialize executor
-        tryToUpdateCapture.setAction(this, &RaspiCamera::update);
-        tryToUpdateCapture.setInterval("once at 1000 calls");
     }
     
     void RaspiCamera::grab()
@@ -115,6 +115,11 @@ namespace kerberos
     void RaspiCamera::open()
     {
         m_camera->open();
+
+        if(!isOpened())
+        {
+            throw OpenCVException("can't open usb camera");
+        }
 
         // ----------
         // sleep a second, to be sure the camera is enabled properly.

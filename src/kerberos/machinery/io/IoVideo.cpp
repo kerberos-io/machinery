@@ -11,6 +11,7 @@ namespace kerberos
         pthread_mutex_init(&m_lock, NULL);
         pthread_mutex_init(&m_time_lock, NULL);
         pthread_mutex_init(&m_capture_lock, NULL);
+        pthread_mutex_init(&m_write_lock, NULL);
         startRetrieveThread();
         
         // --------------------------
@@ -175,11 +176,13 @@ namespace kerberos
 
     void IoVideo::disableCapture()
     {
+        pthread_mutex_lock(&m_write_lock);
         pthread_mutex_lock(&m_capture_lock);
         
         m_capture = 0; // remove capture device
 
         pthread_mutex_unlock(&m_capture_lock);
+        pthread_mutex_unlock(&m_write_lock);
     }
 
     bool IoVideo::save(Image & image)
@@ -220,7 +223,8 @@ namespace kerberos
         video->m_mostRecentImage = image;
         pthread_mutex_unlock(&video->m_lock);
         
-        while(video->m_capture && cronoTime < timeToRecord)
+        pthread_mutex_lock(&video->m_write_lock);
+        while(cronoTime < timeToRecord)
         {
             cronoFPS = (double) cv::getTickCount();
             
@@ -273,6 +277,7 @@ namespace kerberos
             std::string pathToVideo = video->m_directory + video->m_fileName;
             symlink(pathToVideo.c_str(), link.c_str());
         }
+        pthread_mutex_unlock(&video->m_write_lock);
     }
     
     // -------------------------------------------
@@ -287,9 +292,10 @@ namespace kerberos
         {
             if(video->m_recording)
             {
+                pthread_mutex_lock(&video->m_capture_lock);
+                
                 try
                 {
-                    pthread_mutex_lock(&video->m_capture_lock);
                     
                     if(video->m_capture != 0)
                     {
@@ -306,8 +312,6 @@ namespace kerberos
                         pthread_mutex_unlock(&video->m_lock);
                         usleep((int)(1000*1000/video->m_fps));
                     }
-
-                    pthread_mutex_unlock(&video->m_capture_lock);
                 }
                 catch(cv::Exception & ex)
                 {
@@ -317,13 +321,13 @@ namespace kerberos
                     pthread_mutex_destroy(&video->m_lock);
                     throw OpenCVException(ex.msg.c_str());
                 }
+                
+                pthread_mutex_unlock(&video->m_capture_lock);
             }
             else
             {
                 usleep(500*1000);
             }
-            
-            usleep(1000);
         }
     }
     

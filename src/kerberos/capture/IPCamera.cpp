@@ -53,11 +53,6 @@ namespace kerberos
                 grabbed = m_camera->grab();
             }
 
-            if(!grabbed)
-            {
-                reopen();
-                usleep(1000*500);
-            }
             pthread_mutex_unlock(&m_lock);
         }
         catch(cv::Exception & ex)

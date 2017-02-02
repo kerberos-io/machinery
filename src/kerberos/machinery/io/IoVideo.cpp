@@ -130,7 +130,14 @@ namespace kerberos
         m_colors["green"] = cv::Scalar(0,255,0);
         m_colors["blue"] = cv::Scalar(255,0,0);
         
-        return m_colors.at(name);
+        if(name == "none")
+        {
+            return m_colors.at("white");
+        }
+        else
+        {
+            return m_colors.at(name);
+        }
     }
 
     std::string IoVideo::buildPath(std::string pathToVideo, JSON & data)

@@ -29,6 +29,8 @@ namespace kerberos
     
     class Image
     {
+        typedef std::vector<Point2f> PointVector;
+
         private:
             cv::Mat m_image;
 
@@ -57,6 +59,9 @@ namespace kerberos
             void erode(const Image & kernel);
             void dilate(const Image & kernel);
             void threshold(const int threshold);
+            void createMask(int width, int height, PointVector & points);
+            void drawMask(Image & mask);
+
             int brightness();
             static cv::Mat createKernel(int width, int height)
             {

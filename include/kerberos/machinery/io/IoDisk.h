@@ -25,6 +25,8 @@ namespace kerberos
     char DiskName[] = "Disk";
     class IoDisk : public IoCreator<DiskName, IoDisk>
     {
+        typedef std::vector<Point2f> PointVector;
+
         private:
             std::string m_instanceName;
             std::string m_fileFormat;
@@ -35,7 +37,9 @@ namespace kerberos
             std::string m_publicKey;
             std::string m_privateKey;
             bool m_createSymbol;
-            
+            Image m_mask;
+            bool m_privacy;
+
         public:
             IoDisk(){};
             void setup(const StringMap & settings);

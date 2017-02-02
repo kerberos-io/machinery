@@ -27,6 +27,8 @@ namespace kerberos
 {
     class Expositor
     {
+        typedef std::vector<Point2f> PointVector;
+
         protected:
             const char * name;
             

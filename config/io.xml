@@ -6,6 +6,7 @@
         <directory type="text">/etc/opt/kerberosio/capture/</directory>
         <markWithTimestamp type="bool">false</markWithTimestamp>
         <timestampColor type="text">white</timestampColor>
+        <privacy type="bool">true</privacy>
     </Disk>
     <Video>
         <fps type="number">3</fps>
@@ -14,6 +15,9 @@
         <codec type="number">h264</codec>
         <fileFormat type="text">timestamp_microseconds_instanceName_regionCoordinates_numberOfChanges_token</fileFormat>
         <directory type="text">/etc/opt/kerberosio/capture/</directory>
+        <markWithTimestamp type="bool">false</markWithTimestamp>
+        <timestampColor type="text">white</timestampColor>
+        <privacy type="bool">false</privacy>
     </Video>
     <GPIO>
         <pin type="number">17</pin>

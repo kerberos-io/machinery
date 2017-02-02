@@ -6,6 +6,60 @@ namespace kerberos
     {
         Io::setup(settings);
         
+        // ----------------------------------------
+        // If privacy mode is enabled, we calculate
+        // a mask to remove the public area.
+        
+        m_privacy = (settings.at("ios.Disk.privacy") == "true");
+
+        if(m_privacy)
+        {
+            // --------------------------------
+            // Parse coordinates from config file
+            //  - x,y|x,y|x,y|... => add to vectory as Point2f
+            
+            std::vector<cv::Point2f> coor;
+            
+            std::vector<std::string> coordinates;
+            helper::tokenize(settings.at("expositors.Hull.region"), coordinates, "|");
+            
+            for(int i = 0; i < coordinates.size(); i++)
+            {
+                std::vector<std::string> fromAndTo;
+                helper::tokenize(coordinates[i], fromAndTo, ",");
+                int from = std::atoi(fromAndTo[0].c_str());
+                int to = std::atoi(fromAndTo[1].c_str());
+                Point2f p(from ,to);
+                coor.push_back(p);
+            }
+            
+            // -------------------------------
+            // Get width and height of image
+            
+            Image preview = m_capture->retrieve();
+            int captureWidth = preview.getColumns();
+            int captureHeight = preview.getRows();
+
+            // --------------------------------
+            // Calculate points in hull
+            
+            PointVector points;
+            points.clear();
+            for(int j = 0; j < captureHeight; j++)
+            {
+                for(int i = 0; i < captureWidth; i++)
+                {
+                    cv::Point2f p(i,j);
+                    if(cv::pointPolygonTest(coor, p, false) >= 0)
+                    {
+                        points.push_back(p);
+                    }
+                }
+            }
+
+            m_mask.createMask(captureWidth, captureHeight, points);
+        }
+
         // --------------------------
         // Get name from instance
         
@@ -98,6 +152,14 @@ namespace kerberos
 
     bool IoDisk::save(Image & image)
     {
+        // ---------------------
+        // Apply mask if enabled
+
+        if(m_privacy)
+        {
+            image.bitwiseAnd(m_mask, image);
+        }
+
         // ----------------------------------------
         // The naming convention that will be used
         // for the image.
@@ -128,6 +190,14 @@ namespace kerberos
     
     bool IoDisk::save(Image & image, JSON & data)
     {
+        // ---------------------
+        // Apply mask if enabled
+
+        if(m_privacy)
+        {
+            image.bitwiseAnd(m_mask, image);
+        }
+        
         // ----------------------------------------
         // The naming convention that will be used
         // for the image.

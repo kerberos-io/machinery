@@ -13,6 +13,60 @@ namespace kerberos
         pthread_mutex_init(&m_capture_lock, NULL);
         pthread_mutex_init(&m_write_lock, NULL);
         startRetrieveThread();
+
+        // ----------------------------------------
+        // If privacy mode is enabled, we calculate
+        // a mask to remove the public area.
+        
+        m_privacy = (settings.at("ios.Video.privacy") == "true");
+
+        if(m_privacy)
+        {
+            // --------------------------------
+            // Parse coordinates from config file
+            //  - x,y|x,y|x,y|... => add to vectory as Point2f
+            
+            std::vector<cv::Point2f> coor;
+            
+            std::vector<std::string> coordinates;
+            helper::tokenize(settings.at("expositors.Hull.region"), coordinates, "|");
+            
+            for(int i = 0; i < coordinates.size(); i++)
+            {
+                std::vector<std::string> fromAndTo;
+                helper::tokenize(coordinates[i], fromAndTo, ",");
+                int from = std::atoi(fromAndTo[0].c_str());
+                int to = std::atoi(fromAndTo[1].c_str());
+                Point2f p(from ,to);
+                coor.push_back(p);
+            }
+            
+            // -------------------------------
+            // Get width and height of image
+            
+            Image preview = m_capture->retrieve();
+            int captureWidth = preview.getColumns();
+            int captureHeight = preview.getRows();
+
+            // --------------------------------
+            // Calculate points in hull
+            
+            PointVector points;
+            points.clear();
+            for(int j = 0; j < captureHeight; j++)
+            {
+                for(int i = 0; i < captureWidth; i++)
+                {
+                    cv::Point2f p(i,j);
+                    if(cv::pointPolygonTest(coor, p, false) >= 0)
+                    {
+                        points.push_back(p);
+                    }
+                }
+            }
+
+            m_mask.createMask(captureWidth, captureHeight, points);
+        }
         
         // --------------------------
         // Get name from instance
@@ -48,7 +102,7 @@ namespace kerberos
         // --------------------------
         // Check if need to draw timestamp
         
-        /*bool drawTimestamp = (settings.at("ios.Video.markWithTimestamp") == "true");
+        bool drawTimestamp = (settings.at("ios.Video.markWithTimestamp") == "true");
         setDrawTimestamp(drawTimestamp);
         cv::Scalar color = getColor(settings.at("ios.Video.timestampColor"));
         setTimestampColor(color);
@@ -56,7 +110,7 @@ namespace kerberos
         std::string timezone = settings.at("timezone");
         std::replace(timezone.begin(), timezone.end(), '-', '/');
         std::replace(timezone.begin(), timezone.end(), '$', '_');
-        setTimezone(timezone);*/
+        setTimezone(timezone);
         
         // -------------------------------------------------------------
         // Filemanager is mapped to a directory and is used by an image
@@ -214,10 +268,23 @@ namespace kerberos
         pthread_mutex_unlock(&video->m_time_lock);
         
         Image image = video->m_capture->retrieve();
+
         if(video->m_capture->m_angle != 0)
         {
             image.rotate(video->m_capture->m_angle);
         }
+        // ---------------------
+        // Apply mask if enabled
+
+        if(video->m_privacy)
+        {
+            image.bitwiseAnd(video->m_mask, image);
+        }
+
+        // ------------------
+        // Draw date on image
+        
+        video->drawDateOnImage(image, kerberos::helper::getTimestamp());
         
         pthread_mutex_lock(&video->m_lock);
         video->m_mostRecentImage = image;
@@ -280,6 +347,29 @@ namespace kerberos
         pthread_mutex_unlock(&video->m_write_lock);
     }
     
+    void IoVideo::drawDateOnImage(Image & image, std::string timestamp)
+    {
+        if(m_drawTimestamp)
+        {
+            struct tm tstruct;
+            char buf[80];
+            
+            time_t now = std::atoi(timestamp.c_str());
+            
+            char * timeformat = "%d-%m-%Y %X";
+            if(m_timezone != "")
+            {
+                setenv("TZ", m_timezone.c_str(), 1);
+                tzset();
+            }
+            
+            tstruct = *localtime(&now);
+            strftime(buf, sizeof(buf), timeformat, &tstruct);
+            
+            cv::putText(image.getImage(), buf, cv::Point(10,30), cv::FONT_HERSHEY_SIMPLEX, 0.5, getTimestampColor());
+        }
+    }
+
     // -------------------------------------------
     // Function ran in a thread, which records for
     // a specific amount of time.
@@ -302,10 +392,24 @@ namespace kerberos
                         // -----------------------------
                         // Write the frames to the video
                         Image image = video->m_capture->retrieve();
+
                         if(video->m_capture->m_angle != 0)
                         {
                             image.rotate(video->m_capture->m_angle);
                         }
+
+                        // ---------------------
+                        // Apply mask if enabled
+
+                        if(video->m_privacy)
+                        {
+                            image.bitwiseAnd(video->m_mask, image);
+                        }
+
+                        // ------------------
+                        // Draw date on image
+                        
+                        video->drawDateOnImage(image, kerberos::helper::getTimestamp());
                     
                         pthread_mutex_lock(&video->m_lock);
                         video->m_mostRecentImage = image;

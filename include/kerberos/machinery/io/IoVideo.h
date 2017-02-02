@@ -28,6 +28,8 @@ namespace kerberos
     char VideoName[] = "Video";
     class IoVideo : public IoCreator<VideoName, IoVideo>
     {
+        typedef std::vector<Point2f> PointVector;
+
         private:
             std::string m_instanceName;
             std::string m_fileFormat;
@@ -49,6 +51,7 @@ namespace kerberos
             cv::Scalar getColor(const std::string name);
             bool getDrawTimestamp(){return m_drawTimestamp;};
             void setDrawTimestamp(bool drawTimestamp){m_drawTimestamp=drawTimestamp;};
+            void drawDateOnImage(Image & image, std::string timestamp);
             std::string getTimezone(){return m_timezone;};
             void setTimezone(std::string timezone){m_timezone=timezone;};
             cv::Scalar getTimestampColor(){return m_timestampColor;};
@@ -66,6 +69,8 @@ namespace kerberos
             Image m_mostRecentImage;
             bool m_recording;
             bool m_createSymbol;
+            Image m_mask;
+            bool m_privacy;
             pthread_mutex_t m_lock;
             pthread_mutex_t m_time_lock;
             pthread_mutex_t m_capture_lock;

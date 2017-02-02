@@ -6,7 +6,7 @@
         <directory type="text">/etc/opt/kerberosio/capture/</directory>
         <markWithTimestamp type="bool">false</markWithTimestamp>
         <timestampColor type="text">white</timestampColor>
-        <privacy type="bool">true</privacy>
+        <privacy type="bool">false</privacy>
     </Disk>
     <Video>
         <fps type="number">3</fps>

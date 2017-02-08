@@ -118,7 +118,7 @@ namespace kerberos
 
         if(!isOpened())
         {
-            throw OpenCVException("can't open usb camera");
+            throw OpenCVException("can't open rpi camera");
         }
 
         // ----------

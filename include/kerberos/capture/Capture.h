@@ -3,12 +3,15 @@
 //  Description: Devices to capture images (video, webcam, raspberry cam, etc).
 //  Created:     17/07/2014
 //  Author:      Cédric Verstraeten
-//  Mail:        hello@cedric.ws
-//	Website:	 www.cedric.ws
+//  Mail:        cedric@verstraeten.io
+//  Website:     www.verstraeten.io
 //
 //  The copyright to the computer program(s) herein
-//  is the property of Cédric Verstraeten, Belgium.
-//  The program(s) may be used and/or copied .
+//  is the property of Verstraeten.io, Belgium.
+//  The program(s) may be used and/or copied under 
+//  the CC-NC-ND license model.
+//
+//  https://doc.kerberos.io/license
 //
 /////////////////////////////////////////////////////
 
@@ -45,7 +48,7 @@ namespace kerberos
             Capture(){};
             virtual ~Capture(){};
             virtual void setup(kerberos::StringMap & settings) = 0;
-            void setup(kerberos::StringMap & settings, int width, int height);
+            void setup(kerberos::StringMap & settings, int width, int height, int angle);
             virtual void setImageSize(int width, int height);
             virtual void setRotation(int angle);
             virtual void setDelay(int msec);

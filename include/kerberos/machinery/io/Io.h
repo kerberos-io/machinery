@@ -5,12 +5,15 @@
 //               to disk or to database.
 //  Created:     17/07/2014
 //  Author:      Cédric Verstraeten
-//  Mail:        hello@cedric.ws
-//  Website:     www.kerberos.io
+//  Mail:        cedric@verstraeten.io
+//  Website:     www.verstraeten.io
 //
 //  The copyright to the computer program(s) herein
-//  is the property of kerberos.io, Belgium.
-//  The program(s) may be used and/or copied .
+//  is the property of Verstraeten.io, Belgium.
+//  The program(s) may be used and/or copied under 
+//  the CC-NC-ND license model.
+//
+//  https://doc.kerberos.io/license
 //
 /////////////////////////////////////////////////////
 
@@ -22,6 +25,7 @@
 #include "machinery/io/FileManager.h"
 #include "Helper.h"
 #include "easylogging++.h"
+#include "capture/Capture.h";
 
 namespace kerberos
 {
@@ -31,8 +35,12 @@ namespace kerberos
             const char * name;
 
         public:
+            Capture * m_capture;
             virtual ~Io(){};
             virtual void setup(const StringMap & settings);
+            void setCapture(Capture * capture){m_capture = capture;};
+            virtual void fire(JSON & data) = 0;
+            virtual void disableCapture() = 0;
             virtual bool save(Image & image) = 0;
             virtual bool save(Image & image, JSON & data) = 0;
     };

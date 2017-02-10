@@ -22,6 +22,7 @@
 # Get configuration files
 
     FILE(GLOB CONFIG_FILES ${CMAKE_SOURCE_DIR}/config/*)
+    FILE(GLOB SCRIPTS ${CMAKE_SOURCE_DIR}/scripts/*)
     FILE(GLOB LOG_FILE ${CMAKE_SOURCE_DIR}/logs/log.stash)
     
 # ----------------------------------------------
@@ -68,8 +69,16 @@
 # Install
 
 	# copy configuration files
-	INSTALL(FILES ${CONFIG_FILES}
+    INSTALL(FILES ${CONFIG_FILES}
         DESTINATION "/etc/opt/kerberosio/config"
+        PERMISSIONS
+        OWNER_EXECUTE OWNER_WRITE OWNER_READ
+        GROUP_EXECUTE GROUP_WRITE GROUP_READ
+        WORLD_EXECUTE WORLD_WRITE WORLD_READ)
+
+    # copy script
+    INSTALL(FILES ${SCRIPTS}
+        DESTINATION "/etc/opt/kerberosio/scripts"
         PERMISSIONS
         OWNER_EXECUTE OWNER_WRITE OWNER_READ
         GROUP_EXECUTE GROUP_WRITE GROUP_READ
@@ -130,9 +139,9 @@
         SET(CPACK_DEBIAN_PACKAGE_MAINTAINER "Cédric Verstraeten")
         set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Kerberos is a low-budget surveillance solution, that uses computer vision algorithms to detect changes, and that can trigger other devices. Kerberos is open source so you, but also other people, can customize the source to your needs and share it with our community. It has a green footprint when deploying on the Raspberry Pi and it's easy to install, you only need to transfer the image to the SD card and you're done.")
         
-        set(CPACK_PACKAGE_VERSION "2.1.0")
+        set(CPACK_PACKAGE_VERSION "2.2.0")
         set(CPACK_PACKAGE_VERSION_MAJOR "2")
-        set(CPACK_PACKAGE_VERSION_MINOR "1")
+        set(CPACK_PACKAGE_VERSION_MINOR "2")
         set(CPACK_PACKAGE_VERSION_PATCH "0")
         
         string(TOLOWER "${CPACK_PACKAGE_NAME}" CPACK_PACKAGE_NAME_LOWERCASE)

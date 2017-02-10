@@ -1,7 +1,8 @@
 //
-//  Class: IoWebhook
-//  Description: A webhook class that posts to a specific URL.
-//  Created:     25/07/2015
+//  Class: IoScript
+//  Description: A Script class that will execute
+//  a bash script.
+//  Created:     23/01/2017
 //  Author:      Cédric Verstraeten
 //  Mail:        cedric@verstraeten.io
 //  Website:     www.verstraeten.io
@@ -15,31 +16,30 @@
 //
 /////////////////////////////////////////////////////
 
-#ifndef __IoWebhook_H_INCLUDED__   // if IoWebhook.h hasn't been included yet...
-#define __IoWebhook_H_INCLUDED__   // #define this so the compiler knows it has been included
+#ifndef __IoScript_H_INCLUDED__   // if IoScript.h hasn't been included yet...
+#define __IoScript_H_INCLUDED__   // #define this so the compiler knows it has been included
 
 #include "machinery/io/Io.h"
 #include "document.h"
 #include "writer.h"
-#include "restclient-cpp/restclient.h"
 
 namespace kerberos
 {
-    char WebhookName[] = "Webhook";
-    class IoWebhook : public IoCreator<WebhookName, IoWebhook>
+    char ScriptName[] = "Script";
+    class IoScript : public IoCreator<ScriptName, IoScript>
     {
         private:
-            std::string m_url;
+            std::string m_path;
             std::string m_instanceName;
 
         public:
-            IoWebhook(){};
+            IoScript(){};
             void setup(const StringMap & settings);
             void fire(JSON & data){};
             void disableCapture(){};
             
-            void setUrl(std::string url){m_url=url;};
-            const char * getUrl(){return m_url.c_str();};
+            void setPath(std::string path){m_path=path;};
+            const char * getPath(){return m_path.c_str();};
             void setInstanceName(std::string instanceName){m_instanceName=instanceName;};
             std::string getInstanceName(){return m_instanceName;};
             

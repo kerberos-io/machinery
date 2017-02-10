@@ -3,12 +3,15 @@
 //  Description: The kerberos controller.
 //  Created:     17/07/2014
 //  Author:      Cédric Verstraeten
-//  Mail:        hello@cedric.ws
-//  Website:     www.kerberos.io
+//  Mail:        cedric@verstraeten.io
+//  Website:     www.verstraeten.io
 //
 //  The copyright to the computer program(s) herein
-//  is the property of kerberos.io, Belgium.
-//  The program(s) may be used and/or copied .
+//  is the property of Verstraeten.io, Belgium.
+//  The program(s) may be used and/or copied under 
+//  the CC-NC-ND license model.
+//
+//  https://doc.kerberos.io/license
 //
 /////////////////////////////////////////////////////
 
@@ -21,6 +24,7 @@
 #include "machinery/expositor/Expositor.h"
 #include "machinery/io/Io.h"
 #include "easylogging++.h"
+#include "capture/Capture.h";
 
 namespace kerberos
 {
@@ -32,6 +36,7 @@ namespace kerberos
             Expositor * m_expositor;
             Heuristic * m_heuristic;
             std::vector<Io *> m_ios;
+            Capture * m_capture;
 
 		public:
             Machinery():m_conditions(0),m_algorithm(0),m_expositor(0),m_heuristic(0),m_ios(0){};
@@ -53,6 +58,9 @@ namespace kerberos
             };
                     
             void setup(const StringMap & settings);
+            void fire(JSON & data);
+            void setCapture(Capture * capture){m_capture = capture;};
+            void disableCapture();
             void setCondition(std::vector<Condition *> conditions){m_conditions = conditions;};
             void setAlgorithm(Algorithm * algorithm){m_algorithm = algorithm;};
             void setExpositor(Expositor * expositor){m_expositor = expositor;};

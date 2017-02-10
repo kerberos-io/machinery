@@ -161,23 +161,25 @@ namespace kerberos
         
         configureCapture(settings);
         
-        // -------------------
-        // Take first images
-
-        for(ImageVector::iterator it = m_images.begin(); it != m_images.end(); it++)
-        {
-            delete *it;
-        }
-
-        m_images.clear();
-        m_images = capture->takeImages(3);
-        
         // --------------------
         // Initialize machinery
 
         if(machinery != 0) delete machinery;
         machinery = new Machinery();
+        machinery->setCapture(capture);
         machinery->setup(settings);
+        
+        // -------------------
+        // Take first images
+        
+        for(ImageVector::iterator it = m_images.begin(); it != m_images.end(); it++)
+        {
+            delete *it;
+        }
+        
+        m_images.clear();
+        m_images = capture->takeImages(3);
+        
         machinery->initialize(m_images);
     }
     
@@ -194,14 +196,20 @@ namespace kerberos
             LINFO << "Stopping streaming";
             stopStreamThread();
             delete stream;
+            stream = 0;
         }
         
         if(capture != 0)
         {
             LINFO << "Stopping capture device";
-            capture->stopGrabThread();
-            capture->close();
+            if(capture->isOpened())
+            {
+                machinery->disableCapture();
+                capture->stopGrabThread();
+                capture->close();
+            }
             delete capture;
+            capture = 0;
         }
         
         // ---------------------------
@@ -254,14 +262,18 @@ namespace kerberos
             try
             {
                 kerberos->stream->connect();
-
-                Image image = kerberos->capture->retrieve();
-                if(kerberos->capture->m_angle != 0)
+                
+                if(kerberos->capture->isOpened())
                 {
-                    image.rotate(kerberos->capture->m_angle);
+                    Image image = kerberos->capture->retrieve();
+                    if(kerberos->capture->m_angle != 0)
+                    {
+                        image.rotate(kerberos->capture->m_angle);
+                    }
+                    kerberos->stream->write(image);
                 }
-                kerberos->stream->write(image);
-                usleep(200*1000); // sleep 200ms
+                
+                usleep(kerberos->stream->wait * 1000 * 1000); // sleep x microsec.
             }
             catch(cv::Exception & ex){}
         }

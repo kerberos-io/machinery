@@ -4,12 +4,15 @@
 //               the Raspberry Pi.
 //  Created:     16/12/2014
 //  Author:      Cédric Verstraeten
-//  Mail:        hello@cedric.ws
-//  Website:     www.kerberos.io
+//  Mail:        cedric@verstraeten.io
+//  Website:     www.verstraeten.io
 //
 //  The copyright to the computer program(s) herein
-//  is the property of kerberos.io, Belgium.
-//  The program(s) may be used and/or copied .
+//  is the property of Verstraeten.io, Belgium.
+//  The program(s) may be used and/or copied under 
+//  the CC-NC-ND license model.
+//
+//  https://doc.kerberos.io/license
 //
 /////////////////////////////////////////////////////
 
@@ -33,6 +36,8 @@ namespace kerberos
         public:
             IoGPIO(){};
             void setup(const StringMap & settings);
+            void fire(JSON & data){};
+            void disableCapture(){};
             void setOutputPin(unsigned int pin);
             void setInputPin(unsigned int pin);
             void setHigh();

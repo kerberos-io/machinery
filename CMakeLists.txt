@@ -3,9 +3,15 @@ project(Kerberos)
 
 # ----------------------------------------------
 # Check if compiling on the raspberry pi
-
+	
 	if(${CMAKE_SYSTEM_NAME} MATCHES "Linux" AND ${CMAKE_SYSTEM_PROCESSOR} MATCHES "arm")
-	    set(IS_RASPBERRYPI 1)   
+		FIND_LIBRARY(mmalcore_LIBS NAMES mmal_core PATHS /opt/vc/lib)
+		FIND_LIBRARY(mmalutil_LIBS NAMES mmal_util PATHS /opt/vc/lib)
+		FIND_LIBRARY(mmal_LIBS NAMES mmal PATHS /opt/vc/lib)
+
+		if( ( mmal_LIBS ) AND ( mmalutil_LIBS ) AND ( mmalcore_LIBS ) )
+	    	set(IS_RASPBERRYPI 1)
+	    endif()
 	endif()
 
 # ----------------------------------------------

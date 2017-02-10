@@ -3,12 +3,15 @@
 //  Description: A filemanager for creating directories, files, etc.
 //  Created:     17/07/2014
 //  Author:      Cédric Verstraeten
-//  Mail:        hello@cedric.ws
-//	Website:	 www.kerberos.io
+//  Mail:        cedric@verstraeten.io
+//  Website:     www.verstraeten.io
 //
 //  The copyright to the computer program(s) herein
-//  is the property of kerberos.io, Belgium.
-//  The program(s) may be used and/or copied .
+//  is the property of Verstraeten.io, Belgium.
+//  The program(s) may be used and/or copied under 
+//  the CC-NC-ND license model.
+//
+//  https://doc.kerberos.io/license
 //
 /////////////////////////////////////////////////////
 
@@ -41,7 +44,7 @@ namespace kerberos
             bool createDirectoryIfNotExists(char * dir);
             bool createDirectory(std::string & path);
             bool createDirectory(const char * path);
-            bool save(Image & image, const std::string & path);
+            bool save(Image & image, const std::string & path, bool createSymbol);
     };
 }
 #endif 

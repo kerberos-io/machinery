@@ -1,4 +1,5 @@
 #include "capture/Image.h"
+#include <iostream>
 
 namespace kerberos
 {
@@ -19,6 +20,20 @@ namespace kerberos
             throw OpenCVException(ex.msg.c_str());
         }
 	}
+
+    void Image::createMask(int width, int height, PointVector & points)
+    {
+        cv::Mat mat;
+        mat = cv::Mat::zeros(height, width, CV_8UC3);
+        cv::Vec3b black(255,255,255);
+        
+        for(int i = 0; i < points.size(); i++)
+        {
+            mat.at<cv::Vec3b>(points[i]) = black;
+        }
+
+        setImage(mat);
+    }
     
     void Image::drawRectangle(JSONValue & region, int color[3])
     {

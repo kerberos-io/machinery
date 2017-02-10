@@ -11,7 +11,7 @@ namespace kerberos
         int delay = std::atoi(settings.at("captures.VideoCapture.delay").c_str());
         
         // Save width and height in settings
-        Capture::setup(settings, width, height);
+        Capture::setup(settings, width, height, angle);
         setImageSize(width, height);
         setRotation(angle);
         setDelay(delay);
@@ -121,7 +121,12 @@ namespace kerberos
             {
                 m_video->release();
                 m_video->open(getPath());
-                //m_video->set(CV_CAP_PROP_POS_FRAMES, 1850);
+                
+                if(!isOpened())
+                {
+                    throw OpenCVException("can't open raspberry pi camera");
+                }
+
                 setImageSize(m_frameWidth, m_frameHeight);
             }
         }

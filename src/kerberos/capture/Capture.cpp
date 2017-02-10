@@ -2,13 +2,14 @@
     
 namespace kerberos
 {
-    void Capture::setup(kerberos::StringMap & settings, int width, int height)
+    void Capture::setup(kerberos::StringMap & settings, int width, int height, int angle)
     {
         // --------------------------
         // Make width & height global.
         
         settings["capture.width"] = helper::to_string(width);
         settings["capture.height"] = helper::to_string(height);
+        settings["capture.angle"] = helper::to_string(angle);
         
         // ----------------
         // Initialize mutex
@@ -85,13 +86,16 @@ namespace kerberos
 
         for(;;)
         {
-            try
+            if(capture->isOpened())
             {
-                capture->grab();
-            }
-            catch(cv::Exception & ex)
-            {
-                LERROR << ex.what();
+                try
+                {
+                    capture->grab();
+                }
+                catch(cv::Exception & ex)
+                {
+                    LERROR << ex.what();
+                }
             }
             usleep(333*100);
         }
@@ -113,6 +117,5 @@ namespace kerberos
         // before deleting the device.
         
         pthread_cancel(m_captureThread);
-        pthread_join(m_captureThread, NULL);
     }
 }

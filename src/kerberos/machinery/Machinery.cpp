@@ -35,6 +35,7 @@ namespace kerberos
         std::vector<Io *> ios = Factory<Io>::getInstance()->createMultiple(settings.at("io"));
         for(int i = 0; i < ios.size(); i++)
         {
+            ios[i]->setCapture(m_capture);
             ios[i]->setup(settings);
         }
         setIo(ios);
@@ -52,6 +53,24 @@ namespace kerberos
     void update(const ImageVector & images)
     {
         
+    }
+
+    void Machinery::fire(JSON & data)
+    {
+        for(int i = 0; i < m_ios.size(); i++)
+        {
+            m_ios[i]->fire(data);
+        }
+    }
+
+    void Machinery::disableCapture()
+    {
+        m_capture = 0;
+
+        for(int i = 0; i < m_ios.size(); i++)
+        {
+            m_ios[i]->disableCapture();
+        }
     }
 
     bool Machinery::allowed(const ImageVector & images)
@@ -87,7 +106,13 @@ namespace kerberos
         // -------------
         // Detect motion
 
-        return detectMotion(images, data);
+        if(detectMotion(images, data))
+        {
+            fire(data);
+            return true;
+        }
+
+        return false;
     }
 
     bool Machinery::detectMotion(ImageVector & images, JSON & data)

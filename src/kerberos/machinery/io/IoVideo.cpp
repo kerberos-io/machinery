@@ -298,52 +298,58 @@ namespace kerberos
         pthread_mutex_unlock(&video->m_lock);
         
         pthread_mutex_lock(&video->m_write_lock);
-        while(cronoTime < timeToRecord)
+        
+        try
         {
-            cronoFPS = (double) cv::getTickCount();
-            
-            try
+            while(cronoTime < timeToRecord)
             {
+                cronoFPS = (double) cv::getTickCount();
+                
                 // -----------------------------
                 // Write the frames to the video
-
+                
                 pthread_mutex_lock(&video->m_lock);
                 Image image = video->m_mostRecentImage;
                 video->m_writer->write(image.getImage());
                 pthread_mutex_unlock(&video->m_lock);
-            }
-            catch(cv::Exception & ex)
-            {
-                pthread_mutex_unlock(&video->m_lock);
-                pthread_mutex_destroy(&video->m_lock);
-                LERROR << ex.what();
-            }
 
-            // update time to record; (locking)
-            pthread_mutex_lock(&video->m_time_lock);
-            timeToRecord = video->m_timeStartedRecording + video->m_recordingTimeAfter;
-            pthread_mutex_unlock(&video->m_time_lock);
-            
-            cronoPause = (double) cv::getTickCount();
-            cronoTime = cronoPause / cv::getTickFrequency();
-            timeElapsed = (cronoPause - cronoFPS) / cv::getTickFrequency();
-            double fpsToTime = 1. / video->m_fps;
-            timeToSleep = fpsToTime - timeElapsed;
-            
-            if(timeToSleep > 0)
-            {
-                usleep(timeToSleep * 1000 * 1000);
+                // update time to record; (locking)
+                pthread_mutex_lock(&video->m_time_lock);
+                timeToRecord = video->m_timeStartedRecording + video->m_recordingTimeAfter;
+                pthread_mutex_unlock(&video->m_time_lock);
+                
+                cronoPause = (double) cv::getTickCount();
+                cronoTime = cronoPause / cv::getTickFrequency();
+                timeElapsed = (cronoPause - cronoFPS) / cv::getTickFrequency();
+                double fpsToTime = 1. / video->m_fps;
+                timeToSleep = fpsToTime - timeElapsed;
+                
+                if(timeToSleep > 0)
+                {
+                    usleep(timeToSleep * 1000 * 1000);
+                }
+                else
+                {
+                    LINFO << "IoVideo: framerate is too fast, can't record video at this speed (" << video->m_fps << "/FPS)";
+                }
             }
-            else
-            {
-                LINFO << "IoVideo: framerate is too fast, can't record video at this speed (" << video->m_fps << "/FPS)";
-            }
+            
+            video->m_recording = false;
+            video->m_writer->release();
+            delete video->m_writer;
+            video->m_writer = 0;
+            
         }
-        
-        video->m_recording = false;
-        video->m_writer->release();
-        delete video->m_writer;
-        video->m_writer = 0;
+        catch(cv::Exception & ex)
+        {
+            pthread_mutex_unlock(&video->m_lock);
+            pthread_mutex_unlock(&video->m_time_lock);
+            video->m_recording = false;
+            video->m_writer->release();
+            delete video->m_writer;
+            video->m_writer = 0;
+            LERROR << ex.what();
+        }
         
         if(video->m_createSymbol)
         {
@@ -351,6 +357,7 @@ namespace kerberos
             std::string pathToVideo = video->m_directory + video->m_fileName;
             symlink(pathToVideo.c_str(), link.c_str());
         }
+
         pthread_mutex_unlock(&video->m_write_lock);
     }
     

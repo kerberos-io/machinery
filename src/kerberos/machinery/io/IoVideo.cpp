@@ -12,7 +12,6 @@ namespace kerberos
         pthread_mutex_init(&m_time_lock, NULL);
         pthread_mutex_init(&m_capture_lock, NULL);
         pthread_mutex_init(&m_write_lock, NULL);
-        startRetrieveThread();
 
         // ----------------------------------------
         // If privacy mode is enabled, we calculate
@@ -78,6 +77,7 @@ namespace kerberos
         m_width = std::atoi(settings.at("capture.width").c_str());
         m_height = std::atoi(settings.at("capture.height").c_str());
         m_recordingTimeAfter = std::atoi(settings.at("ios.Video.recordAfter").c_str()); // in seconds
+        m_maxDuration = std::atoi(settings.at("ios.Video.maxDuration").c_str()); // in seconds
         m_extension = settings.at("ios.Video.extension");
         std::string codec = settings.at("ios.Video.codec");
         
@@ -204,8 +204,6 @@ namespace kerberos
 
     void IoVideo::fire(JSON & data)
     {
-        m_recording = true;
-
         // ----------------------------------------------------------
         // If a video is recording, and a new detection is coming in,
         // we'll reset the timer. So the video is expaned.
@@ -218,7 +216,7 @@ namespace kerberos
         // -----------------------------------------------------
         // Check if already recording, if not start a new video
         
-        if(m_capture && m_writer == 0)
+        if(m_capture && m_writer == 0 && !m_recording)
         {
             // ----------------------------------------
             // The naming convention that will be used
@@ -232,6 +230,7 @@ namespace kerberos
             m_writer->open(m_directory + m_fileName, m_codec, m_fps, cv::Size(image.getColumns(), image.getRows()));
             
             startRecordThread();
+            m_recording = true;
         }
     }
 
@@ -266,42 +265,24 @@ namespace kerberos
         
         double cronoPause = (double)cvGetTickCount();
         double cronoFPS = cronoPause;
-        double cronoTime = 0;
+        double cronoTime = (double) (cv::getTickCount() / cv::getTickFrequency());
         double timeElapsed = 0;
         double timeToSleep = 0;
+        double startedRecording = cronoTime;
 
         pthread_mutex_lock(&video->m_time_lock);
         double timeToRecord = video->m_timeStartedRecording + video->m_recordingTimeAfter;
         pthread_mutex_unlock(&video->m_time_lock);
         
-        Image image = video->m_capture->retrieve();
-
-        if(video->m_capture->m_angle != 0)
-        {
-            image.rotate(video->m_capture->m_angle);
-        }
-        // ---------------------
-        // Apply mask if enabled
-
-        if(video->m_privacy)
-        {
-            image.bitwiseAnd(video->m_mask, image);
-        }
-
-        // ------------------
-        // Draw date on image
-        
-        video->drawDateOnImage(image, kerberos::helper::getTimestamp());
-        
-        pthread_mutex_lock(&video->m_lock);
-        video->m_mostRecentImage = image;
-        pthread_mutex_unlock(&video->m_lock);
+        video->m_mostRecentImage = video->getImage();
+        video->startRetrieveThread();
         
         pthread_mutex_lock(&video->m_write_lock);
         
         try
         {
-            while(cronoTime < timeToRecord)
+            while(cronoTime < timeToRecord 
+                && cronoTime - startedRecording <= video->m_maxDuration) // lower than max recording time (especially for memory)
             {
                 cronoFPS = (double) cv::getTickCount();
                 
@@ -309,8 +290,7 @@ namespace kerberos
                 // Write the frames to the video
                 
                 pthread_mutex_lock(&video->m_lock);
-                Image image = video->m_mostRecentImage;
-                video->m_writer->write(image.getImage());
+                video->m_writer->write(video->m_mostRecentImage.getImage());
                 pthread_mutex_unlock(&video->m_lock);
 
                 // update time to record; (locking)
@@ -334,10 +314,10 @@ namespace kerberos
                 }
             }
             
-            video->m_recording = false;
             video->m_writer->release();
             delete video->m_writer;
             video->m_writer = 0;
+            video->m_recording = false;
             
         }
         catch(cv::Exception & ex)
@@ -392,61 +372,62 @@ namespace kerberos
     {
         IoVideo * video = (IoVideo *) self;
 
-        while(video->m_capture != 0)
+        while(video->m_capture != 0 && video->m_recording)
         {
-            if(video->m_recording)
+            pthread_mutex_lock(&video->m_capture_lock);
+            
+            try
             {
-                pthread_mutex_lock(&video->m_capture_lock);
-                
-                try
+                if(video->m_capture != 0)
                 {
+                    Image image = video->getImage();
                     
-                    if(video->m_capture != 0)
-                    {
-                        // -----------------------------
-                        // Write the frames to the video
-                        Image image = video->m_capture->retrieve();
-
-                        if(video->m_capture->m_angle != 0)
-                        {
-                            image.rotate(video->m_capture->m_angle);
-                        }
-
-                        // ---------------------
-                        // Apply mask if enabled
-
-                        if(video->m_privacy)
-                        {
-                            image.bitwiseAnd(video->m_mask, image);
-                        }
-
-                        // ------------------
-                        // Draw date on image
-                        
-                        video->drawDateOnImage(image, kerberos::helper::getTimestamp());
-                    
-                        pthread_mutex_lock(&video->m_lock);
-                        video->m_mostRecentImage = image;
-                        pthread_mutex_unlock(&video->m_lock);
-                        usleep((int)(1000*1000/video->m_fps));
-                    }
-                }
-                catch(cv::Exception & ex)
-                {
-                    pthread_mutex_unlock(&video->m_capture_lock);
-                    pthread_mutex_destroy(&video->m_capture_lock);
+                    pthread_mutex_lock(&video->m_lock);
+                    video->m_mostRecentImage = image;
                     pthread_mutex_unlock(&video->m_lock);
-                    pthread_mutex_destroy(&video->m_lock);
-                    throw OpenCVException(ex.msg.c_str());
+
+                    usleep((int)(700*1000/video->m_fps)); // Retrieve a little bit faster than the writing frame rate
                 }
-                
-                pthread_mutex_unlock(&video->m_capture_lock);
             }
-            else
+            catch(cv::Exception & ex)
             {
-                usleep(500*1000);
+                pthread_mutex_unlock(&video->m_capture_lock);
+                pthread_mutex_destroy(&video->m_capture_lock);
+                pthread_mutex_unlock(&video->m_lock);
+                pthread_mutex_destroy(&video->m_lock);
+                throw OpenCVException(ex.msg.c_str());
             }
+            
+            pthread_mutex_unlock(&video->m_capture_lock);
         }
+    }
+
+    Image IoVideo::getImage()
+    {
+        // -----------------------------
+        // Write the frames to the video
+
+        Image image = m_capture->retrieve();
+
+        if(m_capture->m_angle != 0)
+        {
+            image.rotate(m_capture->m_angle);
+        }
+
+        // ---------------------
+        // Apply mask if enabled
+
+        if(m_privacy)
+        {
+            image.bitwiseAnd(m_mask, image);
+        }
+
+        // ------------------
+        // Draw date on image
+        
+        drawDateOnImage(image, kerberos::helper::getTimestamp());
+
+        return image;               
     }
     
     void IoVideo::startRecordThread()

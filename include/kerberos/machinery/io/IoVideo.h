@@ -67,6 +67,7 @@ namespace kerberos
             
             cv::VideoWriter * m_writer;
             Image m_mostRecentImage;
+
             bool m_recording;
             bool m_createSymbol;
             Image m_mask;
@@ -82,10 +83,12 @@ namespace kerberos
             void stopRecordThread();
             void startRetrieveThread();
             void stopRetrieveThread();
+            Image getImage();
 
             int m_codec;
             int m_fps;
-            int m_recordingTimeAfter;
+            int m_recordingTimeAfter; // seconds
+            int m_maxDuration; // seconds
             int m_width;
             int m_height;
             std::string m_extension;

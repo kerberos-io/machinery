@@ -6,5 +6,10 @@
         <publicKey type="text"></publicKey>
         <privateKey type="text"></privateKey>
     </S3>
-    
+
+    <Dropbox>
+        <token type="text"></token>
+        <folder type="text"></folder>
+    </Dropbox>
+
 </clouds>

@@ -8,7 +8,7 @@
 //
 //  The copyright to the computer program(s) herein
 //  is the property of Verstraeten.io, Belgium.
-//  The program(s) may be used and/or copied under 
+//  The program(s) may be used and/or copied under
 //  the CC-NC-ND license model.
 //
 //  https://doc.kerberos.io/license
@@ -42,7 +42,11 @@ namespace kerberos
 
         public:
             IoVideo(){};
-            ~IoVideo(){}; 
+            ~IoVideo()
+            {
+                stopRecordThread();
+                stopRetrieveThread();
+            };
 
             void setup(const StringMap & settings);
             void fire(JSON & data);
@@ -64,7 +68,7 @@ namespace kerberos
             void setFPS(int fps){m_fps = fps;};
             bool save(Image & image);
             bool save(Image & image, JSON & data);
-            
+
             cv::VideoWriter * m_writer;
             Image m_mostRecentImage;
 
@@ -93,7 +97,7 @@ namespace kerberos
             int m_height;
             std::string m_extension;
             std::string m_fileName;
-            std::string m_directory; 
+            std::string m_directory;
     };
 }
 #endif

@@ -431,6 +431,7 @@ namespace kerberos
 
     void IoVideo::stopRecordThread()
     {
+        pthread_cancel(m_recordThread);
         pthread_join(m_recordThread, NULL);
     }
 
@@ -441,6 +442,7 @@ namespace kerberos
 
     void IoVideo::stopRetrieveThread()
     {
+        pthread_cancel(m_recordThread);
         pthread_join(m_recordThread, NULL);
     }
 }

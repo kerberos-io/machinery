@@ -388,7 +388,6 @@ namespace kerberos
             }
             catch(cv::Exception & ex)
             {
-                pthread_mutex_unlock(&video->m_capture_lock);
                 pthread_mutex_unlock(&video->m_lock);
                 LERROR << ex.what();
             }

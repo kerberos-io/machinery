@@ -442,7 +442,7 @@ namespace kerberos
 
     void IoVideo::stopRetrieveThread()
     {
-        pthread_cancel(m_recordThread);
-        pthread_join(m_recordThread, NULL);
+        pthread_cancel(m_retrieveThread);
+        pthread_join(m_retrieveThread, NULL);
     }
 }

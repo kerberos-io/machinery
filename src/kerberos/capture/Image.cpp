@@ -13,7 +13,10 @@ namespace kerberos
 	{
         try
         {
-            return imwrite(pathToFile, m_image);
+	    cv::Mat imageCopy = m_image.clone();
+	    bool result = imwrite(pathToFile, imageCopy);
+	    imageCopy.release();
+            return result;
         }
         catch(cv::Exception & ex)
         {

@@ -80,6 +80,7 @@ namespace kerberos
             pthread_mutex_t m_time_lock;
             pthread_mutex_t m_capture_lock;
             pthread_mutex_t m_write_lock;
+            pthread_mutex_t m_release_lock;
             pthread_t m_recordThread;
             pthread_t m_retrieveThread;
             double m_timeStartedRecording;

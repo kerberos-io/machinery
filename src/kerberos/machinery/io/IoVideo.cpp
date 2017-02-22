@@ -12,6 +12,7 @@ namespace kerberos
         pthread_mutex_init(&m_time_lock, NULL);
         pthread_mutex_init(&m_capture_lock, NULL);
         pthread_mutex_init(&m_write_lock, NULL);
+        pthread_mutex_init(&m_release_lock, NULL);
 
         // ----------------------------------------
         // If privacy mode is enabled, we calculate
@@ -216,6 +217,7 @@ namespace kerberos
         // -----------------------------------------------------
         // Check if already recording, if not start a new video
 
+        pthread_mutex_lock(&m_release_lock);
         if(m_capture && m_writer == 0 && !m_recording)
         {
             // ----------------------------------------
@@ -232,6 +234,7 @@ namespace kerberos
             startRecordThread();
             m_recording = true;
         }
+        pthread_mutex_unlock(&m_release_lock);
     }
 
     void IoVideo::disableCapture()
@@ -314,21 +317,25 @@ namespace kerberos
                 }
             }
 
+            pthread_mutex_lock(&video->m_release_lock);
             video->m_writer->release();
             delete video->m_writer;
             video->m_writer = 0;
             video->m_recording = false;
-
+            pthread_mutex_unlock(&video->m_release_lock);
         }
         catch(cv::Exception & ex)
         {
             pthread_mutex_unlock(&video->m_lock);
             pthread_mutex_unlock(&video->m_time_lock);
+
+            pthread_mutex_lock(&video->m_release_lock);
             video->m_writer->release();
             delete video->m_writer;
             video->m_writer = 0;
             video->m_recording = false;
             LERROR << ex.what();
+            pthread_mutex_unlock(&video->m_release_lock);
         }
 
         if(video->m_createSymbol)
@@ -372,24 +379,33 @@ namespace kerberos
     {
         IoVideo * video = (IoVideo *) self;
 
-        while(video->m_capture != 0 && video->m_recording)
+        bool recording = true;
+
+        while(recording)
         {
             pthread_mutex_lock(&video->m_capture_lock);
 
-            try
-            {
-                Image image = video->getImage();
+            pthread_mutex_lock(&video->m_release_lock);
+            recording = video->m_recording;
+            pthread_mutex_unlock(&video->m_release_lock);
 
-                pthread_mutex_lock(&video->m_lock);
-                video->m_mostRecentImage = image;
-                pthread_mutex_unlock(&video->m_lock);
-
-                usleep((int)(700*1000/video->m_fps)); // Retrieve a little bit faster than the writing frame rate
-            }
-            catch(cv::Exception & ex)
+            if(video->m_capture != 0 && recording)
             {
-                pthread_mutex_unlock(&video->m_lock);
-                LERROR << ex.what();
+                try
+                {
+                    Image image = video->getImage();
+
+                    pthread_mutex_lock(&video->m_lock);
+                    video->m_mostRecentImage = image;
+                    pthread_mutex_unlock(&video->m_lock);
+
+                    usleep((int)(700*1000/video->m_fps)); // Retrieve a little bit faster than the writing frame rate
+                }
+                catch(cv::Exception & ex)
+                {
+                    pthread_mutex_unlock(&video->m_lock);
+                    LERROR << ex.what();
+                }
             }
 
             pthread_mutex_unlock(&video->m_capture_lock);

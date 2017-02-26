@@ -273,14 +273,14 @@ namespace kerberos
         double timeToSleep = 0;
         double startedRecording = cronoTime;
 
+        pthread_mutex_lock(&video->m_write_lock);
+
         pthread_mutex_lock(&video->m_time_lock);
         double timeToRecord = video->m_timeStartedRecording + video->m_recordingTimeAfter;
         pthread_mutex_unlock(&video->m_time_lock);
 
         video->m_mostRecentImage = video->getImage();
         video->startRetrieveThread();
-
-        pthread_mutex_lock(&video->m_write_lock);
 
         try
         {
@@ -316,27 +316,25 @@ namespace kerberos
                     LINFO << "IoVideo: framerate is too fast, can't record video at this speed (" << video->m_fps << "/FPS)";
                 }
             }
-
-            pthread_mutex_lock(&video->m_release_lock);
-            video->m_writer->release();
-            delete video->m_writer;
-            video->m_writer = 0;
-            video->m_recording = false;
-            pthread_mutex_unlock(&video->m_release_lock);
         }
         catch(cv::Exception & ex)
         {
             pthread_mutex_unlock(&video->m_lock);
             pthread_mutex_unlock(&video->m_time_lock);
-
-            pthread_mutex_lock(&video->m_release_lock);
-            video->m_writer->release();
-            delete video->m_writer;
-            video->m_writer = 0;
-            video->m_recording = false;
-            LERROR << ex.what();
-            pthread_mutex_unlock(&video->m_release_lock);
         }
+
+        pthread_mutex_lock(&video->m_release_lock);
+        if(video->m_writer)
+        {
+          if(video->m_writer->isOpened())
+          {
+            video->m_writer->release();
+          }
+          delete video->m_writer;
+          video->m_writer = 0;
+        }
+        video->m_recording = false;
+        pthread_mutex_unlock(&video->m_release_lock);
 
         if(video->m_createSymbol)
         {
@@ -399,7 +397,7 @@ namespace kerberos
                     video->m_mostRecentImage = image;
                     pthread_mutex_unlock(&video->m_lock);
 
-                    usleep((int)(700*1000/video->m_fps)); // Retrieve a little bit faster than the writing frame rate
+                    usleep((int)(500*1000/video->m_fps)); // Retrieve a little bit faster than the writing frame rate
                 }
                 catch(cv::Exception & ex)
                 {
@@ -409,6 +407,7 @@ namespace kerberos
             }
 
             pthread_mutex_unlock(&video->m_capture_lock);
+            usleep(1000); // sleep 1 ms
         }
     }
 

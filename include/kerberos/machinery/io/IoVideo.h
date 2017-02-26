@@ -42,11 +42,7 @@ namespace kerberos
 
         public:
             IoVideo(){};
-            ~IoVideo()
-            {
-                stopRecordThread();
-                stopRetrieveThread();
-            };
+            ~IoVideo(){};
 
             void setup(const StringMap & settings);
             void fire(JSON & data);

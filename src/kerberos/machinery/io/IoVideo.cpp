@@ -218,19 +218,19 @@ namespace kerberos
         // Check if already recording, if not start a new video
 
         pthread_mutex_lock(&m_release_lock);
-        
+
         BINFO << "IoVideo: firing";
-        
+
         if(m_capture && m_writer == 0 && !m_recording)
         {
             // ----------------------------------------
             // The naming convention that will be used
             // for the image.
-            
+
             std::string pathToVideo = getFileFormat();
             m_fileName = buildPath(pathToVideo, data) + "." + m_extension;
             Image image = m_capture->retrieve();
-            
+
             BINFO << "IoVideo: start new recording " << m_fileName;
 
             m_writer = new cv::VideoWriter();
@@ -281,11 +281,11 @@ namespace kerberos
         double timeElapsed = 0;
         double timeToSleep = 0;
         double startedRecording = cronoTime;
-        
+
         BINFO << "IoVideo: start writing images";
 
         pthread_mutex_lock(&video->m_write_lock);
-        
+
         BINFO << "IoVideo: locked write thread";
 
         pthread_mutex_lock(&video->m_time_lock);
@@ -308,7 +308,7 @@ namespace kerberos
                 pthread_mutex_lock(&video->m_lock);
                 video->m_writer->write(video->m_mostRecentImage.getImage());
                 pthread_mutex_unlock(&video->m_lock);
-                
+
                 BINFO << "IoVideo: writing image";
 
                 // update time to record; (locking)
@@ -336,12 +336,13 @@ namespace kerberos
         {
             pthread_mutex_unlock(&video->m_lock);
             pthread_mutex_unlock(&video->m_time_lock);
+            LERROR << ex.what();
         }
-        
+
         BINFO << "IoVideo: end writing images";
 
         pthread_mutex_lock(&video->m_release_lock);
-        
+
         try
         {
             if(video->m_writer)
@@ -362,14 +363,17 @@ namespace kerberos
                 symlink(pathToVideo.c_str(), link.c_str());
             }
         }
-        catch(cv::Exception & ex){}
-        
-        
+        catch(cv::Exception & ex)
+        {
+            LERROR << ex.what();
+        }
+
+
         BINFO << "IoVideo: remove videowriter";
-        
+
         pthread_mutex_unlock(&video->m_release_lock);
         pthread_mutex_unlock(&video->m_write_lock);
-        
+
         BINFO << "IoVideo: unlocking write thread";
     }
 
@@ -405,8 +409,8 @@ namespace kerberos
         IoVideo * video = (IoVideo *) self;
 
         bool recording = true;
-        
-        
+
+
         BINFO << "IoVideo: initializing capture thread";
 
         while(recording)
@@ -419,9 +423,9 @@ namespace kerberos
 
             if(video->m_capture != 0 && recording)
             {
-                
+
                 BINFO << "IoVideo: grabbing images";
-                
+
                 try
                 {
                     Image image = video->getImage();
@@ -442,7 +446,7 @@ namespace kerberos
             pthread_mutex_unlock(&video->m_capture_lock);
             usleep(1000); // sleep 1 ms
         }
-        
+
         BINFO << "IoVideo: closing capture thread";
     }
 
@@ -477,6 +481,7 @@ namespace kerberos
     void IoVideo::startRecordThread()
     {
         pthread_create(&m_recordThread, NULL, recordContinuously, this);
+        pthread_detach(m_recordThread);
     }
 
     void IoVideo::stopRecordThread()
@@ -488,6 +493,7 @@ namespace kerberos
     void IoVideo::startRetrieveThread()
     {
         pthread_create(&m_retrieveThread, NULL, retrieveContinuously, this);
+        pthread_detach(m_retrieveThread);
     }
 
     void IoVideo::stopRetrieveThread()

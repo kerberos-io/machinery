@@ -24,19 +24,19 @@
     FILE(GLOB CONFIG_FILES ${CMAKE_SOURCE_DIR}/config/*)
     FILE(GLOB SCRIPTS ${CMAKE_SOURCE_DIR}/scripts/*)
     FILE(GLOB LOG_FILE ${CMAKE_SOURCE_DIR}/logs/log.stash)
-    
+
 # ----------------------------------------------
 # Executable + define linking libraries
 
 	SET(EXECUTABLE_OUTPUT_PATH ${CMAKE_SOURCE_DIR}/bin)
-    
+
     SET(BUILD_SHARED_LIBS OFF)
-    
+
 	SET(KERBEROS_FACTORY_ENTITIES_TEMP "")
 	foreach(src ${KERBEROS_FACTORY_ENTITIES})
 	    SET(KERBEROS_FACTORY_ENTITIES_TEMP ${KERBEROS_FACTORY_ENTITIES_TEMP} "kerberos/${src}")
 	endforeach(src ${KERBEROS_FACTORY_ENTITIES})
-    
+
     if(${PACKAGE})
         if(APPLE)
             SET(KERBEROS_FACTORY_ENTITIES_TEMP ${KERBEROS_FACTORY_ENTITIES_TEMP} ${CONFIG_FILES} ${LOG_FILE} ${CMAKE_CURRENT_SOURCE_DIR}/kerberosio.icns)
@@ -48,7 +48,7 @@
     else()
         add_executable(kerberosio main.cpp ${KERBEROS_FACTORY_ENTITIES_TEMP})
     endif()
-    
+
     add_dependencies(kerberosio rerun ${KERBEROS_DEPENDENCIES})
     target_link_libraries(kerberosio ${KERBEROS_CORE_LIBRARY} ${KERBEROS_LIBRARIES})
 
@@ -64,7 +64,7 @@
 # Additional options
 
 	SET(CMAKE_BUILD_TYPE Release)
-    
+
 # ----------------------------------------
 # Install
 
@@ -91,11 +91,11 @@
         OWNER_EXECUTE OWNER_WRITE OWNER_READ
         GROUP_EXECUTE GROUP_WRITE GROUP_READ
         WORLD_EXECUTE WORLD_WRITE WORLD_READ)
-        
+
     # create symbol directory
     INSTALL(DIRECTORY
         DESTINATION "/etc/opt/kerberosio/symbols"
-        DIRECTORY_PERMISSIONS 
+        DIRECTORY_PERMISSIONS
         OWNER_EXECUTE OWNER_WRITE OWNER_READ
         GROUP_EXECUTE GROUP_WRITE GROUP_READ
         WORLD_EXECUTE WORLD_WRITE WORLD_READ)
@@ -103,11 +103,11 @@
     # create image directory
     INSTALL(DIRECTORY
         DESTINATION "/etc/opt/kerberosio/capture/"
-        DIRECTORY_PERMISSIONS 
+        DIRECTORY_PERMISSIONS
         OWNER_EXECUTE OWNER_WRITE OWNER_READ
         GROUP_EXECUTE GROUP_WRITE GROUP_READ
         WORLD_EXECUTE WORLD_WRITE WORLD_READ)
-    
+
     # copy service file
     INSTALL(FILES "${CMAKE_SOURCE_DIR}/service/kerberosio.service"
         DESTINATION "/etc/systemd/system"
@@ -115,17 +115,17 @@
         OWNER_EXECUTE OWNER_WRITE OWNER_READ
         GROUP_EXECUTE GROUP_WRITE GROUP_READ
         WORLD_EXECUTE WORLD_WRITE WORLD_READ)
- 
+
     # install binary
     INSTALL(TARGETS kerberosio
     BUNDLE DESTINATION . COMPONENT Runtime
     RUNTIME DESTINATION /usr/bin COMPONENT Runtime)
-    
+
 # ----------------------------------------
 # CPack
 
     IF(APPLE)
-        SET(MACOSX_BUNDLE_ICON_FILE kerberosio.icns) 
+        SET(MACOSX_BUNDLE_ICON_FILE kerberosio.icns)
         SET_SOURCE_FILES_PROPERTIES(${CMAKE_CURRENT_SOURCE_DIR}/kerberosio.icns PROPERTIES MACOSX_PACKAGE_LOCATION Resources)
         SET_SOURCE_FILES_PROPERTIES(${CONFIG_FILES} PROPERTIES MACOSX_PACKAGE_LOCATION Resources/config)
         SET_SOURCE_FILES_PROPERTIES(${LOG_FILE} PROPERTIES MACOSX_PACKAGE_LOCATION Resources/logs)
@@ -138,12 +138,12 @@
         set(CPACK_PACKAGE_VENDOR "kerberos.io")
         SET(CPACK_DEBIAN_PACKAGE_MAINTAINER "Cédric Verstraeten")
         set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Kerberos is a low-budget surveillance solution, that uses computer vision algorithms to detect changes, and that can trigger other devices. Kerberos is open source so you, but also other people, can customize the source to your needs and share it with our community. It has a green footprint when deploying on the Raspberry Pi and it's easy to install, you only need to transfer the image to the SD card and you're done.")
-        
-        set(CPACK_PACKAGE_VERSION "2.2.0")
+
+        set(CPACK_PACKAGE_VERSION "2.2.1")
         set(CPACK_PACKAGE_VERSION_MAJOR "2")
         set(CPACK_PACKAGE_VERSION_MINOR "2")
-        set(CPACK_PACKAGE_VERSION_PATCH "0")
-        
+        set(CPACK_PACKAGE_VERSION_PATCH "1")
+
         string(TOLOWER "${CPACK_PACKAGE_NAME}" CPACK_PACKAGE_NAME_LOWERCASE)
         find_program(DPKG_PROGRAM dpkg DOC "dpkg program of Debian-based systems")
         if(DPKG_PROGRAM)
@@ -152,12 +152,12 @@
                 OUTPUT_VARIABLE CPACK_DEBIAN_PACKAGE_ARCHITECTURE
                 OUTPUT_STRIP_TRAILING_WHITESPACE
             )
-            set(CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME_LOWERCASE}_${CPACK_PACKAGE_VERSION}_${CPACK_DEBIAN_PACKAGE_ARCHITECTURE}")   
+            set(CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME_LOWERCASE}_${CPACK_PACKAGE_VERSION}_${CPACK_DEBIAN_PACKAGE_ARCHITECTURE}")
         else(DPKG_PROGRAM)
             set(CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME_LOWERCASE}_${CPACK_PACKAGE_VERSION}_${CMAKE_SYSTEM_NAME}")
         endif(DPKG_PROGRAM)
-        
+
         SET(CPACK_NSIS_MODIFY_PATH ON)
     ENDIF()
-    
+
 	INCLUDE(CPack)

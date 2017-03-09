@@ -43,14 +43,10 @@ namespace kerberos
         {
             pthread_mutex_lock(&m_lock);
 
-            bool grabbed;
-            if(m_streamType == "rtsp")
+            if(!m_camera->grab())
             {
-                grabbed = m_camera->grab();
-            }
-            else
-            {
-                grabbed = m_camera->grab();
+                reopen();
+                usleep(1000*500);
             }
 
             pthread_mutex_unlock(&m_lock);

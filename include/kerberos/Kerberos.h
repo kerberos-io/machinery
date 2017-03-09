@@ -8,7 +8,7 @@
 //
 //  The copyright to the computer program(s) herein
 //  is the property of Verstraeten.io, Belgium.
-//  The program(s) may be used and/or copied under 
+//  The program(s) may be used and/or copied under
 //  the CC-NC-ND license model.
 //
 //  https://doc.kerberos.io/license
@@ -39,7 +39,7 @@ namespace kerberos
             void configureCapture(StringMap & settings);
             void configureCloud(StringMap & settings);
             void configureStream(StringMap & settings);
-	        void startStreamThread();
+	          void startStreamThread();
             void stopStreamThread();
             void startIOThread();
             void stopIOThread();
@@ -52,7 +52,7 @@ namespace kerberos
             };
             StringMap getParameters(){return m_parameters;}
             std::string toJSON(JSON & data);
-        
+
         public:
 
             Cloud * cloud;
@@ -89,7 +89,7 @@ namespace kerberos
 
             // -----------------------------------
             // Alias for configure, more readable
-            
+
             static void reconfigure(const std::string & configuration)
             {
                 getInstance()->configure(configuration);

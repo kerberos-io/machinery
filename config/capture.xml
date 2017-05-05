@@ -4,29 +4,29 @@
     <IPCamera>
         <url type="text">rtsp://admin:888888@192.168.0.13/tcp/av0_1</url>
         <frameWidth type="number">640</frameWidth>
-        <frameHeight type="number">360</frameHeight>
-        <delay type="number">1000</delay>
+        <frameHeight type="number">480</frameHeight>
+        <delay type="number">500</delay>
         <angle type="number">0</angle>
     </IPCamera>
 
     <USBCamera>
-        <frameWidth type="number">800</frameWidth>
-        <frameHeight type="number">640</frameHeight>
+        <frameWidth type="number">640</frameWidth>
+        <frameHeight type="number">480</frameHeight>
         <deviceNumber type="number">0</deviceNumber>
         <delay type="number">500</delay>
         <angle type="number">0</angle>
     </USBCamera>
 
     <RaspiCamera>
-        <frameWidth type="number">1280</frameWidth>
-        <frameHeight type="number">720</frameHeight>
+        <frameWidth type="number">640</frameWidth>
+        <frameHeight type="number">480</frameHeight>
         <delay type="number">500</delay>
         <angle type="number">0</angle>
     </RaspiCamera>
 
     <VideoCapture>
-        <frameWidth type="number">800</frameWidth>
-        <frameHeight type="number">640</frameHeight>
+        <frameWidth type="number">640</frameWidth>
+        <frameHeight type="number">480</frameHeight>
         <path type="text">0</path>
         <delay type="number">500</delay>
         <angle type="number">0</angle>

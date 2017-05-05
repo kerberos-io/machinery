@@ -73,6 +73,18 @@ namespace kerberos
         // Date
         std::string date = getDate();
         headers.push_back("Date: " + date);
+        
+        std::string contentType = "image/jpeg";
+        
+        std::vector<std::string> extensions;
+        helper::tokenize(fileName, extensions, ".");
+        std::string extension = helper::urlencode(extensions[extensions.size()-1]);
+        if(extension == "mp4")
+        {
+            contentType = "video/mp4";
+        }
+        
+        headers.push_back("Content-Type: " + contentType);
 
         // folder    
         std::string folder = (m_folder == "") ? "" : m_folder + "/";
@@ -80,7 +92,7 @@ namespace kerberos
         // Authorize request
         std::string request = "PUT\n";
         request += "\n";
-        request += "\n";
+        request += contentType + "\n";
         request += date + "\n";
         request += "/" + m_bucket + "/" + folder + fileName;
         headers.push_back("Authorization: " + authorize(request));

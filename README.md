@@ -1,6 +1,6 @@
-#KERBEROS.**IO**
+# KERBEROS.**IO**
 
-[![Build Status](https://travis-ci.org/kerberos-io/machinery.svg)](https://travis-ci.org/kerberos-io/machinery) [![Stories in Ready](https://badge.waffle.io/kerberos-io/machinery.svg?label=ready&title=Ready)](http://waffle.io/kerberos-io/machinery)  [![Join the chat at https://gitter.im/kerberos-io/hades](https://img.shields.io/badge/GITTER-join chat-green.svg)](https://gitter.im/kerberos-io/hades?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![Build Status](https://travis-ci.org/kerberos-io/machinery.svg)](https://travis-ci.org/kerberos-io/machinery) [![Stories in Ready](https://badge.waffle.io/kerberos-io/machinery.svg?label=ready&title=Ready)](http://waffle.io/kerberos-io/machin ) [![Join the chat](https://img.shields.io/gitter/room/TechnologyAdvice/Stardust.svg?style=flat)](https://gitter.im/kerberos-io/hades?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 [![Kerberos.io - video surveillance](https://kerberos.io/images/kerberos.png)](https://kerberos.io)
 
@@ -8,7 +8,7 @@
 
 [![Feature Requests](http://feathub.com/kerberos-io/machinery?format=svg)](http://feathub.com/kerberos-io/machinery)
 
-#CC-NC-ND license
+# CC-NC-ND license
 
 THE WORK (AS DEFINED BELOW) IS PROVIDED UNDER THE TERMS OF THIS CREATIVE COMMONS PUBLIC LICENSE ("CCPL" OR "LICENSE"). THE WORK IS PROTECTED BY COPYRIGHT AND/OR OTHER APPLICABLE LAW. ANY USE OF THE WORK OTHER THAN AS AUTHORIZED UNDER THIS LICENSE OR COPYRIGHT LAW IS PROHIBITED.
 
@@ -49,29 +49,29 @@ The steps belong to a four passway; illustrated on the image below. In each cycl
 
 [Read more](https://doc.kerberos.io/2.0/machinery/introduction)
 
-##Installation
+## Installation
 
 The reason why you're reading this paragraph is because you want to know how to install the machinery on your Raspberry Pi, local working station, server or whatever machine you prefer. The good news is that we have **different approaches** from basic to advanced; it depends on how you want to install it.
 
-###KiOS (for Raspberry Pi)
+### KiOS (for Raspberry Pi)
 
 [KiOS](https://github.com/kerberos-io/kios) is a custom linux OS (created by buildroot) which runs Kerberos.io out-of-the- (it contains both the machinery and the web). KiOS is **installed like every other OS** for the Raspberry Pi, you need to flash the OS (.img) to a SD card, update your network configration and you're up and running; no manual compilation or horrible configurations. This is the **most simple** and **basic** installation procedure.
 
 [Read more](https://doc.kerberos.io/2.0/installation/KiOS)
 
-###Raspbian (for Raspberry Pi)
+### Raspbian (for Raspberry Pi)
 
 If you already have a Raspberry Pi running with Raspbian, you probably don't want to reflash your SD-card. Therefore you can install the different parts of Kerberos.io (the machinery and the web) manual.
 
 [Read more](https://doc.kerberos.io/2.0/installation/Raspbian)
 
-###Armbian (for Orange Pi, PCDuino, etc)
+### Armbian (for Orange Pi, PCDuino, etc)
 
 Kerberos.io can also be installed on other boards, which run the Armbian OS. 
 
 [Read more](https://doc.kerberos.io/2.0/installation/Armbian)
 
-###Generic
+### Generic
 
 If you want to install the machinery on your working station, than you'll need to compile the source code yourself; it's a little bit more work.
 
@@ -97,16 +97,16 @@ Start the machinery on start-up, and reboot the system.
      sudo systemctl enable kerberosio
      sudo reboot
 
-##Configure
+## Configure
 
 The configuration files can be found at **/etc/opt/kerberosio/config**. By default the Raspberry Pi Camera module is set as capture device. You can update the **config.xml** file to change it to **USBCamera** or **IPCamera**. Images are stored in the **/etc/opt/kerberosio/capture** directory; this location can be changed by editing the **io.xml** file.
 
-##Run
+## Run
 
 After kerberos is installed a binary is available at **/usr/bin/kerberosio**. Just run following command in your terminal to start kerberosio.
 
     kerberosio
     
-##Contribute
+## Contribute
 
 Want to contribute? You're a Ph.D. in Computer Vision, or an ambitious programmer who wants to take kerberos.io to the next level? Then we like to welcome you to the community. Contributions are taken very seriously, besides your code, testing and documentation is very very ... very important! We only will accept pull-request with tests and documentation of a decent level and of course if everything works as expected. 

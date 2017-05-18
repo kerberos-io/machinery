@@ -99,6 +99,8 @@ namespace kerberos
         {
             m_codec = -1;
         }
+        
+        m_writer = new cv::VideoWriter();
 
         // --------------------------
         // Check if need to draw timestamp
@@ -221,7 +223,7 @@ namespace kerberos
 
         BINFO << "IoVideo: firing";
 
-        if(m_capture && m_writer == 0 && !m_recording)
+        if(m_capture && !m_writer->isOpened() && !m_recording)
         {
             // ----------------------------------------
             // The naming convention that will be used
@@ -233,7 +235,6 @@ namespace kerberos
 
             BINFO << "IoVideo: start new recording " << m_fileName;
 
-            m_writer = new cv::VideoWriter();
             m_writer->open(m_directory + m_fileName, m_codec, m_fps, cv::Size(image.getColumns(), image.getRows()));
 
             startRecordThread();
@@ -351,8 +352,6 @@ namespace kerberos
                 {
                     video->m_writer->release();
                 }
-                delete video->m_writer;
-                video->m_writer = 0;
             }
             video->m_recording = false;
 

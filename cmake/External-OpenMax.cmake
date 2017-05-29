@@ -27,10 +27,10 @@ ExternalProject_Add(openmax
     -DBUILD_SHARED_LIBS=OFF
 )
 
-set(OPENMAX_INCLUDE_DIR ${CMAKE_BINARY_DIR}/thirdparty/include/)
-set(OPENMAX_LIBRARY_DIR ${CMAKE_BINARY_DIR}/thirdparty/lib/)
+set(OPENMAX_INCLUDE_DIR ${CMAKE_BINARY_DIR}/openmax/include/)
+set(OPENMAX_LIBRARY_DIR ${CMAKE_BINARY_DIR}/openmax-build/)
 
-set(OPENMAX_LIBRARIES -lopenmaxil -lbcm_host -lvcsm -lvcos -lvchiq_arm -lrt -lpthread -ldl)
+set(OPENMAX_LIBRARIES -lopenmaxil -lbcm_host -lvcsm -lvcos -lvchiq_arm -lrt -lpthread -ldl "OpenMaxIL++")
 
 include_directories(${OPENMAX_INCLUDE_DIR})
 link_directories(${OPENMAX_LIBRARY_DIR})

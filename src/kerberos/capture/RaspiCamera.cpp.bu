@@ -1,17 +1,5 @@
 #include "capture/RaspiCamera.h"
 
-using namespace IL;
-
-struct State {
-	Camera* camera;
-	VideoEncode* preview_encode;
-	VideoEncode* record_encode;
-	bool recording; // TODO : set this variable to true from an external thread to activate recording
-	bool running;
-	pthread_t preview_thid;
-	pthread_t record_thid;
-} state = { nullptr, nullptr, nullptr, false, false };
-
 namespace kerberos
 {
     void RaspiCamera::setup(kerberos::StringMap &settings)
@@ -126,42 +114,19 @@ namespace kerberos
     
     void RaspiCamera::open()
     {
-	// Initialize hardware
-	bcm_host_init();
+        m_camera->open();
 
-	// Create components
-	state.camera = new Camera( 1280, 720, 0, false, 0, false );
-	state.preview_encode = new VideoEncode( 8192, VideoEncode::CodingMJPEG, false, false );
-	state.record_encode = new VideoEncode( 4096, VideoEncode::CodingAVC, false, false );
+        if(!isOpened())
+        {
+            throw OpenCVException("can't open rpi camera");
+        }
 
-	// Setup camera
-	state.camera->setFramerate( 30 );
-
-	// Copy preview port definition to the encoder to help it handle incoming data
-	Component::CopyPort( &state.camera->outputPorts()[70], &state.preview_encode->inputPorts()[200] );
-
-	// Tunnel video port to AVC encoder
-	state.camera->SetupTunnelVideo( state.record_encode );
-
-
-	// Prepare components for next step
-	state.camera->SetState( Component::StateIdle );
-	state.preview_encode->SetState( Component::StateIdle );
-	state.record_encode->SetState( Component::StateIdle );
-
-	// Allocate buffers that will be processed manually
-	state.camera->AllocateOutputBuffer( 70 );
-	state.preview_encode->AllocateInputBuffer( 200 );
-
-	// Start components
-	state.camera->SetState( Component::StateExecuting );
-	state.preview_encode->SetState( Component::StateExecuting );
-	state.record_encode->SetState( Component::StateExecuting );
-
-	// Start capturing
-	state.camera->SetCapturing( true );
-	state.running = true;
-
+        // ----------
+        // sleep a second, to be sure the camera is enabled properly.
+        // when reconfiguring the machinery, the process get blocked, if 
+        // the raspicamera isn't enabled properly.
+        
+        usleep(1000*1000);
     }
     
     void RaspiCamera::close()

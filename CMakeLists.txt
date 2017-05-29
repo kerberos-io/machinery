@@ -38,6 +38,12 @@ project(Kerberos)
 	set(KERBEROS_SRC "")
 	set(KERBEROS_FACTORY_ENTITIES "")
 
+
+
+set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wuninitialized -std=gnu++11 -Wno-pmf-conversions -Wno-unused-result" )
+set( CMAKE_LD_FLAGS "${CMAKE_LD_FLAGS} -Wall -std=gnu11" )
+set( CMAKE_LINKER_FLAGS "${CMAKE_LINKER_FLAGS} -Wall -std=gnu11" )
+
 # ----------------------------------------------
 # Build all the dependencies
 

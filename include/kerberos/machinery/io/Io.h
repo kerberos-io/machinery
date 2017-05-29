@@ -25,7 +25,7 @@
 #include "machinery/io/FileManager.h"
 #include "Helper.h"
 #include "easylogging++.h"
-#include "capture/Capture.h";
+#include "capture/Capture.h"
 
 namespace kerberos
 {

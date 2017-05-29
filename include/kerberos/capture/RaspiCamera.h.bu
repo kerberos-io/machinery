@@ -21,10 +21,6 @@
 #include "capture/Capture.h"
 #include "raspicam/raspicam_cv.h"
 #include "Executor.h"
-#include "Camera.h"
-#include "VideoEncode.h"
-#include "VideoDecode.h"
-#include "VideoRender.h"
 
 namespace kerberos
 {

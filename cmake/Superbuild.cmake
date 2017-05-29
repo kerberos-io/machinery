@@ -38,6 +38,9 @@ include( ExternalProject )
 
         include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/External-RaspiCam.cmake)
         set(KERBEROS_DEPENDENCIES ${KERBEROS_DEPENDENCIES} raspicamera)
+	
+	include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/External-OpenMax.cmake)
+	set(KERBEROS_DEPENDENCIES ${KERBEROS_DEPENDENCIES} openmax)
 
     endif()
     

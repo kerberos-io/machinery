@@ -2,7 +2,7 @@
 //  Class: Machinery.h
 //  Description: The kerberos controller.
 //  Created:     17/07/2014
-//  Author:      Cédric Verstraeten
+//  Author:      Cï¿½dric Verstraeten
 //  Mail:        cedric@verstraeten.io
 //  Website:     www.verstraeten.io
 //
@@ -24,7 +24,7 @@
 #include "machinery/expositor/Expositor.h"
 #include "machinery/io/Io.h"
 #include "easylogging++.h"
-#include "capture/Capture.h";
+#include "capture/Capture.h"
 
 namespace kerberos
 {

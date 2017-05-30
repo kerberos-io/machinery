@@ -224,6 +224,7 @@ namespace kerberos
         // ------------------
         // Initialize stream
 
+        usleep(1000*5000);
         stream = new Stream();
         stream->configureStream(settings);
         startStreamThread();
@@ -278,9 +279,11 @@ namespace kerberos
 
                 kerberos->stream->connect();
 
-                uint8_t * data = nullptr;
+                uint8_t * data = new uint8_t[80000];
                 int32_t length = kerberos->capture->retrieveRAW(data);
                 kerberos->stream->writeRAW(data, length);
+                delete data;
+                //usleep(kerberos->stream->wait * 1000 * 1000); // sleep x microsec.*/
             }
             catch(cv::Exception & ex){}
         }

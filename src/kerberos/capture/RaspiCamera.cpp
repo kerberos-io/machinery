@@ -78,13 +78,12 @@ void* preview_thread( void* self )
 			process_image( capture, data );
 		}
 
+		pthread_mutex_lock(&capture->m_lock);
 		while ( ( datalen = state.preview_encode->getOutputData( zero_copy ? nullptr : mjpeg_data, false ) ) > 0 ) {
-				// TODO : send MJPEG data to a client, 'data' contains exactly one coded frame which is 'datalen' long
-				pthread_mutex_lock(&capture->m_lock);
-			 	capture->mjpeg_data_length = datalen;
-				memcpy(capture->mjpeg_data_buffer, mjpeg_data, datalen);
-				pthread_mutex_unlock(&capture->m_lock);
+				capture->mjpeg_data_length = datalen;
+				capture->mjpeg_data_buffer = mjpeg_data;
 		}
+		pthread_mutex_unlock(&capture->m_lock);
 	}
 
 	return nullptr;
@@ -100,7 +99,7 @@ void* record_thread( void* argp )
 		int32_t datalen = state.record_encode->getOutputData( data );
 		if ( datalen > 0 && state.recording ) {
 			// TODO : save data somewhere
-			file.write( (char*)data, datalen );
+			file.write((char*) data, datalen);
 			file.flush();
 		}
 	}
@@ -130,9 +129,6 @@ namespace kerberos
 
         // Open camera
         open();
-
-				data_buffer = new uint8_t[80000];
-				mjpeg_data_buffer = new uint8_t[80000];
     }
 
     void RaspiCamera::grab(){}
@@ -146,7 +142,7 @@ namespace kerberos
 						int32_t length = 0;
 						pthread_mutex_lock(&m_lock);
 						length = mjpeg_data_length;
-						data = mjpeg_data_buffer;
+						memcpy(data, mjpeg_data_buffer, length);
 						pthread_mutex_unlock(&m_lock);
 
 						return length;

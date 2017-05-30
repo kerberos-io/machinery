@@ -8,7 +8,7 @@
 //
 //  The copyright to the computer program(s) herein
 //  is the property of Verstraeten.io, Belgium.
-//  The program(s) may be used and/or copied under 
+//  The program(s) may be used and/or copied under
 //  the CC-NC-ND license model.
 //
 //  https://doc.kerberos.io/license
@@ -34,7 +34,7 @@ namespace kerberos
         private:
             raspicam::RaspiCam_Cv * m_camera;
             Executor<RaspiCamera> tryToUpdateCapture;
-        
+
         public:
             RaspiCamera()
             {
@@ -44,11 +44,18 @@ namespace kerberos
             void setImageSize(int width, int height);
             void setRotation(int angle);
             void setDelay(int msec);
-            
+
+            uint8_t * mjpeg_data_buffer;
+            int32_t mjpeg_data_length;
+
+            uint8_t * data_buffer;
+            int32_t data_length;
+
             void grab();
             Image retrieve();
+            int32_t retrieveRAW(uint8_t* data);
             Image * takeImage();
-        
+
             void open();
             void close();
             void update();

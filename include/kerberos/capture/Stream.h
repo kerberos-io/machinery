@@ -8,7 +8,7 @@
 //
 //  The copyright to the computer program(s) herein
 //  is the property of Verstraeten.io, Belgium.
-//  The program(s) may be used and/or copied under 
+//  The program(s) may be used and/or copied under
 //  the CC-NC-ND license model.
 //
 //  https://doc.kerberos.io/license
@@ -51,8 +51,8 @@ namespace kerberos
         int m_timeout; // master sock timeout, shutdown after timeout millis.
         int m_quality; // jpeg compression [1..100]
 
-        int _write( int sock, char *s, int len ) 
-        { 
+        int _write( int sock, char *s, int len )
+        {
             if ( len < 1 ) { len = strlen(s); }
             #if defined(__APPLE_CC__) || defined(BSD)
                 return send(sock, s, len, 0);
@@ -68,7 +68,7 @@ namespace kerberos
             FD_ZERO( &master );
         }
 
-        ~Stream() 
+        ~Stream()
         {
             release();
         }
@@ -79,6 +79,7 @@ namespace kerberos
         bool isOpened();
         bool connect();
         void write(Image image);
+        void writeRAW(uint8_t* data, int32_t length);
         double wait;
     };
 }

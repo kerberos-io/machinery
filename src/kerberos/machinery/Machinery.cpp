@@ -7,7 +7,7 @@ namespace kerberos
     {
         // -----------------------------------------------------------
         // Creates condition, algorithms, expositors, heuristics and io handlers.
-        
+
         LINFO << "Starting conditions: " + settings.at("condition");
         std::vector<Condition *> conditions = Factory<Condition>::getInstance()->createMultiple(settings.at("condition"));
         for(int i = 0; i < conditions.size(); i++)
@@ -29,7 +29,8 @@ namespace kerberos
         LINFO << "Starting heuristic: " + settings.at("heuristic");
         Heuristic * heuristic = Factory<Heuristic>::getInstance()->create(settings.at("heuristic"));
         heuristic->setup(settings);
-        setHeuristic(heuristic);  
+        setHeuristic(heuristic);
+        std::cout << "test" << std::endl;
 
         LINFO << "Starting io devices: " + settings.at("io");
         std::vector<Io *> ios = Factory<Io>::getInstance()->createMultiple(settings.at("io"));
@@ -39,6 +40,8 @@ namespace kerberos
             ios[i]->setup(settings);
         }
         setIo(ios);
+
+        std::cout << "test2" << std::endl;
     }
 
     void Machinery::initialize(ImageVector & images)
@@ -49,10 +52,10 @@ namespace kerberos
             m_ios[i]->save(*images[images.size()-1]);
         }
     }
-    
+
     void update(const ImageVector & images)
     {
-        
+
     }
 
     void Machinery::fire(JSON & data)
@@ -76,28 +79,28 @@ namespace kerberos
     bool Machinery::allowed(const ImageVector & images)
     {
         bool allowed = true;
-        
+
         int i = 0;
         while(allowed && i < m_conditions.size())
         {
             allowed = m_conditions[i]->allowed(images);
             i++;
         }
-        
+
         return allowed;
     }
-    
+
     bool Machinery::save(Image & image, JSON & data)
     {
         bool success = true;
-        
+
         int i = 0;
         while(success && i < m_ios.size())
         {
             success = m_ios[i]->save(image, data);
             i++;
         }
-        
+
         return success;
     }
 
@@ -123,7 +126,7 @@ namespace kerberos
             m_expositor->calculate(evaluation, data);
             return m_heuristic->isValid(evaluation, images, data);
         }
-        
+
         return false;
     }
 }

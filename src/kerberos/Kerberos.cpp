@@ -283,7 +283,7 @@ namespace kerberos
                 int32_t length = kerberos->capture->retrieveRAW(data);
                 kerberos->stream->writeRAW(data, length);
                 delete data;
-                //usleep(kerberos->stream->wait * 1000 * 1000); // sleep x microsec.*/
+                usleep(kerberos->stream->wait * 1000 * 1000); // sleep x microsec.*/
             }
             catch(cv::Exception & ex){}
         }

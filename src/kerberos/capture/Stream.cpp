@@ -158,9 +158,9 @@ namespace kerberos
 
           if(length > 0)
           {
-              LINFO << "streaming: " << length;
               for(int i = 0; i < clients.size(); i++)
               {
+	          LINFO << "streaming (" << length << ") to " << i; 
                   packetsSend[clients[i]]++;
 
                   int error = 0;

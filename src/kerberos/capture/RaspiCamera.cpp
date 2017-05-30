@@ -83,6 +83,7 @@ void* preview_thread( void* self )
 				capture->mjpeg_data_length = datalen;
 				capture->mjpeg_data_buffer = mjpeg_data;
 		}
+		LINFO << "grab new image";
 		pthread_mutex_unlock(&capture->m_lock);
 	}
 

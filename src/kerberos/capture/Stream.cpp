@@ -115,8 +115,7 @@ namespace kerberos
         int addrlen = sizeof(SOCKADDR);
         SOCKADDR_IN address = {0};
         SOCKET client = accept(sock, (SOCKADDR*)&address, (socklen_t*) &addrlen);
-	u_long nbio = 1;
-        //ioctlsocket(client, FIONBIO, &nbio);
+
         if (client == SOCKET_ERROR)
         {
             LERROR << "Stream: couldn't accept connection on sock";

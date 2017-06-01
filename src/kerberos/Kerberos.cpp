@@ -41,7 +41,7 @@ namespace kerberos
             // -------------------
             // Initialize data
 
-            /*JSON data;
+            JSON data;
             data.SetObject();
 
             // ------------------------------------
@@ -84,8 +84,7 @@ namespace kerberos
             // -------------
             // Shift images
 
-            m_images = capture->shiftImage();*/
-            usleep(1000 * 1000);
+            m_images = capture->shiftImage();
         }
     }
 
@@ -178,10 +177,10 @@ namespace kerberos
             delete *it;
         }
 
-        /*m_images.clear();
+        m_images.clear();
         m_images = capture->takeImages(3);
 
-        machinery->initialize(m_images);*/
+        machinery->initialize(m_images);
     }
 
     // ----------------------------------

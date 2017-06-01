@@ -50,6 +50,7 @@ namespace kerberos
 
             uint8_t * data_buffer;
             int32_t data_length;
+            uint8_t * image_data;
 
             void grab();
             Image retrieve();

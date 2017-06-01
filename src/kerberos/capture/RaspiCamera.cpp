@@ -13,18 +13,8 @@ struct State {
 	pthread_t record_thid;
 } state = { nullptr, nullptr, nullptr, false, false };
 
-void process_image(kerberos::RaspiCamera * capture, uint8_t* data )
-{
-		int width = 1280;
-		int height = 720;
-		cv::Mat mYUV( height + height / 2, width, CV_8UC1, (void*)data );
-		cv::Mat mRGB( height, width, CV_8UC3 );
-		cvtColor( mYUV, mRGB, CV_YUV2RGB_I420, 3 );
-}
-
 void* preview_thread( void* self )
 {
-
 	kerberos::RaspiCamera * capture = (kerberos::RaspiCamera *) self;
 
 	bool zero_copy = true;
@@ -53,17 +43,19 @@ void* preview_thread( void* self )
 		if ( datalen > 0 ) {
 			// Send it to the MJPEG encoder
 			state.preview_encode->fillInput( 200, data, datalen, false, true );
-			// Process the image
-			//process_image( capture, data );
+			// Grab the image
+			pthread_mutex_lock(&capture->m_lock);
+			capture->data_length = datalen;
+			capture->data_buffer = data;
+			pthread_mutex_unlock(&capture->m_lock);
 		}
 
-		pthread_mutex_lock(&capture->m_lock);
 		while ( ( datalen = state.preview_encode->getOutputData( zero_copy ? nullptr : mjpeg_data, false ) ) > 0 ) {
+				pthread_mutex_lock(&capture->m_lock);
 				capture->mjpeg_data_length = datalen;
 				capture->mjpeg_data_buffer = mjpeg_data;
+				pthread_mutex_unlock(&capture->m_lock);
 		}
-		LINFO << "grab new image";
-		pthread_mutex_unlock(&capture->m_lock);
 	}
 
 	return nullptr;
@@ -114,6 +106,9 @@ namespace kerberos
         setRotation(angle);
         setDelay(delay);
 
+				// Allocate space for grabbing images
+				image_data = new uint8_t[1280*720*sizeof(uint16_t)];
+
         // Open camera
         open();
     }
@@ -143,7 +138,30 @@ namespace kerberos
 
     Image * RaspiCamera::takeImage()
     {
-        Image * image = new Image();
+				// Delay camera for some time..
+		 		usleep(m_delay*1000);
+
+				Image * image = new Image();
+
+				try
+				{
+						int32_t length = 0;
+						pthread_mutex_lock(&m_lock);
+						length = data_length;
+						memcpy(image_data, data_buffer, length);
+						pthread_mutex_unlock(&m_lock);
+
+						int width = 1280;
+						int height = 720;
+						cv::Mat mYUV(height + height / 2, width, CV_8UC1, (void*)image_data);
+						cvtColor( mYUV, image->getImage(), CV_YUV2BGR_I420, 3 );
+				}
+				catch(cv::Exception & ex)
+				{
+						pthread_mutex_unlock(&m_lock);
+						throw OpenCVException(ex.msg.c_str());
+				}
+
         return image;
     }
 
@@ -165,17 +183,6 @@ namespace kerberos
 
     void RaspiCamera::open()
     {
-
-	// We register signal handler to properly destroy OpenMAX context (by calling exit() in the handler)
-	static int sig_list[] = { 2, 3, 6, 7, 9, 11, 15 };
-	uint32_t i;
-	for ( i = 0; i <= sizeof(sig_list)/sizeof(int); i++ ) {
-		struct sigaction sa;
-		memset( &sa, 0, sizeof(sa) );
-		sa.sa_handler = &terminate;
-		sigaction( sig_list[i], &sa, NULL );
-	}
-
 				// Initialize hardware
 				bcm_host_init();
 

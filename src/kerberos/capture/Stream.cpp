@@ -57,12 +57,14 @@ namespace kerberos
         if(m_enabled)
         {
             sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+	    u_long nbio = 1;
+	    //ioctlsocket(sock, FIONBIO, &nbio);
 
-            int reuse = 1;
+	    int reuse = 1;
             setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, (const char*)&reuse, sizeof(reuse));
 
             struct timeval timeout;
-            timeout.tv_sec = 3;
+            timeout.tv_sec = 2;
             timeout.tv_usec = 0;
             setsockopt(sock, SOL_SOCKET, SO_SNDTIMEO, (struct timeval *)&timeout,sizeof(timeout));
 
@@ -113,7 +115,8 @@ namespace kerberos
         int addrlen = sizeof(SOCKADDR);
         SOCKADDR_IN address = {0};
         SOCKET client = accept(sock, (SOCKADDR*)&address, (socklen_t*) &addrlen);
-
+	u_long nbio = 1;
+        //ioctlsocket(client, FIONBIO, &nbio);
         if (client == SOCKET_ERROR)
         {
             LERROR << "Stream: couldn't accept connection on sock";
@@ -124,7 +127,7 @@ namespace kerberos
         }
 
         struct timeval timeout;
-        timeout.tv_sec = 3;
+        timeout.tv_sec = 2;
         timeout.tv_usec = 0;
         setsockopt(client, SOL_SOCKET, SO_RCVTIMEO, (struct timeval *)&timeout, sizeof(timeout));
 
@@ -160,7 +163,7 @@ namespace kerberos
           {
               for(int i = 0; i < clients.size(); i++)
               {
-	          LINFO << "streaming (" << length << ") to " << i; 
+                  std::cout << length << std::endl;
                   packetsSend[clients[i]]++;
 
                   int error = 0;
@@ -171,9 +174,7 @@ namespace kerberos
                   {
                       char head[400];
                       sprintf(head,"--mjpegstream\r\nContent-Type: image/jpeg\r\nContent-Length: %lu\r\n\r\n",length);
-
                       _write(clients[i],head,0);
-
                       retval = getsockopt(clients[i], SOL_SOCKET, SO_ERROR, &error, &len);
 
                       if (retval == 0 && error == 0)

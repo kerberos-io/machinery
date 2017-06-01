@@ -1,4 +1,5 @@
 #include "capture/RaspiCamera.h"
+#include <signal.h>
 
 using namespace IL;
 
@@ -14,33 +15,11 @@ struct State {
 
 void process_image(kerberos::RaspiCamera * capture, uint8_t* data )
 {
-	uint8_t* y_plane = data;
-	uint8_t* u_plane = &data[ 1280 * 720 ];
-	uint8_t* v_plane = &data[ 1280 * 720 + ( 1280 / 2 ) * ( 720 / 2 ) ];
-
-	int width = 1280;
-	int height = 720;
-
-	for ( int y = 0; y < height; y++ ) {
-		for ( int x = 0; x < width; x++ ) {
-			int xx = x >> 1;
-			int yy = y >> 1;
-			int Y = y_plane[ y * width + x ] - 16;
-			int U = u_plane[ yy * width/2 + xx ] - 128;
-			int V = v_plane[ yy * width/2 + xx ] - 128;
-			int r = ( 298 * Y + 409 * V + 128 ) >> 8;
-			int g = ( 298 * Y - 100 * U - 208 * V + 128 ) >> 8;
-			int b = ( 298 * Y + 516 * U + 128 ) >> 8;
-			// put [r,g,b] in cvMat at [x,y]
-		}
-	}
-
-	/*pthread_mutex_lock(&capture->m_lock);
-	capture->mjpeg_data_length = datalen;
-	capture->mjpeg_data_buffer = mjpeg_data;
-	pthread_mutex_unlock(&capture->m_lock);*/
-
-	// TODO : process image here (i.e. pass it to OpenCV, export to external program, ...)
+		int width = 1280;
+		int height = 720;
+		cv::Mat mYUV( height + height / 2, width, CV_8UC1, (void*)data );
+		cv::Mat mRGB( height, width, CV_8UC3 );
+		cvtColor( mYUV, mRGB, CV_YUV2RGB_I420, 3 );
 }
 
 void* preview_thread( void* self )
@@ -54,7 +33,7 @@ void* preview_thread( void* self )
 	if ( not zero_copy ) {
 		// Allocate space for image
 		data = new uint8_t[1280*720*sizeof(uint16_t)];
-		mjpeg_data = new uint8_t[80000];
+		mjpeg_data = new uint8_t[(int)(1280*720*1.5)];
 	}
 
 	// ATTENTION : Each loop must take less time than it takes to the camera to take one frame
@@ -75,7 +54,7 @@ void* preview_thread( void* self )
 			// Send it to the MJPEG encoder
 			state.preview_encode->fillInput( 200, data, datalen, false, true );
 			// Process the image
-			process_image( capture, data );
+			//process_image( capture, data );
 		}
 
 		pthread_mutex_lock(&capture->m_lock);
@@ -93,7 +72,7 @@ void* preview_thread( void* self )
 
 void* record_thread( void* argp )
 {
-	uint8_t* data = new uint8_t[65536];
+	uint8_t* data = new uint8_t[65536*4];
 	std::ofstream file( "/tmp/test.h264", std::ofstream::out | std::ofstream::binary );
 	while ( state.running ) {
 		// Consume h264 data, this is a blocking call
@@ -108,6 +87,13 @@ void* record_thread( void* argp )
 	return nullptr;
 }
 
+void terminate( int sig )
+{
+	state.running = false;
+	pthread_join( state.record_thid, nullptr );
+	pthread_join( state.preview_thid, nullptr );
+	exit(0);
+}
 
 namespace kerberos
 {
@@ -158,18 +144,6 @@ namespace kerberos
     Image * RaspiCamera::takeImage()
     {
         Image * image = new Image();
-
-				uint8_t* data = new uint8_t[80000];
-				int32_t length = retrieveRAW(data);
-				std::vector<uint8_t> buffer;
-				cv::Mat builded_img;
-				for (uint ptr = 0; ptr < length; ptr++) {
-					buffer.push_back(data[ptr]);
-				}
-				builded_img = cv::imdecode(buffer, CV_LOAD_IMAGE_COLOR);
-				image->setImage(builded_img);
-				delete data;
-
         return image;
     }
 
@@ -191,6 +165,17 @@ namespace kerberos
 
     void RaspiCamera::open()
     {
+
+	// We register signal handler to properly destroy OpenMAX context (by calling exit() in the handler)
+	static int sig_list[] = { 2, 3, 6, 7, 9, 11, 15 };
+	uint32_t i;
+	for ( i = 0; i <= sizeof(sig_list)/sizeof(int); i++ ) {
+		struct sigaction sa;
+		memset( &sa, 0, sizeof(sa) );
+		sa.sa_handler = &terminate;
+		sigaction( sig_list[i], &sa, NULL );
+	}
+
 				// Initialize hardware
 				bcm_host_init();
 

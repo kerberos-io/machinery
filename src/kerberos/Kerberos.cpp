@@ -259,6 +259,8 @@ namespace kerberos
     {
         Kerberos * kerberos = (Kerberos *) self;
 
+        uint8_t * data = new uint8_t[(int)(1280*720*1.5)];
+
         while(kerberos->stream->isOpened())
         {
             try
@@ -279,14 +281,14 @@ namespace kerberos
 
                 kerberos->stream->connect();
 
-                uint8_t * data = new uint8_t[80000];
                 int32_t length = kerberos->capture->retrieveRAW(data);
                 kerberos->stream->writeRAW(data, length);
-                delete data;
                 usleep(kerberos->stream->wait * 1000 * 1000); // sleep x microsec.*/
             }
             catch(cv::Exception & ex){}
         }
+
+        delete data;
     }
 
     void Kerberos::startStreamThread()

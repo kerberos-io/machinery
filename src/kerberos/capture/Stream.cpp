@@ -57,10 +57,8 @@ namespace kerberos
         if(m_enabled)
         {
             sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-	    u_long nbio = 1;
-	    //ioctlsocket(sock, FIONBIO, &nbio);
 
-	    int reuse = 1;
+	          int reuse = 1;
             setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, (const char*)&reuse, sizeof(reuse));
 
             struct timeval timeout;

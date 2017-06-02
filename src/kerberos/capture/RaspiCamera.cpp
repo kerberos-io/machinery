@@ -43,15 +43,11 @@ void* preview_thread( void* self )
 		if ( datalen > 0 ) {
 			// Send it to the MJPEG encoder
 			state.preview_encode->fillInput( 200, data, datalen, false, true );
-			// Grab the image
-			pthread_mutex_lock(&capture->m_lock);
-			capture->data_length = datalen;
-			capture->data_buffer = data;
-			pthread_mutex_unlock(&capture->m_lock);
 		}
 
 		while ( ( datalen = state.preview_encode->getOutputData( zero_copy ? nullptr : mjpeg_data, false ) ) > 0 ) {
 				pthread_mutex_lock(&capture->m_lock);
+				capture->data_buffer = data;
 				capture->mjpeg_data_length = datalen;
 				capture->mjpeg_data_buffer = mjpeg_data;
 				pthread_mutex_unlock(&capture->m_lock);
@@ -145,16 +141,12 @@ namespace kerberos
 
 				try
 				{
-						int32_t length = 0;
-						pthread_mutex_lock(&m_lock);
-						length = data_length;
-						memcpy(image_data, data_buffer, length);
-						pthread_mutex_unlock(&m_lock);
-
 						int width = 1280;
 						int height = 720;
-						cv::Mat mYUV(height + height / 2, width, CV_8UC1, (void*)image_data);
-						cvtColor( mYUV, image->getImage(), CV_YUV2BGR_I420, 3 );
+						pthread_mutex_lock(&m_lock);
+						cv::Mat mYUV(height + height / 2, width, CV_8UC1, (void*)data_buffer);
+						pthread_mutex_unlock(&m_lock);
+						cvtColor(mYUV, image->getImage(), CV_YUV2BGR_I420, 3);
 				}
 				catch(cv::Exception & ex)
 				{

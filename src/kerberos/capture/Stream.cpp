@@ -223,22 +223,27 @@ namespace kerberos
                     socklen_t len = sizeof (error);
                     int retval = getsockopt(clients[i], SOL_SOCKET, SO_ERROR, &error, &len);
 
+                    int socketState = 0;
+                    char buffer[1024];
                     if (retval == 0 && error == 0)
                     {
-                        char head[400];
-                        sprintf(head,"--mjpegstream\r\nContent-Type: image/jpeg\r\nContent-Length: %lu\r\n\r\n",outlen);
-
-                        _write(clients[i],head,0);
-
-                        retval = getsockopt(clients[i], SOL_SOCKET, SO_ERROR, &error, &len);
-
-                        if (retval == 0 && error == 0)
+                        if(socketState >= 0)
                         {
-                            _write(clients[i],(char*)(&outbuf[0]),outlen);
+                            char head[400];
+                            sprintf(head,"--mjpegstream\r\nContent-Type: image/jpeg\r\nContent-Length: %lu\r\n\r\n",outlen);
+
+                            socketState = _write(clients[i],head,0);
+
+                            retval = getsockopt(clients[i], SOL_SOCKET, SO_ERROR, &error, &len);
+
+                            if (retval == 0 && error == 0)
+                            {
+                                socketState = _write(clients[i],(char*)(&outbuf[0]),outlen);
+                            }
                         }
                     }
 
-                    if (retval != 0 || error != 0)
+                    if (retval != 0 || error != 0 || socketState == -1)
                     {
                         shutdown(clients[i], 2);
                         FD_CLR(clients[i],&master);

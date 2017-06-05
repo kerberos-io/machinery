@@ -160,7 +160,7 @@ namespace kerberos
           {
               for(int i = 0; i < clients.size(); i++)
               {
-                  std::cout << length << std::endl;
+                  std::cout << "send: " << length << std::endl;
                   packetsSend[clients[i]]++;
 
                   int error = 0;

@@ -264,9 +264,9 @@ namespace kerberos
         {
             try
             {
-                /*kerberos->stream->connect();
+                kerberos->stream->connect();
 
-                if(kerberos->capture->isOpened())
+                if(true)//kerberos->capture->isOpened())
                 {
                     Image image = kerberos->capture->retrieve();
                     if(kerberos->capture->m_angle != 0)
@@ -276,12 +276,16 @@ namespace kerberos
                     kerberos->stream->write(image);
                 }
 
-                usleep(kerberos->stream->wait * 1000 * 1000); // sleep x microsec.*/
+                usleep(kerberos->stream->wait * 1000 * 1000); // sleep x microsec.
 
-                kerberos->stream->connect();
+                /*kerberos->stream->connect();
 
-                int32_t length = kerberos->capture->retrieveRAW(data);
-                kerberos->stream->writeRAW(data, length);
+                if(true) //kerberos->stream->hasClients())
+                {
+                    int32_t length = kerberos->capture->retrieveRAW(data);
+                    kerberos->stream->writeRAW(data, length);
+                }
+
                 usleep(kerberos->stream->wait * 1000 * 1000); // sleep x microsec.*/
             }
             catch(cv::Exception & ex){}

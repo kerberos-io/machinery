@@ -30,7 +30,6 @@ namespace kerberos
         Heuristic * heuristic = Factory<Heuristic>::getInstance()->create(settings.at("heuristic"));
         heuristic->setup(settings);
         setHeuristic(heuristic);
-        std::cout << "test" << std::endl;
 
         LINFO << "Starting io devices: " + settings.at("io");
         std::vector<Io *> ios = Factory<Io>::getInstance()->createMultiple(settings.at("io"));
@@ -40,8 +39,6 @@ namespace kerberos
             ios[i]->setup(settings);
         }
         setIo(ios);
-
-        std::cout << "test2" << std::endl;
     }
 
     void Machinery::initialize(ImageVector & images)

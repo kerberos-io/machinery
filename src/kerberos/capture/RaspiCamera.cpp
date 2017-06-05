@@ -17,41 +17,19 @@ void* preview_thread( void* self )
 {
 	kerberos::RaspiCamera * capture = (kerberos::RaspiCamera *) self;
 
-	bool zero_copy = true;
-	uint8_t* data = nullptr;
-	uint8_t* mjpeg_data = nullptr;
-	if ( not zero_copy ) {
-		// Allocate space for image
-		data = new uint8_t[1280*720*sizeof(uint16_t)];
-		mjpeg_data = new uint8_t[(int)(1280*720*1.5)];
-	}
+	// Retrieve OMX buffer
+	capture->data_buffer = state.camera->outputPorts()[70].buffer->pBuffer;
+	capture->mjpeg_data_buffer = state.preview_encode->outputPorts()[201].buffer->pBuffer;
 
 	// ATTENTION : Each loop must take less time than it takes to the camera to take one frame
 	// otherwise it will cause underflow which can lead to camera stalling
 	// a good solution is to implement frame skipping (measure time between to loops, if this time
 	// is too big, just skip image processing and MJPEG sendout)
+
 	while ( state.running ) {
-		if ( zero_copy ) {
-			// Retrieve OMX buffer
-			data = state.camera->outputPorts()[70].buffer->pBuffer;
-			mjpeg_data = state.preview_encode->outputPorts()[201].buffer->pBuffer;
-		}
 		// Get YUV420 image from preview port, this is a blocking call
 		// If zero-copy is activated, we don't pass any buffer
-		int32_t datalen = state.camera->getOutputData( 70, zero_copy ? nullptr : data );
-
-		if ( datalen > 0 ) {
-			// Send it to the MJPEG encoder
-			state.preview_encode->fillInput( 200, data, datalen, false, true );
-		}
-
-		while ( ( datalen = state.preview_encode->getOutputData( zero_copy ? nullptr : mjpeg_data, false ) ) > 0 ) {
-				pthread_mutex_lock(&capture->m_lock);
-				capture->data_buffer = data;
-				capture->mjpeg_data_length = datalen;
-				capture->mjpeg_data_buffer = mjpeg_data;
-				pthread_mutex_unlock(&capture->m_lock);
-		}
+		capture->data_length  = state.camera->getOutputData(70, nullptr);
 	}
 
 	return nullptr;
@@ -64,7 +42,7 @@ void* record_thread( void* argp )
 	std::ofstream file( "/tmp/test.h264", std::ofstream::out | std::ofstream::binary );
 	while ( state.running ) {
 		// Consume h264 data, this is a blocking call
-		int32_t datalen = state.record_encode->getOutputData( data );
+		int32_t datalen = state.record_encode->getOutputData(data);
 		if ( datalen > 0 && state.recording ) {
 			// TODO : save data somewhere
 			file.write((char*) data, datalen);
@@ -102,32 +80,53 @@ namespace kerberos
         setRotation(angle);
         setDelay(delay);
 
-				// Allocate space for grabbing images
-				image_data = new uint8_t[1280*720*sizeof(uint16_t)];
-
         // Open camera
         open();
     }
 
     void RaspiCamera::grab(){}
 
-		Image RaspiCamera::retrieve(){}
+		Image RaspiCamera::retrieve()
+		{
+				// Delay camera for some time..
+				usleep(m_delay*1000);
+
+				Image image;
+
+				try
+				{
+						int width = 1280;
+						int height = 720;
+						cv::Mat mYUV(height + height / 2, width, CV_8UC1, (void*) data_buffer);
+						cvtColor(mYUV, image.getImage(), CV_YUV2BGR_I420, 3);
+				}
+				catch(cv::Exception & ex)
+				{
+						throw OpenCVException(ex.msg.c_str());
+				}
+
+				return image;
+		}
 
 		int32_t RaspiCamera::retrieveRAW(uint8_t * data)
 		{
 				try
 				{
-						int32_t length = 0;
-						pthread_mutex_lock(&m_lock);
-						length = mjpeg_data_length;
-						memcpy(data, mjpeg_data_buffer, length);
-						pthread_mutex_unlock(&m_lock);
+						if ( data_length > 0 ) {
+							// Send it to the MJPEG encoder
+							state.preview_encode->fillInput(200, data_buffer, data_length, false, true);
+						}
 
-						return length;
+						while ( ( mjpeg_data_length = state.preview_encode->getOutputData(nullptr, false ) ) > 0 ) {
+							data = mjpeg_data_buffer;
+						}
+
+						//std::cout << mjpeg_data_length << std::endl;
+
+						return mjpeg_data_length;
 				}
 				catch(cv::Exception & ex)
 				{
-						pthread_mutex_unlock(&m_lock);
 						throw OpenCVException(ex.msg.c_str());
 				}
 		}
@@ -143,14 +142,14 @@ namespace kerberos
 				{
 						int width = 1280;
 						int height = 720;
-						pthread_mutex_lock(&m_lock);
-						cv::Mat mYUV(height + height / 2, width, CV_8UC1, (void*)data_buffer);
-						pthread_mutex_unlock(&m_lock);
+						cv::Mat mYUV(height + height / 2, width, CV_8UC1, (void*) data_buffer);
 						cvtColor(mYUV, image->getImage(), CV_YUV2BGR_I420, 3);
+
+						// Check if need to rotate the image
+            image->rotate(m_angle);
 				}
 				catch(cv::Exception & ex)
 				{
-						pthread_mutex_unlock(&m_lock);
 						throw OpenCVException(ex.msg.c_str());
 				}
 
@@ -184,7 +183,7 @@ namespace kerberos
 				state.record_encode = new VideoEncode( 4096, VideoEncode::CodingAVC, false, false );
 
 				// Setup camera
-				state.camera->setFramerate( 30 );
+				state.camera->setFramerate(30);
 
 				// Copy preview port definition to the encoder to help it handle incoming data
 				Component::CopyPort( &state.camera->outputPorts()[70], &state.preview_encode->inputPorts()[200] );
@@ -209,7 +208,7 @@ namespace kerberos
 				// Start capturing
 				state.camera->SetCapturing( true );
 				state.running = true;
-				//state.recording = true;
+				state.recording = false;
 
 				// Start threads
 				pthread_create( &state.preview_thid, nullptr, &preview_thread, this );

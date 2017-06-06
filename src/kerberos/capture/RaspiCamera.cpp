@@ -45,7 +45,6 @@ void* record_thread( void* argp )
 		// Consume h264 data, this is a blocking call
 		int32_t datalen = state.record_encode->getOutputData(data);
 		if ( datalen > 0 && state.recording ) {
-			// TODO : save data somewhere
 			file.write((char*) data, datalen);
 			file.flush();
 		}
@@ -239,6 +238,15 @@ namespace kerberos
 		void RaspiCamera::startRecord(std::string path)
 		{
 				file.open(path, std::ofstream::out | std::ofstream::binary);
+
+				const std::map< uint32_t, uint8_t* > headers = state.record_encode->headers();
+				if ( headers.size() > 0 ) {
+					for ( auto hdr : headers ) {
+						file.write((char*) hdr.second, hdr.first);
+						file.flush();
+					}
+				}
+				
 				state.recording = true;
 		}
 

@@ -25,6 +25,7 @@
 #include "VideoEncode.h"
 #include "VideoDecode.h"
 #include "VideoRender.h"
+#include <map>
 
 namespace kerberos
 {

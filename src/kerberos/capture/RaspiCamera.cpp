@@ -13,6 +13,8 @@ struct State {
 	pthread_t record_thid;
 } state = { nullptr, nullptr, nullptr, false, false };
 
+std::ofstream file;
+
 void* preview_thread( void* self )
 {
 	kerberos::RaspiCamera * capture = (kerberos::RaspiCamera *) self;
@@ -39,7 +41,6 @@ void* preview_thread( void* self )
 void* record_thread( void* argp )
 {
 	uint8_t* data = new uint8_t[65536*4];
-	std::ofstream file( "/tmp/test.h264", std::ofstream::out | std::ofstream::binary );
 	while ( state.running ) {
 		// Consume h264 data, this is a blocking call
 		int32_t datalen = state.record_encode->getOutputData(data);
@@ -80,6 +81,8 @@ namespace kerberos
         setRotation(angle);
         setDelay(delay);
 
+				onBoardRecording = true;
+
         // Open camera
         open();
     }
@@ -112,16 +115,15 @@ namespace kerberos
 		{
 				try
 				{
-						if ( data_length > 0 ) {
+						if (data_length > 0) {
 							// Send it to the MJPEG encoder
 							state.preview_encode->fillInput(200, data_buffer, data_length, false, true);
 						}
 
-						while ( ( mjpeg_data_length = state.preview_encode->getOutputData(nullptr, false ) ) > 0 ) {
-							data = mjpeg_data_buffer;
+						int length = 0;
+						while ( ( length = state.preview_encode->getOutputData(data, false ) ) > 0 ) {
+							mjpeg_data_length = length;
 						}
-
-						//std::cout << mjpeg_data_length << std::endl;
 
 						return mjpeg_data_length;
 				}
@@ -215,15 +217,34 @@ namespace kerberos
 				pthread_create( &state.record_thid, nullptr, &record_thread, this );
     }
 
+		RaspiCamera::~RaspiCamera()
+		{
+				delete state.camera;
+				delete state.preview_encode;
+				delete state.record_encode;
+		}
+
     void RaspiCamera::close()
     {
-        m_camera->release();
+        state.running = false;
     }
 
     void RaspiCamera::update(){}
 
     bool RaspiCamera::isOpened()
     {
-        return m_camera->isOpened();
+        return true;
     }
+
+		void RaspiCamera::startRecord(std::string path)
+		{
+				file.open(path, std::ofstream::out | std::ofstream::binary);
+				state.recording = true;
+		}
+
+		void RaspiCamera::stopRecord()
+		{
+				file.close();
+				state.recording = false;
+		}
 }

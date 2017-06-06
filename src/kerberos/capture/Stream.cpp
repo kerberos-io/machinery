@@ -30,6 +30,11 @@ namespace kerberos
        }
     }
 
+    bool Stream::hasClients()
+    {
+        return (clients.size() > 0);
+    }
+
     bool Stream::release()
     {
         for(int i = 0; i < clients.size(); i++)
@@ -166,21 +171,21 @@ namespace kerberos
                   int error = 0;
                   socklen_t len = sizeof (error);
                   int retval = getsockopt(clients[i], SOL_SOCKET, SO_ERROR, &error, &len);
-
+                  int socketState = 0;
                   if (retval == 0 && error == 0)
                   {
                       char head[400];
                       sprintf(head,"--mjpegstream\r\nContent-Type: image/jpeg\r\nContent-Length: %lu\r\n\r\n",length);
-                      _write(clients[i],head,0);
+                      socketState = _write(clients[i],head,0);
                       retval = getsockopt(clients[i], SOL_SOCKET, SO_ERROR, &error, &len);
 
                       if (retval == 0 && error == 0)
                       {
-                          _write(clients[i], (char*) data, length);
+                          socketState = _write(clients[i], (char*) data, length);
                       }
                   }
 
-                  if (retval != 0 || error != 0)
+                  if (retval != 0 || error != 0 || socketState == -1)
                   {
                       shutdown(clients[i], 2);
                       FD_CLR(clients[i],&master);
@@ -227,19 +232,16 @@ namespace kerberos
                     char buffer[1024];
                     if (retval == 0 && error == 0)
                     {
-                        if(socketState >= 0)
+                        char head[400];
+                        sprintf(head,"--mjpegstream\r\nContent-Type: image/jpeg\r\nContent-Length: %lu\r\n\r\n",outlen);
+
+                        socketState = _write(clients[i],head,0);
+
+                        retval = getsockopt(clients[i], SOL_SOCKET, SO_ERROR, &error, &len);
+
+                        if (retval == 0 && error == 0)
                         {
-                            char head[400];
-                            sprintf(head,"--mjpegstream\r\nContent-Type: image/jpeg\r\nContent-Length: %lu\r\n\r\n",outlen);
-
-                            socketState = _write(clients[i],head,0);
-
-                            retval = getsockopt(clients[i], SOL_SOCKET, SO_ERROR, &error, &len);
-
-                            if (retval == 0 && error == 0)
-                            {
-                                socketState = _write(clients[i],(char*)(&outbuf[0]),outlen);
-                            }
+                            socketState = _write(clients[i],(char*)(&outbuf[0]),outlen);
                         }
                     }
 

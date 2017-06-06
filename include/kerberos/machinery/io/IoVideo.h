@@ -79,7 +79,11 @@ namespace kerberos
             pthread_mutex_t m_release_lock;
             pthread_t m_recordThread;
             pthread_t m_retrieveThread;
+            pthread_t m_recordOnboardThread;
             double m_timeStartedRecording;
+
+            void startOnboardRecordThread();
+            void stopOnboardRecordThread();
             void startRecordThread();
             void stopRecordThread();
             void startRetrieveThread();
@@ -95,6 +99,7 @@ namespace kerberos
             std::string m_extension;
             std::string m_fileName;
             std::string m_directory;
+            std::string m_path;
     };
 }
 #endif

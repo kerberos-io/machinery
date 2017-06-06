@@ -221,24 +221,46 @@ namespace kerberos
 
         BINFO << "IoVideo: firing";
 
-        if(m_capture && m_writer == 0 && !m_recording)
+        bool supportDeviceRecording = true;
+        if(supportDeviceRecording) // generate
         {
-            // ----------------------------------------
-            // The naming convention that will be used
-            // for the image.
+            if(!m_recording)
+            {
+                // ----------------------------------------
+                // The naming convention that will be used
+                // for the image.
 
-            std::string pathToVideo = getFileFormat();
-            m_fileName = buildPath(pathToVideo, data) + "." + m_extension;
-            Image image = m_capture->retrieve();
+                std::string pathToVideo = getFileFormat();
+                m_fileName = buildPath(pathToVideo, data) + ".h264";
+                m_path = "/etc/opt/kerberosio/h264/" + m_fileName;
 
-            BINFO << "IoVideo: start new recording " << m_fileName;
-
-            m_writer = new cv::VideoWriter();
-            m_writer->open(m_directory + m_fileName, m_codec, m_fps, cv::Size(image.getColumns(), image.getRows()));
-
-            startRecordThread();
-            m_recording = true;
+                startOnboardRecordThread();
+                m_recording = true;
+            }
         }
+        else // Use built-in OpenCV
+        {
+            if(m_capture && m_writer == 0 && !m_recording)
+            {
+                // ----------------------------------------
+                // The naming convention that will be used
+                // for the image.
+
+                std::string pathToVideo = getFileFormat();
+                m_fileName = buildPath(pathToVideo, data) + "." + m_extension;
+                m_path = m_directory + m_fileName;
+                Image image = m_capture->retrieve();
+
+                BINFO << "IoVideo: start new recording " << m_fileName;
+
+                m_writer = new cv::VideoWriter();
+                m_writer->open(m_path, m_codec, m_fps, cv::Size(image.getColumns(), image.getRows()));
+
+                startRecordThread();
+                m_recording = true;
+            }
+        }
+
         pthread_mutex_unlock(&m_release_lock);
     }
 
@@ -265,6 +287,83 @@ namespace kerberos
     bool IoVideo::save(Image & image, JSON & data)
     {
         return true;
+    }
+
+    void * recordOnboad(void * self)
+    {
+        IoVideo * video = (IoVideo *) self;
+
+        double cronoPause = (double)cvGetTickCount();
+        double cronoTime = (double) (cv::getTickCount() / cv::getTickFrequency());
+        double startedRecording = cronoTime;
+
+        BINFO << "IoVideo: start writing images";
+
+        pthread_mutex_lock(&video->m_write_lock);
+
+        video->m_capture->startRecord(video->m_path);
+
+        BINFO << "IoVideo: locked write thread";
+
+        pthread_mutex_lock(&video->m_time_lock);
+        double timeToRecord = video->m_timeStartedRecording + video->m_recordingTimeAfter;
+        pthread_mutex_unlock(&video->m_time_lock);
+
+        try
+        {
+            while(cronoTime < timeToRecord
+                && cronoTime - startedRecording <= video->m_maxDuration) // lower than max recording time (especially for memory)
+            {
+                // update time to record; (locking)
+                pthread_mutex_lock(&video->m_time_lock);
+                timeToRecord = video->m_timeStartedRecording + video->m_recordingTimeAfter;
+                pthread_mutex_unlock(&video->m_time_lock);
+
+                cronoPause = (double) cv::getTickCount();
+                cronoTime = cronoPause / cv::getTickFrequency();
+
+                usleep(1000*500); // sleep 0,5s
+            }
+        }
+        catch(cv::Exception & ex)
+        {
+            pthread_mutex_unlock(&video->m_lock);
+            pthread_mutex_unlock(&video->m_time_lock);
+            LERROR << ex.what();
+        }
+
+        BINFO << "IoVideo: end writing images";
+
+        pthread_mutex_lock(&video->m_release_lock);
+
+        try
+        {
+            // stop recording thread
+            video->m_capture->stopRecord();
+            video->m_recording = false;
+
+            // convert from h264 to mp4
+            // todo ..
+
+            /*if(video->m_createSymbol)
+            {
+                std::string link = SYMBOL_DIRECTORY + video->m_fileName;
+                std::string pathToVideo = video->m_directory + video->m_fileName;
+                symlink(pathToVideo.c_str(), link.c_str());
+            }*/
+        }
+        catch(cv::Exception & ex)
+        {
+            LERROR << ex.what();
+        }
+
+
+        BINFO << "IoVideo: remove videowriter";
+
+        pthread_mutex_unlock(&video->m_release_lock);
+        pthread_mutex_unlock(&video->m_write_lock);
+
+        BINFO << "IoVideo: unlocking write thread";
     }
 
     // -------------------------------------------
@@ -476,6 +575,18 @@ namespace kerberos
         drawDateOnImage(image, kerberos::helper::getTimestamp());
 
         return image;
+    }
+
+    void IoVideo::startOnboardRecordThread()
+    {
+        pthread_create(&m_recordOnboardThread, NULL, recordOnboad, this);
+        pthread_detach(m_recordOnboardThread);
+    }
+
+    void IoVideo::stopOnboardRecordThread()
+    {
+        pthread_cancel(m_recordOnboardThread);
+        pthread_join(m_recordOnboardThread, NULL);
     }
 
     void IoVideo::startRecordThread()

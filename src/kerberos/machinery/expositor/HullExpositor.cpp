@@ -34,7 +34,7 @@ namespace kerberos
         // --------------------------------
         // Calculate points in hull
         m_points.clear();
-        int optimization = 5;
+        int optimization = 1;
         for(int j = 0; j < captureHeight; j+=optimization)
         {
             for(int i = 0; i < captureWidth; i+=optimization)

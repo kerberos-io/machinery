@@ -57,6 +57,8 @@ namespace kerberos
             Image retrieve();
             int32_t retrieveRAW(uint8_t* data){ return 0; }
             Image * takeImage();
+            void startRecord(std::string path){};
+            void stopRecord(){};
 
             void open();
             void close();

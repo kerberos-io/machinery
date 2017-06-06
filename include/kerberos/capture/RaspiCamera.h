@@ -40,6 +40,7 @@ namespace kerberos
             {
                 m_camera = new raspicam::RaspiCam_Cv();
             }
+            ~RaspiCamera();
             void setup(StringMap & settings);
             void setImageSize(int width, int height);
             void setRotation(int angle);
@@ -56,6 +57,8 @@ namespace kerberos
             Image retrieve();
             int32_t retrieveRAW(uint8_t* data);
             Image * takeImage();
+            void startRecord(std::string path);
+            void stopRecord();
 
             void open();
             void close();

@@ -44,8 +44,9 @@ namespace kerberos
             int m_frameWidth, m_frameHeight;
             int m_angle; // 90, 180, 270
             int m_delay; // msec
+            bool onBoardRecording;
 
-            Capture(){};
+            Capture():onBoardRecording(false){};
             virtual ~Capture(){};
             virtual void setup(kerberos::StringMap & settings) = 0;
             void setup(kerberos::StringMap & settings, int width, int height, int angle);
@@ -57,6 +58,8 @@ namespace kerberos
             virtual Image retrieve() = 0;
             virtual int32_t retrieveRAW(uint8_t* data) = 0;
             virtual Image * takeImage() = 0;
+            virtual void startRecord(std::string path) = 0;
+            virtual void stopRecord() = 0;
 
             ImageVector & takeImages(int numberOfImages);
             ImageVector & shiftImage();

@@ -77,6 +77,7 @@ namespace kerberos
         bool release();
         bool open();
         bool isOpened();
+        bool hasClients();
         bool connect();
         void write(Image image);
         void writeRAW(uint8_t* data, int32_t length);

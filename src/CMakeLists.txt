@@ -8,8 +8,8 @@
 	include_directories(${CMAKE_SOURCE_DIR}/include/kerberos)
 	include_directories(${CMAKE_SOURCE_DIR}/include/rapidjson)
 	include_directories(${CMAKE_SOURCE_DIR}/include/mmapgpio)
-    include_directories(${CMAKE_SOURCE_DIR}/include/encode)
-    include_directories(${CMAKE_SOURCE_DIR}/include/easylogging)
+  include_directories(${CMAKE_SOURCE_DIR}/include/encode)
+  include_directories(${CMAKE_SOURCE_DIR}/include/easylogging)
 
 	add_subdirectory(tinyxml)
 	add_subdirectory(executor)
@@ -21,36 +21,36 @@
 # ---------------------------------------
 # Get configuration files
 
-    FILE(GLOB CONFIG_FILES ${CMAKE_SOURCE_DIR}/config/*)
-    FILE(GLOB SCRIPTS ${CMAKE_SOURCE_DIR}/scripts/*)
-    FILE(GLOB LOG_FILE ${CMAKE_SOURCE_DIR}/logs/log.stash)
+  FILE(GLOB CONFIG_FILES ${CMAKE_SOURCE_DIR}/config/*)
+  FILE(GLOB SCRIPTS ${CMAKE_SOURCE_DIR}/scripts/*)
+  FILE(GLOB LOG_FILE ${CMAKE_SOURCE_DIR}/logs/log.stash)
 
 # ----------------------------------------------
 # Executable + define linking libraries
 
 	SET(EXECUTABLE_OUTPUT_PATH ${CMAKE_SOURCE_DIR}/bin)
 
-    SET(BUILD_SHARED_LIBS OFF)
+  SET(BUILD_SHARED_LIBS OFF)
 
 	SET(KERBEROS_FACTORY_ENTITIES_TEMP "")
 	foreach(src ${KERBEROS_FACTORY_ENTITIES})
 	    SET(KERBEROS_FACTORY_ENTITIES_TEMP ${KERBEROS_FACTORY_ENTITIES_TEMP} "kerberos/${src}")
 	endforeach(src ${KERBEROS_FACTORY_ENTITIES})
 
-    if(${PACKAGE})
-        if(APPLE)
-            SET(KERBEROS_FACTORY_ENTITIES_TEMP ${KERBEROS_FACTORY_ENTITIES_TEMP} ${CONFIG_FILES} ${LOG_FILE} ${CMAKE_CURRENT_SOURCE_DIR}/kerberosio.icns)
-            add_executable(kerberosio MACOSX_BUNDLE main.cpp ${KERBEROS_FACTORY_ENTITIES_TEMP})
-        endif()
-        IF("${CMAKE_SYSTEM}" MATCHES "Linux")
-            add_executable(kerberosio main.cpp ${KERBEROS_FACTORY_ENTITIES_TEMP})
-        endif()
-    else()
-        add_executable(kerberosio main.cpp ${KERBEROS_FACTORY_ENTITIES_TEMP})
-    endif()
+  if(${PACKAGE})
+      if(APPLE)
+          SET(KERBEROS_FACTORY_ENTITIES_TEMP ${KERBEROS_FACTORY_ENTITIES_TEMP} ${CONFIG_FILES} ${LOG_FILE} ${CMAKE_CURRENT_SOURCE_DIR}/kerberosio.icns)
+          add_executable(kerberosio MACOSX_BUNDLE main.cpp ${KERBEROS_FACTORY_ENTITIES_TEMP})
+      endif()
+      IF("${CMAKE_SYSTEM}" MATCHES "Linux")
+          add_executable(kerberosio main.cpp ${KERBEROS_FACTORY_ENTITIES_TEMP})
+      endif()
+  else()
+      add_executable(kerberosio main.cpp ${KERBEROS_FACTORY_ENTITIES_TEMP})
+  endif()
 
-    add_dependencies(kerberosio rerun ${KERBEROS_DEPENDENCIES})
-    target_link_libraries(kerberosio ${KERBEROS_CORE_LIBRARY} ${KERBEROS_LIBRARIES})
+  add_dependencies(kerberosio rerun ${KERBEROS_DEPENDENCIES})
+  target_link_libraries(kerberosio ${KERBEROS_CORE_LIBRARY} ${KERBEROS_LIBRARIES})
 
 # -----------------------------------------
 # Write variables to parent CMakeLists.txt
@@ -103,6 +103,14 @@
     # create image directory
     INSTALL(DIRECTORY
         DESTINATION "/etc/opt/kerberosio/capture/"
+        DIRECTORY_PERMISSIONS
+        OWNER_EXECUTE OWNER_WRITE OWNER_READ
+        GROUP_EXECUTE GROUP_WRITE GROUP_READ
+        WORLD_EXECUTE WORLD_WRITE WORLD_READ)
+
+		# create h264 directory
+    INSTALL(DIRECTORY
+        DESTINATION "/etc/opt/kerberosio/h264/"
         DIRECTORY_PERMISSIONS
         OWNER_EXECUTE OWNER_WRITE OWNER_READ
         GROUP_EXECUTE GROUP_WRITE GROUP_READ

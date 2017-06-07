@@ -1,5 +1,6 @@
 #include "capture/RaspiCamera.h"
 #include <signal.h>
+#include <sched.h>
 
 using namespace IL;
 
@@ -15,6 +16,20 @@ struct State {
 
 std::ofstream file;
 
+static int HighPri( const int pri )
+{
+	struct sched_param sched;
+	memset( &sched, 0, sizeof(sched) );
+
+	if ( pri > sched_get_priority_max( SCHED_RR ) ) {
+		sched.sched_priority = sched_get_priority_max( SCHED_RR );
+	} else {
+		sched.sched_priority = pri;
+	}
+
+	return sched_setscheduler( 0, SCHED_RR, &sched );
+}
+
 void* preview_thread( void* self )
 {
 	kerberos::RaspiCamera * capture = (kerberos::RaspiCamera *) self;
@@ -22,6 +37,8 @@ void* preview_thread( void* self )
 	// Retrieve OMX buffer
 	capture->data_buffer = state.camera->outputPorts()[70].buffer->pBuffer;
 	capture->mjpeg_data_buffer = state.preview_encode->outputPorts()[201].buffer->pBuffer;
+
+	HighPri(99); // Mark the thread as high priority
 
 	// ATTENTION : Each loop must take less time than it takes to the camera to take one frame
 	// otherwise it will cause underflow which can lead to camera stalling
@@ -53,14 +70,6 @@ void* record_thread( void* argp )
 	return nullptr;
 }
 
-void terminate( int sig )
-{
-	state.running = false;
-	pthread_join( state.record_thid, nullptr );
-	pthread_join( state.preview_thid, nullptr );
-	exit(0);
-}
-
 namespace kerberos
 {
     void RaspiCamera::setup(kerberos::StringMap &settings)
@@ -69,6 +78,11 @@ namespace kerberos
         int height = std::atoi(settings.at("captures.RaspiCamera.frameHeight").c_str());
         int angle = std::atoi(settings.at("captures.RaspiCamera.angle").c_str());
         int delay = std::atoi(settings.at("captures.RaspiCamera.delay").c_str());
+        m_framerate = std::atoi(settings.at("captures.RaspiCamera.framerate").c_str());
+        m_sharpness = std::atoi(settings.at("captures.RaspiCamera.sharpness").c_str());
+        m_brightness = std::atoi(settings.at("captures.RaspiCamera.brightness").c_str());
+        m_contrast = std::atoi(settings.at("captures.RaspiCamera.contrast").c_str());
+        m_saturation = std::atoi(settings.at("captures.RaspiCamera.saturation").c_str());
 
         // Initialize executor
         tryToUpdateCapture.setAction(this, &RaspiCamera::update);
@@ -80,7 +94,8 @@ namespace kerberos
         setRotation(angle);
         setDelay(delay);
 
-				onBoardRecording = true;
+				m_onBoardRecording = true;
+				m_hardwareMJPEGEncoding = true;
 
         // Open camera
         open();
@@ -97,9 +112,7 @@ namespace kerberos
 
 				try
 				{
-						int width = 1280;
-						int height = 720;
-						cv::Mat mYUV(height + height / 2, width, CV_8UC1, (void*) data_buffer);
+						cv::Mat mYUV(m_frameHeight + m_frameHeight / 2, m_frameWidth, CV_8UC1, (void*) data_buffer);
 						cvtColor(mYUV, image.getImage(), CV_YUV2BGR_I420, 3);
 				}
 				catch(cv::Exception & ex)
@@ -141,9 +154,7 @@ namespace kerberos
 
 				try
 				{
-						int width = 1280;
-						int height = 720;
-						cv::Mat mYUV(height + height / 2, width, CV_8UC1, (void*) data_buffer);
+						cv::Mat mYUV(m_frameHeight + m_frameHeight / 2, m_frameWidth, CV_8UC1, (void*) data_buffer);
 						cvtColor(mYUV, image->getImage(), CV_YUV2BGR_I420, 3);
 
 						// Check if need to rotate the image
@@ -179,12 +190,16 @@ namespace kerberos
 				bcm_host_init();
 
 				// Create components
-				state.camera = new Camera( 1280, 720, 0, false, 0, false );
-				state.preview_encode = new VideoEncode( 8192, VideoEncode::CodingMJPEG, false, false );
-				state.record_encode = new VideoEncode( 4096, VideoEncode::CodingAVC, false, false );
+				state.camera = new Camera(m_frameWidth, m_frameHeight, 0, false, 0, false);
+				state.preview_encode = new VideoEncode(8192, VideoEncode::CodingMJPEG, false, false);
+				state.record_encode = new VideoEncode(4096, VideoEncode::CodingAVC, false, false);
 
 				// Setup camera
-				state.camera->setFramerate(30);
+				state.camera->setFramerate(m_framerate);
+				state.camera->setBrightness(m_brightness);
+				state.camera->setSaturation(m_saturation);
+				state.camera->setContrast(m_contrast);
+				state.camera->setSharpness(m_sharpness);
 
 				// Copy preview port definition to the encoder to help it handle incoming data
 				Component::CopyPort( &state.camera->outputPorts()[70], &state.preview_encode->inputPorts()[200] );
@@ -193,21 +208,21 @@ namespace kerberos
 				state.camera->SetupTunnelVideo( state.record_encode );
 
 				// Prepare components for next step
-				state.camera->SetState( Component::StateIdle );
-				state.preview_encode->SetState( Component::StateIdle );
-				state.record_encode->SetState( Component::StateIdle );
+				state.camera->SetState(Component::StateIdle);
+				state.preview_encode->SetState(Component::StateIdle);
+				state.record_encode->SetState(Component::StateIdle);
 
 				// Allocate buffers that will be processed manually
-				state.camera->AllocateOutputBuffer( 70 );
-				state.preview_encode->AllocateInputBuffer( 200 );
+				state.camera->AllocateOutputBuffer(70);
+				state.preview_encode->AllocateInputBuffer(200);
 
 				// Start components
-				state.camera->SetState( Component::StateExecuting );
-				state.preview_encode->SetState( Component::StateExecuting );
-				state.record_encode->SetState( Component::StateExecuting );
+				state.camera->SetState(Component::StateExecuting);
+				state.preview_encode->SetState(Component::StateExecuting);
+				state.record_encode->SetState(Component::StateExecuting);
 
 				// Start capturing
-				state.camera->SetCapturing( true );
+				state.camera->SetCapturing(true);
 				state.running = true;
 				state.recording = false;
 
@@ -246,7 +261,7 @@ namespace kerberos
 						file.flush();
 					}
 				}
-				
+
 				state.recording = true;
 		}
 

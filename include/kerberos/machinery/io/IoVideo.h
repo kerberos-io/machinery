@@ -34,6 +34,7 @@ namespace kerberos
             std::string m_instanceName;
             std::string m_fileFormat;
             bool m_drawTimestamp;
+            bool m_enableHardwareEncoding;
             cv::Scalar m_timestampColor;
             std::string m_timezone;
             FileManager m_fileManager;
@@ -99,6 +100,7 @@ namespace kerberos
             std::string m_extension;
             std::string m_fileName;
             std::string m_directory;
+            std::string m_hardwareDirectory;
             std::string m_path;
     };
 }

@@ -35,6 +35,11 @@ namespace kerberos
         private:
             raspicam::RaspiCam_Cv * m_camera;
             Executor<RaspiCamera> tryToUpdateCapture;
+            int m_framerate;
+            int m_brightness;
+            int m_contrast;
+            int m_saturation;
+            int m_sharpness;
 
         public:
             RaspiCamera()

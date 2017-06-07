@@ -266,22 +266,22 @@ namespace kerberos
             {
                 kerberos->stream->connect();
 
-                /*if(true)//kerberos->capture->isOpened())
-                {
-                    Image image = kerberos->capture->retrieve();
-                    if(kerberos->capture->m_angle != 0)
-                    {
-                        image.rotate(kerberos->capture->m_angle);
-                    }
-                    kerberos->stream->write(image);
-                }
-
-                usleep(kerberos->stream->wait * 1000 * 1000);*/ // sleep x microsec.
-
                 if(kerberos->stream->hasClients())
                 {
-                    int32_t length = kerberos->capture->retrieveRAW(data);
-                    kerberos->stream->writeRAW(data, length);
+                    if(kerberos->capture->m_hardwareMJPEGEncoding)
+                    {
+                        int32_t length = kerberos->capture->retrieveRAW(data);
+                        kerberos->stream->writeRAW(data, length);
+                    }
+                    else
+                    {
+                        Image image = kerberos->capture->retrieve();
+                        if(kerberos->capture->m_angle != 0)
+                        {
+                            image.rotate(kerberos->capture->m_angle);
+                        }
+                        kerberos->stream->write(image);
+                    }
                 }
 
                 usleep(kerberos->stream->wait * 1000 * 1000); // sleep x microsec.

@@ -44,9 +44,10 @@ namespace kerberos
             int m_frameWidth, m_frameHeight;
             int m_angle; // 90, 180, 270
             int m_delay; // msec
-            bool onBoardRecording;
+            bool m_onBoardRecording;
+            bool m_hardwareMJPEGEncoding;
 
-            Capture():onBoardRecording(false){};
+            Capture():m_onBoardRecording(false),m_hardwareMJPEGEncoding(false){};
             virtual ~Capture(){};
             virtual void setup(kerberos::StringMap & settings) = 0;
             void setup(kerberos::StringMap & settings, int width, int height, int angle);

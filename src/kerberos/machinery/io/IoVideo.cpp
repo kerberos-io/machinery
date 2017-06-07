@@ -119,6 +119,8 @@ namespace kerberos
 
         setFileFormat(settings.at("ios.Video.fileFormat"));
         m_directory = settings.at("ios.Video.directory");
+        m_hardwareDirectory = settings.at("ios.Video.hardwareDirectory");
+        m_enableHardwareEncoding = (settings.at("ios.Video.enableHardwareEncoding") == "true");
     }
 
     cv::Scalar IoVideo::getColor(const std::string name)
@@ -221,8 +223,12 @@ namespace kerberos
 
         BINFO << "IoVideo: firing";
 
-        bool supportDeviceRecording = true;
-        if(supportDeviceRecording) // generate
+        // ------------------
+        // Check if the camera supports on board recording (camera specific),
+        // and if you want to user it. If not it will fallback on the video writer
+        // that ships with OpenCV/FFmpeg.
+
+        if(m_capture->m_onBoardRecording && m_enableHardwareEncoding)
         {
             if(!m_recording)
             {
@@ -232,7 +238,7 @@ namespace kerberos
 
                 std::string pathToVideo = getFileFormat();
                 m_fileName = buildPath(pathToVideo, data) + ".h264";
-                m_path = "/etc/opt/kerberosio/h264/" + m_fileName;
+                m_path = m_hardwareDirectory + m_fileName;
 
                 startOnboardRecordThread();
                 m_recording = true;

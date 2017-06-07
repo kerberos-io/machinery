@@ -100,6 +100,11 @@ namespace kerberos
             m_codec = -1;
         }
 
+        m_encodingBinary = "ffmpeg";
+        if(!system("which avconv > /dev/null 2>&1")){
+            m_encodingBinary = "avconv";
+        }
+
         // --------------------------
         // Check if need to draw timestamp
 
@@ -237,8 +242,8 @@ namespace kerberos
                 // for the image.
 
                 std::string pathToVideo = getFileFormat();
-                m_fileName = buildPath(pathToVideo, data) + ".h264";
-                m_path = m_hardwareDirectory + m_fileName;
+                m_fileName = buildPath(pathToVideo, data);
+                m_path = m_hardwareDirectory + m_fileName + ".h264";
 
                 startOnboardRecordThread();
                 m_recording = true;
@@ -328,7 +333,7 @@ namespace kerberos
                 cronoPause = (double) cv::getTickCount();
                 cronoTime = cronoPause / cv::getTickFrequency();
 
-                usleep(1000*500); // sleep 0,5s
+                usleep(1000); // sleep 1s
             }
         }
         catch(cv::Exception & ex)
@@ -344,19 +349,29 @@ namespace kerberos
 
         try
         {
+            // convert from h264 to mp4 with avconv of ffmpeg
+            // (ideally this should be executed in a seperate thread).
+            std::string mp4File = video->m_directory + video->m_fileName + "." + video->m_extension;
+
+            std::string command = video->m_encodingBinary; // ffmpeg or avconv
+            command += " -framerate " + std::to_string(video->m_capture->m_framerate);
+            command += " -i " + video->m_path;
+            command += " -c copy " + mp4File;
+
+            system(command.c_str());
+            unlink(video->m_path.c_str()); // remove h264 file.
+
+            // Move to symbol directory if we have cloud setup.
+            if(video->m_createSymbol)
+            {
+                std::string link = SYMBOL_DIRECTORY + video->m_fileName + "." + video->m_extension;
+                std::string pathToVideo = video->m_directory + video->m_fileName + "." + video->m_extension;
+                symlink(pathToVideo.c_str(), link.c_str());
+            }
+
             // stop recording thread
             video->m_capture->stopRecord();
             video->m_recording = false;
-
-            // convert from h264 to mp4
-            // todo ..
-
-            /*if(video->m_createSymbol)
-            {
-                std::string link = SYMBOL_DIRECTORY + video->m_fileName;
-                std::string pathToVideo = video->m_directory + video->m_fileName;
-                symlink(pathToVideo.c_str(), link.c_str());
-            }*/
         }
         catch(cv::Exception & ex)
         {

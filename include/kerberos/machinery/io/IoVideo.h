@@ -102,6 +102,7 @@ namespace kerberos
             std::string m_directory;
             std::string m_hardwareDirectory;
             std::string m_path;
+            std::string m_encodingBinary;
     };
 }
 #endif

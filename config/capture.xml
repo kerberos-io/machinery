@@ -18,8 +18,8 @@
     </USBCamera>
 
     <RaspiCamera>
-        <frameWidth type="number">1280</frameWidth>
-        <frameHeight type="number">720</frameHeight>
+        <frameWidth type="number">640</frameWidth>
+        <frameHeight type="number">480</frameHeight>
         <delay type="number">500</delay>
         <angle type="number">0</angle>
         <framerate type="number">30</framerate>

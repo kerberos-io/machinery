@@ -15,7 +15,7 @@ link_directories(${USERLAND_LIBRARY_DIR})
 message("External project: OpenMaxIL-cpp")
 
 ExternalProject_Add(openmax
-  GIT_REPOSITORY ${git_protocol}://github.com/dridri/OpenMaxIL-cpp
+  GIT_REPOSITORY ${git_protocol}://github.com/cedricve/OpenMaxIL-cpp
   SOURCE_DIR openmax
   BINARY_DIR openmax-build
   UPDATE_COMMAND ""

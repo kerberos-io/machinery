@@ -15,7 +15,7 @@ link_directories(${USERLAND_LIBRARY_DIR})
 message("External project: OpenMaxIL-cpp")
 
 ExternalProject_Add(openmax
-  GIT_REPOSITORY ${git_protocol}://github.com/cedricve/OpenMaxIL-cpp
+  GIT_REPOSITORY ${git_protocol}://github.com/dridri/OpenMaxIL-cpp
   SOURCE_DIR openmax
   BINARY_DIR openmax-build
   UPDATE_COMMAND ""
@@ -24,7 +24,6 @@ ExternalProject_Add(openmax
   INSTALL_COMMAND ""
   CMAKE_ARGS
     -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_BINARY_DIR}/thirdparty
-    -DCMAKE_TOOLCHAIN_FILE=${CMAKE_SOURCE_DIR}/../../host/usr/share/buildroot/toolchainfile.cmake
     -DBUILD_SHARED_LIBS=OFF   
 )
 

@@ -1,7 +1,7 @@
 # -----------------------------------
 # Userland, ARM used by raspicam
 
-message("Bind project: Userland")
+message("Bind project: OpenMAX")
 
 set(USERLAND_INCLUDE_DIR /opt/vc/include/)
 set(USERLAND_LIBRARY_DIR /opt/vc/lib/)
@@ -24,7 +24,8 @@ ExternalProject_Add(openmax
   INSTALL_COMMAND ""
   CMAKE_ARGS
     -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_BINARY_DIR}/thirdparty
-    -DBUILD_SHARED_LIBS=OFF
+    -DCMAKE_TOOLCHAIN_FILE=${CMAKE_SOURCE_DIR}/../../host/usr/share/buildroot/toolchainfile.cmake
+    -DBUILD_SHARED_LIBS=OFF   
 )
 
 set(OPENMAX_INCLUDE_DIR ${CMAKE_BINARY_DIR}/openmax/include/)

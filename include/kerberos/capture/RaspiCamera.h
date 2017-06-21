@@ -32,7 +32,6 @@ namespace kerberos
     class RaspiCamera : public CaptureCreator<RaspiCameraName, RaspiCamera>
     {
         private:
-            raspicam::RaspiCam_Cv * m_camera;
             Executor<RaspiCamera> tryToUpdateCapture;
             int m_brightness;
             int m_contrast;
@@ -40,10 +39,7 @@ namespace kerberos
             int m_sharpness;
 
         public:
-            RaspiCamera()
-            {
-                m_camera = new raspicam::RaspiCam_Cv();
-            }
+            RaspiCamera(){}
             ~RaspiCamera();
             void setup(StringMap & settings);
             void setImageSize(int width, int height);

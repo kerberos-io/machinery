@@ -19,7 +19,6 @@
 #define __RaspiCamera_H_INCLUDED__   // #define this so the compiler knows it has been included
 
 #include "capture/Capture.h"
-#include "raspicam/raspicam_cv.h"
 #include "Executor.h"
 #include "Camera.h"
 #include "VideoEncode.h"

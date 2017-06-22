@@ -156,9 +156,6 @@ namespace kerberos
 				{
 						cv::Mat mYUV(m_frameHeight + m_frameHeight / 2, m_frameWidth, CV_8UC1, (void*) data_buffer);
 						cvtColor(mYUV, image->getImage(), CV_YUV2BGR_I420, 3);
-
-						// Check if need to rotate the image
-            image->rotate(m_angle);
 				}
 				catch(cv::Exception & ex)
 				{
@@ -200,6 +197,11 @@ namespace kerberos
 				state.camera->setSaturation(m_saturation);
 				state.camera->setContrast(m_contrast);
 				state.camera->setSharpness(m_sharpness);
+
+				if(m_angle == 180)
+				{
+						state.camera->setMirror(false, true);
+				}
 
 				// Copy preview port definition to the encoder to help it handle incoming data
 				Component::CopyPort( &state.camera->outputPorts()[70], &state.preview_encode->inputPorts()[200] );

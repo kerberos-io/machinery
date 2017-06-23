@@ -1,3 +1,4 @@
+#include <fcntl.h>
 #include "capture/Stream.h"
 
 namespace kerberos
@@ -13,21 +14,27 @@ namespace kerberos
         int port = std::atoi(settings.at("streams.Mjpg.streamPort").c_str());
         int quality = std::atoi(settings.at("streams.Mjpg.quality").c_str());
         int fps = std::atoi(settings.at("streams.Mjpg.fps").c_str());
+        std::string username = settings.at("streams.Mjpg.username");
+        std::string password = settings.at("streams.Mjpg.password");
 
         //use port up to well known ports range
-       if(port >= 1024)
-       {
-           //TODO: here it would be nice to check if port is valid and free
+        if(port >= 1024)
+        {
+            //TODO: here it would be nice to check if port is valid and free
             m_enabled = enabled;
+            m_username = username;
+            m_password = password;
             m_streamPort = port;
             m_quality = quality;
             wait = 1. / fps;
-       }
-       else
-       {
+            LINFO << "Username: " << m_username;
+            LINFO << "Password: " << m_password;
+        }
+        else
+        {
             LERROR << "Settings: can't use invalid port";
             //TODO: manage invalid port error
-       }
+        }
     }
 
     bool Stream::hasClients()
@@ -106,6 +113,98 @@ namespace kerberos
         return sock != INVALID_SOCKET;
     }
 
+    std::map<std::string, std::string> Stream::getRequestInfo(SOCKET client)
+    {
+        std::map<std::string, std::string> info;
+
+        // We need some information from the client
+        // Get data from the request.
+        char method[10]={'\0'};
+        char url[512]={'\0'};
+        char protocol[10]={'\0'};
+
+        unsigned short int length = 1023;
+        char buffer[1024] = {'\0'};
+        int nread = read(client, buffer, length);
+        sscanf (buffer, "%9s %511s %9s", method, url, protocol);
+
+        info["buffer"] = (std::string) buffer;
+        info["method"] = (std::string) method;
+        info["url"] = (std::string) url;
+        info["protocol"] = (std::string) protocol;
+
+        return info;
+    }
+
+    bool Stream::authenticate(std::map<std::string, std::string> & requestInfo)
+    {
+        // Check if we have authentication enabled.
+        // verify if both username and password is set.
+        if(m_username != "" && m_password != "")
+        {
+            std::string credentials = m_username +  ":" + m_password;
+            std::string credentialsBase64 =  base64_encode((unsigned char const*) credentials.c_str(), credentials.length());
+
+            LINFO << credentialsBase64;
+            LINFO << requestInfo.find("method")->second;
+            LINFO << requestInfo.find("url")->second;
+            LINFO << requestInfo.find("protocol")->second;
+            LINFO << requestInfo.find("buffer")->second;
+
+            std::string payload = requestInfo.find("buffer")->second;
+
+            // We'll check if there is an authentication header
+            // in the request send by the user.
+            int findAuthenticationInHeader = payload.find("Basic", 0);
+
+            if(findAuthenticationInHeader != std::string::npos)
+            {
+                // We need to find the token in the payload, therefore
+                // we'll split the payload by a spaces, and add them to
+                // a vector sequentially. After this we'll search for Basic again,
+                // and if found we take the next entry in the vector (as this will be the token).
+
+                bool tokenFound = false;
+                std::string token = "";
+
+                std::istringstream payloadBySpaces(payload);
+                std::string line;
+
+                while (std::getline(payloadBySpaces, line, ' ' ) && !tokenFound)
+                {
+                    if(line == "Basic")
+                    {
+                        std::getline(payloadBySpaces, token, ' ' );
+                        token = token.substr(0 ,token.find('\n'));
+                        tokenFound = true;
+                    }
+                }
+
+                if(!tokenFound)
+                {
+                    LERROR << "Stream: no token found in client request.";
+                    return false;
+                }
+                else if(token != credentialsBase64)
+                {
+                    LERROR << "Stream: token found, but it's not correct.";
+                    return false;
+                }
+
+                return true;
+            }
+            else
+            {
+                LERROR << "Stream: no token found in client request.";
+                return false;
+            }
+
+            return false;
+        }
+
+        return true;
+    }
+
     bool Stream::connect()
     {
         fd_set rread = master;
@@ -135,22 +234,43 @@ namespace kerberos
 
         maxfd=(maxfd>client?maxfd:client);
         FD_SET( client, &master );
-        _write( client,"HTTP/1.0 200 OK\r\n"
-            "Server: Mozarella/2.2\r\n"
-            "Accept-Range: bytes\r\n"
-            "Max-Age: 0\r\n"
-            "Expires: 0\r\n"
-            "Cache-Control: no-cache, private\r\n"
-            "Pragma: no-cache\r\n"
-            "Content-Type: multipart/x-mixed-replace; boundary=mjpegstream\r\n"
-            "\r\n",0);
 
-        LINFO << "Stream: opening socket for new client";
+        std::map<std::string, std::string> requestInfo = getRequestInfo(client);
+        bool isAuthenticated = authenticate(requestInfo);
 
-        clients.push_back(client);
-        packetsSend[client] = 0;
+        if(isAuthenticated)
+        {
+            _write( client,"HTTP/1.0 200 OK\r\n"
+                "Server: Mozarella/2.2\r\n"
+                "Accept-Range: bytes\r\n"
+                "Max-Age: 0\r\n"
+                "Expires: 0\r\n"
+                "Cache-Control: no-cache, private\r\n"
+                "Pragma: no-cache\r\n"
+                "Content-Type: multipart/x-mixed-replace; boundary=mjpegstream\r\n"
+                "\r\n",0);
 
-        return true;
+
+            LINFO << "Stream: authentication success";
+            LINFO << "Stream: opening socket for new client.";
+
+            clients.push_back(client);
+            packetsSend[client] = 0;
+
+            return true;
+        }
+        else
+        {
+            // Request Authorization
+            char response[1024]={'\0'};
+            snprintf (response, sizeof (response),request_auth_response_template, requestInfo["method"].c_str());
+            _write (client, response, strlen(response));
+
+            LINFO << "Stream: authentication failed.";
+            LINFO << "Stream: closing socket.";
+
+            return false;
+        }
     }
 
     void Stream::writeRAW(uint8_t* data, int32_t length)

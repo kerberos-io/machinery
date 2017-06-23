@@ -29,6 +29,8 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <sys/ioctl.h>
+#include <map>
+#include "base64.h"
 #define PORT        unsigned short
 #define SOCKET    int
 #define HOSTENT  struct hostent
@@ -43,13 +45,23 @@ namespace kerberos
     class Stream
     {
         std::map<int, int> packetsSend;
+        std::map<int,  std::vector<uchar> > buffers;
+        std::map<int, int> pos;
+        std::map<int, bool> written;
         std::vector<SOCKET> clients;
         SOCKET sock;
         fd_set master;
+        std::string m_username;
+        std::string m_password;
         bool m_enabled;
         int m_streamPort;
         int m_timeout; // master sock timeout, shutdown after timeout millis.
         int m_quality; // jpeg compression [1..100]
+
+        const char * request_auth_response_template =
+                "HTTP/1.0 401 Authorization Required\r\n"
+                        "WWW-Authenticate: Basic realm=\"Motion Security Access\"\r\n\r\n\r\n";
+
 
         int _write( int sock, char *s, int len )
         {
@@ -73,15 +85,18 @@ namespace kerberos
             release();
         }
 
+        double wait;
+
         void configureStream(StringMap & settings);
         bool release();
         bool open();
         bool isOpened();
         bool hasClients();
         bool connect();
+        std::map<std::string, std::string> getRequestInfo(SOCKET client);
+        bool authenticate(std::map<std::string, std::string> & requestInfo);
         void write(Image image);
         void writeRAW(uint8_t* data, int32_t length);
-        double wait;
     };
 }
 #endif

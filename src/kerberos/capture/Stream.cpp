@@ -145,12 +145,6 @@ namespace kerberos
             std::string credentials = m_username +  ":" + m_password;
             std::string credentialsBase64 =  base64_encode((unsigned char const*) credentials.c_str(), credentials.length());
 
-            LINFO << credentialsBase64;
-            LINFO << requestInfo.find("method")->second;
-            LINFO << requestInfo.find("url")->second;
-            LINFO << requestInfo.find("protocol")->second;
-            LINFO << requestInfo.find("buffer")->second;
-
             std::string payload = requestInfo.find("buffer")->second;
 
             // We'll check if there is an authentication header
@@ -174,8 +168,8 @@ namespace kerberos
                 {
                     if(line == "Basic")
                     {
-                        std::getline(payloadBySpaces, token, ' ' );
-                        token = token.substr(0 ,token.find('\n'));
+                        std::getline(payloadBySpaces, token, ' ');
+                        token = token.substr(0 ,token.find('\r'));
                         tokenFound = true;
                     }
                 }
@@ -261,7 +255,7 @@ namespace kerberos
         }
         else
         {
-            // Request Authorization
+            // Request for authorization
             char response[1024]={'\0'};
             snprintf (response, sizeof (response),request_auth_response_template, requestInfo["method"].c_str());
             _write (client, response, strlen(response));

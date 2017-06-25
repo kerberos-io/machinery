@@ -198,9 +198,9 @@ namespace kerberos
 				state.camera->setContrast(m_contrast);
 				state.camera->setSharpness(m_sharpness);
 
-				if(m_angle == 180)
+				if(m_angle > 0)
 				{
-						state.camera->setMirror(false, true);
+						state.camera->setRotation(m_angle);
 				}
 
 				// Copy preview port definition to the encoder to help it handle incoming data

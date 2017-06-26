@@ -6,8 +6,8 @@
     	<streamPort type="number">8889</streamPort>
     	<quality type="number">75</quality>
     	<fps type="number">15</fps>>
-    	<username type="text">root</username>
-    	<password type="text">root</password>
+    	<username type="text"></username>
+    	<password type="text"></password>
     </Mjpg>
 
 </streams>

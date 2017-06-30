@@ -259,6 +259,7 @@ namespace kerberos
         Kerberos * kerberos = (Kerberos *) self;
 
         uint8_t * data = new uint8_t[(int)(1280*720*1.5)];
+        int32_t length = kerberos->capture->retrieveRAW(data);
 
         while(kerberos->stream->isOpened())
         {
@@ -270,7 +271,7 @@ namespace kerberos
                 {
                     if(kerberos->capture->m_hardwareMJPEGEncoding)
                     {
-                        int32_t length = kerberos->capture->retrieveRAW(data);
+                        length = kerberos->capture->retrieveRAW(data);
                         kerberos->stream->writeRAW(data, length);
                     }
                     else

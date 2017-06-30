@@ -259,6 +259,8 @@ namespace kerberos
             char response[1024]={'\0'};
             snprintf (response, sizeof (response),request_auth_response_template, requestInfo["method"].c_str());
             _write (client, response, strlen(response));
+            shutdown(client, 2);
+            close(client);
 
             LINFO << "Stream: authentication failed.";
             LINFO << "Stream: closing socket.";

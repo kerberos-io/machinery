@@ -118,6 +118,7 @@ namespace kerberos
 
         LINFO << "Reading configuration file: " << configuration;
         StringMap settings = kerberos::helper::getSettingsFromXML(configuration);
+        settings["configuration"] = configuration;
 
         // -------------------------------
         // Override config with parameters
@@ -242,6 +243,7 @@ namespace kerberos
             LINFO << "Stopping cloud service";
             cloud->stopUploadThread();
             cloud->stopPollThread();
+            cloud->stopHealthThread();
             delete cloud;
         }
 

@@ -8,7 +8,7 @@
 //
 //  The copyright to the computer program(s) herein
 //  is the property of Verstraeten.io, Belgium.
-//  The program(s) may be used and/or copied under 
+//  The program(s) may be used and/or copied under
 //  the CC-NC-ND license model.
 //
 //  https://doc.kerberos.io/license
@@ -52,6 +52,7 @@ namespace kerberos
         std::string getMicroseconds();
         const std::string currentDateTime(std::string timezone = "");
         int compareTime(const std::string & first, const std::string & second);
+        const std::string random_string(size_t length);
         const std::string getRootDirectory(const char * relativeDirectory);
         void tokenize(const std::string & str, std::vector<std::string> & tokens, const std::string & delimiters = ",");
         std::string normalizePath(const std::string & cwd, const std::string & command, const std::string & binaryPath);

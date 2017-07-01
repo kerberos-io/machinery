@@ -27,8 +27,6 @@ namespace kerberos
             m_streamPort = port;
             m_quality = quality;
             wait = 1. / fps;
-            LINFO << "Username: " << m_username;
-            LINFO << "Password: " << m_password;
         }
         else
         {

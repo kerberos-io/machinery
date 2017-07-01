@@ -296,18 +296,10 @@ namespace kerberos
         const std::string random_string(size_t length)
         {
             srand((unsigned)time(NULL));
-            auto randchar = []() -> char
-            {
-                const char charset[] =
-                "0123456789"
-                "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-                "abcdefghijklmnopqrstuvwxyz";
-                const size_t max_index = (sizeof(charset) - 1);
-                return charset[rand() % max_index];
-            };
-            std::string str(length,0);
-            std::generate_n( str.begin(), length, randchar );
-            return str;
+            std::string a = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+          	std::string r = "";
+          	for(int i = 0; i < length; i++) r.push_back(a.at(size_t(rand() % 62)));
+	          return r;
         }
 
         // -----------------------------------------------------------------

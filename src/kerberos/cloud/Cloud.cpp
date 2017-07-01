@@ -108,7 +108,7 @@ namespace kerberos
 
         // -----------------------------------
         // Check if we need to generate a
-        // new product key (first time booting)
+        // new product key (first time running)
 
         if(cloud->m_productKey == "???")
         {
@@ -129,9 +129,9 @@ namespace kerberos
         while(true)
         {
             std::string health = "{";
-            health += "\"key\": \"" + cloud->m_productKey + "\"";
+            health += "\"key\": \"" + cloud->m_productKey + "\",";
+            health += "\"version\": \"" + (std::string) VERSION + "\"";
             health += "}";
-
             RestClient::post(CLOUD, "application/json", health);
             usleep(15*1000*1000); // every 15s
         }

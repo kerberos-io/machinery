@@ -215,7 +215,7 @@ namespace kerberos
 
         if(RUNNING_ON_A_RASPBERRYPI)
         {
-            percentage = helper::GetStdoutFromCommand("echo $(df -h | grep /dev/mmcblk0p " + partition + " | head -1 | awk -F' ' '{ print $5/1 }' | tr ['%'] [\"0\"])  | tr '\n' ' '");
+            percentage = helper::GetStdoutFromCommand("echo $(df -h | grep /dev/mmcblk0p" + partition + " | head -1 | awk -F' ' '{ print $5/1 }' | tr ['%'] [\"0\"]) | tr '\n' ' '");
         }
 
         return percentage;

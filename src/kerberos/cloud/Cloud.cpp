@@ -23,7 +23,14 @@ namespace kerberos
         std::string publicKey = settings.at("clouds.S3.publicKey");
         std::string privateKey = settings.at("clouds.S3.privateKey");
         setCloudCredentials(user, publicKey, privateKey);
-        startHealthThread();
+
+        if(m_user != "" &&
+           m_publicKey != "" &&
+           m_privateKey != ""
+        )
+        {
+            startHealthThread();
+        }
     }
 
     void Cloud::scan()
@@ -208,7 +215,7 @@ namespace kerberos
 
         if(RUNNING_ON_A_RASPBERRYPI)
         {
-            percentage = helper::GetStdoutFromCommand("echo $(df -h | grep /dev/mmcblk0p " + partition + " | head -1 | awk -F' ' '{ print $5/1 }' | tr ['%'] [\"0\"])");
+            percentage = helper::GetStdoutFromCommand("echo $(df -h | grep /dev/mmcblk0p " + partition + " | head -1 | awk -F' ' '{ print $5/1 }' | tr ['%'] [\"0\"])  | tr '\n' ' '");
         }
 
         return percentage;

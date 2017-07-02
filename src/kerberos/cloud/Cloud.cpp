@@ -141,7 +141,7 @@ namespace kerberos
         fixedProperties += "\"hash\": \"" + cloud->m_hash + "\",";
 
         std::string raspberrypi = (RUNNING_ON_A_RASPBERRYPI ? "true" : "false");
-        fixedProperties += "\"raspberrypi\": \"" + raspberrypi + "\",";
+        fixedProperties += "\"raspberrypi\": " + raspberrypi + ",";
 
         // ------------------------------------------
         // Send client data to the cloud application.

@@ -64,7 +64,7 @@ namespace kerberos
 
                 if(RUNNING_ON_A_RASPBERRYPI)
                 {
-                    size = system("echo $(df -h | grep /dev/mmcblk0p3 | head -1 | awk -F' ' '{ print $5/1 }' | tr ['%'] [\"0\"])");
+                    size = helper::GetStdoutFromCommand("echo $(df -h | grep /dev/mmcblk0p3 | head -1 | awk -F' ' '{ print $5/1 }' | tr ['%'] [\"0\"])");
                 }
 
                 return size;
@@ -75,7 +75,7 @@ namespace kerberos
 
                 if(RUNNING_ON_A_RASPBERRYPI)
                 {
-                    temperature = system("vcgencmd measure_temp");
+                    temperature = helper::GetStdoutFromCommand("vcgencmd measure_temp");
                 }
 
                 return temperature;

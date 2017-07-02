@@ -48,7 +48,16 @@ namespace kerberos
             virtual ~Cloud(){};
             virtual void setup(kerberos::StringMap & settings) = 0;
             virtual bool upload(std::string pathToImage) = 0;
+            
+            void startUploadThread();
+            void stopUploadThread();
+            void startPollThread();
+            void stopPollThread();
+            void startHealthThread();
+            void stopHealthThread();
+
             void scan();
+            void generateHash(kerberos::StringMap & settings);
             void setProductKey(std::string key)
             {
                 m_productKey = key;
@@ -57,7 +66,11 @@ namespace kerberos
             {
                 m_configuration_path = path;
             };
-            void generateHash(kerberos::StringMap & settings);
+            std::string getHostname()
+            {
+                std::string hostname = helper::GetStdoutFromCommand("hostname");
+                return hostname;
+            };
             std::string getDiskPercentage()
             {
                 std::string size = "-1";
@@ -80,13 +93,6 @@ namespace kerberos
 
                 return temperature;
             };
-
-            void startUploadThread();
-            void stopUploadThread();
-            void startPollThread();
-            void stopPollThread();
-            void startHealthThread();
-            void stopHealthThread();
     };
 
     template<const char * Alias, typename Class>

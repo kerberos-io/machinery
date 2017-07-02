@@ -116,7 +116,7 @@ namespace kerberos
             // Generate random key
             std::string key = helper::random_string(26);
 
-            // Set product key.
+            // Set product key
             std::string command = "sed -i'.b' 's/\?\?\?/";
             command += key;
             command += "/g' ";
@@ -138,6 +138,7 @@ namespace kerberos
         std:: string fixedProperties = "";
         fixedProperties += "\"key\": \"" + cloud->m_productKey + "\",";
         fixedProperties += "\"version\": \"" + (std::string) VERSION + "\",";
+        fixedProperties += "\"hostname\": \"" + cloud->getHostname() + "\",";
         fixedProperties += "\"hash\": \"" + cloud->m_hash + "\",";
 
         std::string raspberrypi = (RUNNING_ON_A_RASPBERRYPI ? "true" : "false");

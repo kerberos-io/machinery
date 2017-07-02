@@ -41,14 +41,18 @@ namespace kerberos
             pthread_t m_uploadThread;
             pthread_t m_healthThread;
             std::string m_productKey;
+            std::string m_capture;
             std::string m_configuration_path;
             std::string m_hash;
+            std::string m_user;
+            std::string m_publicKey;
+            std::string m_privateKey;
 
             Cloud(){};
             virtual ~Cloud(){};
             virtual void setup(kerberos::StringMap & settings) = 0;
             virtual bool upload(std::string pathToImage) = 0;
-            
+
             void startUploadThread();
             void stopUploadThread();
             void startPollThread();
@@ -62,37 +66,21 @@ namespace kerberos
             {
                 m_productKey = key;
             };
+            void setCapture(std::string capture)
+            {
+                m_capture = capture;
+            };
             void setConfigurationPath(std::string path)
             {
                 m_configuration_path = path;
             };
-            std::string getHostname()
-            {
-                std::string hostname = helper::GetStdoutFromCommand("hostname");
-                return hostname;
-            };
-            std::string getDiskPercentage()
-            {
-                std::string size = "-1";
+            void setCloudCredentials(std::string user, std::string publicKey, std::string privateKey);
+            std::string getHostname();
+            std::string getDiskPercentage(std::string partition);
+            std::string getTemperature();
+            std::string getWifiSSID();
+            std::string getWifiStrength();
 
-                if(RUNNING_ON_A_RASPBERRYPI)
-                {
-                    size = helper::GetStdoutFromCommand("echo $(df -h | grep /dev/mmcblk0p3 | head -1 | awk -F' ' '{ print $5/1 }' | tr ['%'] [\"0\"])");
-                }
-
-                return size;
-            };
-            std::string getTemperature()
-            {
-                std::string temperature = "-1";
-
-                if(RUNNING_ON_A_RASPBERRYPI)
-                {
-                    temperature = helper::GetStdoutFromCommand("vcgencmd measure_temp");
-                }
-
-                return temperature;
-            };
     };
 
     template<const char * Alias, typename Class>

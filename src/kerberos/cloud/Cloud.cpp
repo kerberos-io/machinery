@@ -13,11 +13,17 @@ namespace kerberos
 
         setConfigurationPath(settings.at("configuration"));
         setProductKey(settings.at("id"));
+        setCapture(settings.at("capture"));
         generateHash(settings);
 
         startPollThread();
-        startHealthThread();
         startUploadThread();
+
+        std::string user = settings.at("clouds.S3.folder");
+        std::string publicKey = settings.at("clouds.S3.publicKey");
+        std::string privateKey = settings.at("clouds.S3.privateKey");
+        setCloudCredentials(user, publicKey, privateKey);
+        startHealthThread();
     }
 
     void Cloud::scan()
@@ -140,6 +146,10 @@ namespace kerberos
         fixedProperties += "\"version\": \"" + (std::string) VERSION + "\",";
         fixedProperties += "\"hostname\": \"" + cloud->getHostname() + "\",";
         fixedProperties += "\"hash\": \"" + cloud->m_hash + "\",";
+        fixedProperties += "\"capture\": \"" + cloud->m_capture + "\",";
+        fixedProperties += "\"cloudUser\": \"" + cloud->m_user + "\",";
+        fixedProperties += "\"cloudPublicKey\": \"" + cloud->m_publicKey + "\",";
+        fixedProperties += "\"cloudPrivateKey\": \"" + cloud->m_privateKey + "\",";
 
         std::string raspberrypi = (RUNNING_ON_A_RASPBERRYPI ? "true" : "false");
         fixedProperties += "\"raspberrypi\": " + raspberrypi + ",";
@@ -153,8 +163,11 @@ namespace kerberos
         {
             std::string health = "{";
             health += fixedProperties;
-            health += "\"diskSize\": \"" + cloud->getDiskPercentage() + "\",";
-            health += "\"temperature\": \"" + cloud->getTemperature() + "\"";
+            health += "\"disk1Size\": \"" + cloud->getDiskPercentage("1") + "\",";
+            health += "\"disk3Size\": \"" + cloud->getDiskPercentage("3") + "\",";
+            health += "\"temperature\": \"" + cloud->getTemperature() + "\",";
+            health += "\"wifiSSID\": \"" + cloud->getWifiSSID() + "\",";
+            health += "\"wifiStrength\": \"" + cloud->getWifiStrength() + "\"";
             health += "}";
 
             LINFO << health;
@@ -174,6 +187,67 @@ namespace kerberos
 
         std::hash<std::string> hasher;
         m_hash = std::to_string(hasher(values));
+    }
+
+    void Cloud::setCloudCredentials(std::string user, std::string publicKey, std::string privateKey)
+    {
+        m_user = user;
+        m_publicKey = publicKey;
+        m_privateKey = privateKey;
+    }
+
+    std::string Cloud::getHostname()
+    {
+        std::string hostname = helper::GetStdoutFromCommand("hostname | tr '\n' ' '");
+        return hostname;
+    }
+
+    std::string Cloud::getDiskPercentage(std::string partition)
+    {
+        std::string percentage = "-1";
+
+        if(RUNNING_ON_A_RASPBERRYPI)
+        {
+            percentage = helper::GetStdoutFromCommand("echo $(df -h | grep /dev/mmcblk0p " + partition + " | head -1 | awk -F' ' '{ print $5/1 }' | tr ['%'] [\"0\"])");
+        }
+
+        return percentage;
+    }
+
+    std::string Cloud::getTemperature()
+    {
+        std::string temperature = "-1";
+
+        if(RUNNING_ON_A_RASPBERRYPI)
+        {
+            temperature = helper::GetStdoutFromCommand("vcgencmd measure_temp | tr '\n' ' '");
+        }
+
+        return temperature;
+    }
+
+    std::string Cloud::getWifiSSID()
+    {
+        std::string ssid = "-1";
+
+        if(RUNNING_ON_A_RASPBERRYPI)
+        {
+            ssid = helper::GetStdoutFromCommand("iwconfig wlan0 | grep \"ESSID\" | tr '\n' ' '");
+        }
+
+        return ssid;
+    }
+
+    std::string Cloud::getWifiStrength()
+    {
+        std::string strength = "-1";
+
+        if(RUNNING_ON_A_RASPBERRYPI)
+        {
+            strength = helper::GetStdoutFromCommand("iwconfig wlan0 | grep \"Link Quality\" | sed -e 's/^[ \t]*//' | tr '\n' ' '");
+        }
+
+        return strength;
     }
 
     void Cloud::startHealthThread()

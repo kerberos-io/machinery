@@ -42,6 +42,7 @@ namespace kerberos
             pthread_t m_healthThread;
             std::string m_productKey;
             std::string m_configuration_path;
+            std::string m_hash;
 
             Cloud(){};
             virtual ~Cloud(){};
@@ -55,6 +56,29 @@ namespace kerberos
             void setConfigurationPath(std::string path)
             {
                 m_configuration_path = path;
+            };
+            void generateHash(kerberos::StringMap & settings);
+            std::string getDiskPercentage()
+            {
+                std::string size = "-1";
+
+                if(RUNNING_ON_A_RASPBERRYPI)
+                {
+                    size = system("echo $(df -h | grep /dev/mmcblk0p3 | head -1 | awk -F' ' '{ print $5/1 }' | tr ['%'] [\"0\"])");
+                }
+
+                return size;
+            };
+            std::string getTemperature()
+            {
+                std::string temperature = "-1";
+
+                if(RUNNING_ON_A_RASPBERRYPI)
+                {
+                    temperature = system("vcgencmd measure_temp");
+                }
+
+                return temperature;
             };
 
             void startUploadThread();

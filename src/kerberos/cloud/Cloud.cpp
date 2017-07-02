@@ -13,6 +13,7 @@ namespace kerberos
 
         setConfigurationPath(settings.at("configuration"));
         setProductKey(settings.at("id"));
+        generateHash(settings);
 
         startPollThread();
         startHealthThread();
@@ -122,19 +123,56 @@ namespace kerberos
             command += cloud->m_configuration_path;
             system(command.c_str());
 
+            // Remove backup file
+            command = "rm " + cloud->m_configuration_path + ".b";
+            system(command.c_str());
+
             // Reset key
-            cloud->m_productKey = key;
+            cloud->setProductKey(key);
         }
+
+        // --------------------------------------------
+        // Generate fixed JSON data which will be send,
+        // over and over again.
+
+        std:: string fixedProperties = "";
+        fixedProperties += "\"key\": \"" + cloud->m_productKey + "\",";
+        fixedProperties += "\"version\": \"" + (std::string) VERSION + "\",";
+        fixedProperties += "\"hash\": \"" + cloud->m_hash + "\",";
+
+        std::string raspberrypi = (RUNNING_ON_A_RASPBERRYPI ? "true" : "false");
+        fixedProperties += "\"raspberrypi\": \"" + raspberrypi + "\",";
+
+        // ------------------------------------------
+        // Send client data to the cloud application.
+
+        std::string url = (std::string) CLOUD + "/api/v1/health";
 
         while(true)
         {
             std::string health = "{";
-            health += "\"key\": \"" + cloud->m_productKey + "\",";
-            health += "\"version\": \"" + (std::string) VERSION + "\"";
+            health += fixedProperties;
+            health += "\"diskSize\": \"" + cloud->getDiskPercentage() + "\",";
+            health += "\"temperature\": \"" + cloud->getTemperature() + "\"";
             health += "}";
-            RestClient::post(CLOUD, "application/json", health);
-            usleep(15*1000*1000); // every 15s
+
+            LINFO << health;
+
+            RestClient::post(url, "application/json", health);
+            usleep(5*1000*1000); // every 5s
         }
+    }
+
+    void Cloud::generateHash(kerberos::StringMap & settings)
+    {
+        std::string values = settings.at("name");
+        values += settings.at("capture");
+        values += settings.at("captures.USBCamera.deviceNumber");
+        values += settings.at("captures.IPCamera.url");
+        values += settings.at("streams.Mjpg.streamPort");
+
+        std::hash<std::string> hasher;
+        m_hash = std::to_string(hasher(values));
     }
 
     void Cloud::startHealthThread()

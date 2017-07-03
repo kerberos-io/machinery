@@ -152,15 +152,15 @@ namespace kerberos
         }
         logger->reconfigure();
 
-        // -----------------
-        // Configure cloud
-
-        configureCloud(settings);
-
         // ------------------
         // Configure capture
 
         configureCapture(settings);
+
+        // -----------------
+        // Configure cloud
+
+        configureCloud(settings);
 
         // --------------------
         // Initialize machinery

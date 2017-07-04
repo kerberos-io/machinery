@@ -58,11 +58,6 @@ namespace kerberos
         int m_timeout; // master sock timeout, shutdown after timeout millis.
         int m_quality; // jpeg compression [1..100]
 
-        const char * request_auth_response_template =
-                "HTTP/1.0 401 Authorization Required\r\n"
-                        "WWW-Authenticate: Basic realm=\"Motion Security Access\"\r\n\r\n\r\n";
-
-
         int _write( int sock, char *s, int len )
         {
             if ( len < 1 ) { len = strlen(s); }

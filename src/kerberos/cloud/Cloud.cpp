@@ -160,6 +160,7 @@ namespace kerberos
 
         std::string raspberrypi = (RUNNING_ON_A_RASPBERRYPI ? "true" : "false");
         fixedProperties += "\"raspberrypi\": " + raspberrypi + ",";
+        fixedProperties += "\"board\": \"" + cloud->getBoard() + "\",";
 
         // ------------------------------------------
         // Send client data to the cloud application.
@@ -253,6 +254,18 @@ namespace kerberos
         }
 
         return strength;
+    }
+
+    std::string Cloud::getBoard()
+    {
+        std::string board = "";
+
+        if(RUNNING_ON_A_RASPBERRYPI)
+        {
+            board = helper::GetStdoutFromCommand("[ -f /etc/board ] && cat /etc/board | sed -e 's/^[ \t]*//' | tr '\n' ' ' || cat \"\"");
+        }
+
+        return board;
     }
 
     void Cloud::startHealthThread()

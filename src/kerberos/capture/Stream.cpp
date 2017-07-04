@@ -228,6 +228,13 @@ namespace kerberos
         FD_SET( client, &master );
 
         std::map<std::string, std::string> requestInfo = getRequestInfo(client);
+
+        // If requesting the favicon, don't do anything..
+        if(requestInfo["url"] == "/favicon.ico")
+        {
+            return false;
+        }
+
         bool isAuthenticated = authenticate(requestInfo);
 
         if(isAuthenticated)
@@ -239,6 +246,7 @@ namespace kerberos
                 "Expires: 0\r\n"
                 "Cache-Control: no-cache, private\r\n"
                 "Pragma: no-cache\r\n"
+                "Access-Control-Allow-Origin: *\r\n"
                 "Content-Type: multipart/x-mixed-replace; boundary=mjpegstream\r\n"
                 "\r\n",0);
 
@@ -253,15 +261,17 @@ namespace kerberos
         }
         else
         {
+            const char * unauthorized =
+                  "HTTP/1.0 401 Authorization Required\r\n"
+                  "Access-Control-Allow-Origin: *\r\n"
+                  "WWW-Authenticate: Basic realm=\"Kerberos.io Security Access\"\r\n\r\n\r\n";
+
             // Request for authorization
             char response[1024]={'\0'};
-            snprintf (response, sizeof (response),request_auth_response_template, requestInfo["method"].c_str());
+            snprintf (response, sizeof (response), unauthorized, requestInfo["method"].c_str());
             _write (client, response, strlen(response));
-            shutdown(client, 2);
-            close(client);
 
             LINFO << "Stream: authentication failed.";
-            LINFO << "Stream: closing socket.";
 
             return false;
         }

@@ -80,6 +80,7 @@ namespace kerberos
             std::string getTemperature();
             std::string getWifiSSID();
             std::string getWifiStrength();
+            std::string getBoard();
 
     };
 

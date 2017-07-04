@@ -34,6 +34,7 @@ namespace kerberos
             std::string m_instanceName;
             std::string m_fileFormat;
             bool m_drawTimestamp;
+            bool m_enableHardwareEncoding;
             cv::Scalar m_timestampColor;
             std::string m_timezone;
             FileManager m_fileManager;
@@ -79,7 +80,11 @@ namespace kerberos
             pthread_mutex_t m_release_lock;
             pthread_t m_recordThread;
             pthread_t m_retrieveThread;
+            pthread_t m_recordOnboardThread;
             double m_timeStartedRecording;
+
+            void startOnboardRecordThread();
+            void stopOnboardRecordThread();
             void startRecordThread();
             void stopRecordThread();
             void startRetrieveThread();
@@ -95,6 +100,9 @@ namespace kerberos
             std::string m_extension;
             std::string m_fileName;
             std::string m_directory;
+            std::string m_hardwareDirectory;
+            std::string m_path;
+            std::string m_encodingBinary;
     };
 }
 #endif

@@ -8,7 +8,7 @@
 //
 //  The copyright to the computer program(s) herein
 //  is the property of Verstraeten.io, Belgium.
-//  The program(s) may be used and/or copied under 
+//  The program(s) may be used and/or copied under
 //  the CC-NC-ND license model.
 //
 //  https://doc.kerberos.io/license
@@ -35,21 +35,53 @@ namespace kerberos
             int m_interval;
             FW::Guard * guard;
             std::string m_captureDirectory;
-        
+
         public:
             pthread_t m_pollThread;
             pthread_t m_uploadThread;
-        
+            pthread_t m_healthThread;
+            std::string m_productKey;
+            std::string m_capture;
+            std::string m_configuration_path;
+            std::string m_hash;
+            std::string m_user;
+            std::string m_publicKey;
+            std::string m_privateKey;
+
             Cloud(){};
             virtual ~Cloud(){};
             virtual void setup(kerberos::StringMap & settings) = 0;
             virtual bool upload(std::string pathToImage) = 0;
-            void scan();
-        
+
             void startUploadThread();
             void stopUploadThread();
             void startPollThread();
             void stopPollThread();
+            void startHealthThread();
+            void stopHealthThread();
+
+            void scan();
+            void generateHash(kerberos::StringMap & settings);
+            void setProductKey(std::string key)
+            {
+                m_productKey = key;
+            };
+            void setCapture(std::string capture)
+            {
+                m_capture = capture;
+            };
+            void setConfigurationPath(std::string path)
+            {
+                m_configuration_path = path;
+            };
+            void setCloudCredentials(std::string user, std::string publicKey, std::string privateKey);
+            std::string getHostname();
+            std::string getDiskPercentage(std::string partition);
+            std::string getTemperature();
+            std::string getWifiSSID();
+            std::string getWifiStrength();
+            std::string getBoard();
+
     };
 
     template<const char * Alias, typename Class>
@@ -57,7 +89,7 @@ namespace kerberos
     {
         protected:
             CloudCreator(){name = ID;}
-            
+
         public:
             static Cloud* create(){return new Class();};
             static const char * ID;

@@ -17,10 +17,16 @@
 #ifndef __Version_H_INCLUDED__   // if Version.h hasn't been included yet...
 #define __Version_H_INCLUDED__   // #define this so the compiler knows it has been included
 
-    #define VERSION "2.2.2"
+    #define VERSION "2.3.0"
     #define HADES "https://hades.kerberos.io"
+    #define CLOUD "https://cloud.kerberos.io"
     #define SYMBOL_DIRECTORY "/etc/opt/kerberosio/symbols/"
     #define CONFIGURATION_PATH "/etc/opt/kerberosio/config/config.xml"
     #define LOG_PATH "/etc/opt/kerberosio/logs/log.stash"
+
+    #define RUNNING_ON_A_RASPBERRYPI false
+    #if IS_RASPBERRYPI == 1
+        #define RUNNING_ON_A_RASPBERRYPI true
+    #endif
 
 #endif

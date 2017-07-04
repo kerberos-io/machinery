@@ -8,7 +8,7 @@
 //
 //  The copyright to the computer program(s) herein
 //  is the property of Verstraeten.io, Belgium.
-//  The program(s) may be used and/or copied under 
+//  The program(s) may be used and/or copied under
 //  the CC-NC-ND license model.
 //
 //  https://doc.kerberos.io/license
@@ -29,7 +29,7 @@ namespace kerberos
         private:
             cv::VideoCapture * m_video;
             std::string m_path;
-        
+
         public:
             VideoCapture()
             {
@@ -42,7 +42,7 @@ namespace kerberos
                     throw OpenCVException(ex.msg.c_str());
                 }
             }
-        
+
             VideoCapture(int width, int height);
             virtual ~VideoCapture(){};
             void setup(StringMap & settings);
@@ -51,11 +51,14 @@ namespace kerberos
             void setDelay(int msec){Capture::setDelay(msec);}
             void setPath(std::string path){m_path=path;}
             std::string getPath(){return m_path;}
-            
+
             void grab();
             Image retrieve();
+            int32_t retrieveRAW(uint8_t* data){ return 0; }
             Image * takeImage();
-        
+            void startRecord(std::string path){};
+            void stopRecord(){};
+
             void open();
             void close();
             void update();

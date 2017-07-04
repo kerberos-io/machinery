@@ -24,7 +24,7 @@
 #include "machinery/expositor/Expositor.h"
 #include "machinery/io/Io.h"
 #include "easylogging++.h"
-#include "capture/Capture.h";
+#include "capture/Capture.h"
 
 namespace kerberos
 {

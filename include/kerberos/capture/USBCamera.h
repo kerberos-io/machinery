@@ -8,7 +8,7 @@
 //
 //  The copyright to the computer program(s) herein
 //  is the property of Verstraeten.io, Belgium.
-//  The program(s) may be used and/or copied under 
+//  The program(s) may be used and/or copied under
 //  the CC-NC-ND license model.
 //
 //  https://doc.kerberos.io/license
@@ -30,7 +30,7 @@ namespace kerberos
             cv::VideoCapture * m_camera;
             Executor<USBCamera> tryToUpdateCapture;
             int m_deviceNumber;
-        
+
         public:
             USBCamera()
             {
@@ -43,7 +43,7 @@ namespace kerberos
                     throw OpenCVException(ex.msg.c_str());
                 }
             }
-        
+
             USBCamera(int width, int height);
             virtual ~USBCamera(){};
             void setup(StringMap & settings);
@@ -52,11 +52,14 @@ namespace kerberos
             void setDelay(int msec){Capture::setDelay(msec);}
             void setDeviceNumber(int number){m_deviceNumber=number;}
             int getDeviceNumber(){return m_deviceNumber;}
-            
+
             void grab();
             Image retrieve();
+            int32_t retrieveRAW(uint8_t* data){ return 0; }
             Image * takeImage();
-        
+            void startRecord(std::string path){};
+            void stopRecord(){};
+
             void open();
             void close();
             void update();

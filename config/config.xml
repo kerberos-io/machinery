@@ -2,6 +2,7 @@
 <kerberos>
 
     <instance>
+        <id type="text">???</id>
         <name type="text">frontdoor</name>
         <logging type="bool">false</logging>
         <timezone type="timezone">Europe-Brussels</timezone>

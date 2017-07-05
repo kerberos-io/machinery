@@ -60,7 +60,7 @@ namespace kerberos
 
         if(RUNNING_ON_A_RASPBERRYPI)
         {
-            strength = helper::GetStdoutFromCommand("iwconfig wlan0 | grep Link Quality");
+            strength = helper::GetStdoutFromCommand("iwconfig wlan0 | grep Quality");
             strength = ::kerberos::removeUnwantedChars(strength);
         }
 

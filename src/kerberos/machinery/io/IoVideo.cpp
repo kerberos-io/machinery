@@ -100,8 +100,6 @@ namespace kerberos
             m_codec = -1;
         }
 
-        m_writer = new cv::VideoWriter();
-
         m_encodingBinary = "ffmpeg";
         if(!system("which avconv > /dev/null 2>&1")){
             m_encodingBinary = "avconv";
@@ -473,6 +471,8 @@ namespace kerberos
                 {
                     video->m_writer->release();
                 }
+                delete video->m_writer;
+                video->m_writer = 0;
             }
             video->m_recording = false;
 

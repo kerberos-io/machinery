@@ -41,7 +41,9 @@ namespace kerberos
             pthread_t m_uploadThread;
             pthread_t m_healthThread;
             std::string m_productKey;
+            std::string m_name;
             std::string m_capture;
+            std::string m_directory;
             std::string m_configuration_path;
             std::string m_hash;
             std::string m_user;
@@ -66,6 +68,14 @@ namespace kerberos
             {
                 m_productKey = key;
             };
+            void setCaptureDirectory(std::string directory)
+            {
+                m_directory = directory;
+            };
+            void setName(std::string name)
+            {
+                m_name = name;
+            };
             void setCapture(std::string capture)
             {
                 m_capture = capture;
@@ -75,13 +85,6 @@ namespace kerberos
                 m_configuration_path = path;
             };
             void setCloudCredentials(std::string user, std::string publicKey, std::string privateKey);
-            std::string getHostname();
-            std::string getDiskPercentage(std::string partition);
-            std::string getTemperature();
-            std::string getWifiSSID();
-            std::string getWifiStrength();
-            std::string getBoard();
-            std::string isDocker();
 
     };
 

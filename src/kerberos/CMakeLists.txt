@@ -18,6 +18,7 @@
         Factory.cpp
         Helper.cpp
         Kerberos.cpp
+        System.cpp
     )
 
 # -------------------------------------------------------

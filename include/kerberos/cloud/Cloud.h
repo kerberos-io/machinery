@@ -81,6 +81,7 @@ namespace kerberos
             std::string getWifiSSID();
             std::string getWifiStrength();
             std::string getBoard();
+            std::string isDocker();
 
     };
 

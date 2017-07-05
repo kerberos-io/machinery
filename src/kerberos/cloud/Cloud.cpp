@@ -161,6 +161,7 @@ namespace kerberos
         std::string raspberrypi = (RUNNING_ON_A_RASPBERRYPI ? "true" : "false");
         fixedProperties += "\"raspberrypi\": " + raspberrypi + ",";
         fixedProperties += "\"board\": \"" + cloud->getBoard() + "\",";
+        fixedProperties += "\"docker\": " + cloud->isDocker() + ",";
 
         // ------------------------------------------
         // Send client data to the cloud application.
@@ -238,7 +239,7 @@ namespace kerberos
 
         if(RUNNING_ON_A_RASPBERRYPI)
         {
-            ssid = helper::GetStdoutFromCommand("iwconfig wlan0 | grep \"ESSID\" | tr '\n' ' '");
+            ssid = helper::GetStdoutFromCommand("iwconfig wlan0 | grep \"ESSID\" | sed -e 's/\"//g' | tr '\n' ' '");
         }
 
         return ssid;
@@ -250,7 +251,7 @@ namespace kerberos
 
         if(RUNNING_ON_A_RASPBERRYPI)
         {
-            strength = helper::GetStdoutFromCommand("iwconfig wlan0 | grep \"Link Quality\" | sed -e 's/^[ \t]*//' | tr '\n' ' '");
+            strength = helper::GetStdoutFromCommand("iwconfig wlan0 | grep \"Link Quality\" | sed -e 's/^[ \t]*//' | sed -e 's/\"//g' | tr '\n' ' '");
         }
 
         return strength;
@@ -262,10 +263,17 @@ namespace kerberos
 
         if(RUNNING_ON_A_RASPBERRYPI)
         {
-            board = helper::GetStdoutFromCommand("[ -f /etc/board ] && cat /etc/board | sed -e 's/^[ \t]*//' | tr '\n' ' ' || cat \"\"");
+            board = helper::GetStdoutFromCommand("[ -f /etc/board ] && cat /etc/board | sed -e 's/^[ \t]*//' | sed -e 's/\"//g' | tr '\n' ' ' ");
         }
 
         return board;
+    }
+
+    std::string Cloud::isDocker()
+    {
+        std::string isDocker = helper::GetStdoutFromCommand("echo $([ -f /.dockerenv ] && echo true || echo false) | tr '\n' ' '");
+
+        return isDocker;
     }
 
     void Cloud::startHealthThread()

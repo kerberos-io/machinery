@@ -99,7 +99,7 @@ namespace kerberos
         {
             m_codec = -1;
         }
-        
+
         m_writer = new cv::VideoWriter();
 
         m_encodingBinary = "ffmpeg";
@@ -230,9 +230,6 @@ namespace kerberos
 
         BINFO << "IoVideo: firing";
 
-<<<<<<< HEAD
-        if(m_capture && !m_writer->isOpened() && !m_recording)
-=======
         // ------------------
         // Check if the camera supports on board recording (camera specific),
         // and if you want to user it. If not it will fallback on the video writer
@@ -255,7 +252,6 @@ namespace kerberos
             }
         }
         else // Use built-in OpenCV
->>>>>>> openmax-il
         {
             if(m_capture && m_writer == 0 && !m_recording)
             {
@@ -270,12 +266,8 @@ namespace kerberos
 
                 BINFO << "IoVideo: start new recording " << m_fileName;
 
-<<<<<<< HEAD
-            m_writer->open(m_directory + m_fileName, m_codec, m_fps, cv::Size(image.getColumns(), image.getRows()));
-=======
                 m_writer = new cv::VideoWriter();
                 m_writer->open(m_path, m_codec, m_fps, cv::Size(image.getColumns(), image.getRows()));
->>>>>>> openmax-il
 
                 startRecordThread();
                 m_recording = true;

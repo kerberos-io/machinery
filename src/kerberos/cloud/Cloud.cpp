@@ -159,8 +159,7 @@ namespace kerberos
 
         fixedProperties += "\"cloudUser\": \"" + cloud->m_user + "\",";
         fixedProperties += "\"cloudPublicKey\": \"" + cloud->m_publicKey + "\",";
-        fixedProperties += "\"cloudPrivateKey\": \"" + cloud->m_privateKey + "\",";
-
+        
         fixedProperties += "\"cameraName\": \"" + cloud->m_name + "\",";
         fixedProperties += "\"cameraType\": \"" + cloud->m_capture + "\",";
 

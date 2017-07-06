@@ -122,8 +122,11 @@ namespace kerberos
         // Filemanager is mapped to a directory and is used by an image
         // to save to the correct directory.
 
-        setFileFormat(settings.at("ios.Video.fileFormat"));
+        setVideoFileFormat(settings.at("ios.Video.fileFormat"));
+        setImageFileFormat(settings.at("ios.Disk.fileFormat"));
         m_directory = settings.at("ios.Video.directory");
+        m_fileManager.setBaseDirectory(m_directory);
+
         m_hardwareDirectory = settings.at("ios.Video.hardwareDirectory");
         m_enableHardwareEncoding = (settings.at("ios.Video.enableHardwareEncoding") == "true");
     }
@@ -146,6 +149,27 @@ namespace kerberos
         {
             return m_colors.at(name);
         }
+    }
+
+    std::string IoVideo::buildPath(std::string pathToImage)
+    {
+        // -----------------------------------------------
+        // Get timestamp, microseconds, random token, and instance name
+
+        std::string instanceName = getInstanceName();
+        kerberos::helper::replace(pathToImage, "instanceName", instanceName);
+
+        std::string timestamp = kerberos::helper::getTimestamp();
+        kerberos::helper::replace(pathToImage, "timestamp", timestamp);
+
+        std::string microseconds = kerberos::helper::getMicroseconds();
+        std::string size = kerberos::helper::to_string((int)microseconds.length());
+        kerberos::helper::replace(pathToImage, "microseconds", size + "-" + microseconds);
+
+        std::string token = kerberos::helper::to_string(rand()%1000);
+        kerberos::helper::replace(pathToImage, "token", token);
+
+        return pathToImage;
     }
 
     std::string IoVideo::buildPath(std::string pathToVideo, JSON & data)
@@ -241,7 +265,7 @@ namespace kerberos
                 // The naming convention that will be used
                 // for the image.
 
-                std::string pathToVideo = getFileFormat();
+                std::string pathToVideo = getVideoFormat();
                 m_fileName = buildPath(pathToVideo, data);
                 m_path = m_hardwareDirectory + m_fileName + ".h264";
 
@@ -257,7 +281,7 @@ namespace kerberos
                 // The naming convention that will be used
                 // for the image.
 
-                std::string pathToVideo = getFileFormat();
+                std::string pathToVideo = getVideoFormat();
                 m_fileName = buildPath(pathToVideo, data) + "." + m_extension;
                 m_path = m_directory + m_fileName;
                 Image image = m_capture->retrieve();
@@ -292,7 +316,36 @@ namespace kerberos
 
     bool IoVideo::save(Image & image)
     {
-        return true;
+        // ---------------------
+        // Apply mask if enabled
+
+        if(m_privacy)
+        {
+            image.bitwiseAnd(m_mask, image);
+        }
+
+        // ----------------------------------------
+        // The naming convention that will be used
+        // for the image.
+
+        std::string pathToImage = getImageFormat();
+
+        // ---------------------
+        // Replace variables
+
+        pathToImage = buildPath(pathToImage);
+
+        if(!m_capture->m_onBoardRecording && !m_enableHardwareEncoding)
+        {
+            std::string timestamp = kerberos::helper::getTimestamp();
+            kerberos::helper::replace(pathToImage, "timestamp", timestamp);
+            drawDateOnImage(image, timestamp);
+        }
+
+        // ---------------------------------------------------------------------
+        // Save original version & generate unique timestamp for current image
+
+        return m_fileManager.save(image, pathToImage, false);
     }
 
     bool IoVideo::save(Image & image, JSON & data)

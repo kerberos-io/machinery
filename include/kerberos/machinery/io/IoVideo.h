@@ -32,7 +32,8 @@ namespace kerberos
 
         private:
             std::string m_instanceName;
-            std::string m_fileFormat;
+            std::string m_videoFormat;
+            std::string m_imageFormat;
             bool m_drawTimestamp;
             bool m_enableHardwareEncoding;
             cv::Scalar m_timestampColor;
@@ -48,6 +49,7 @@ namespace kerberos
             void setup(const StringMap & settings);
             void fire(JSON & data);
             void disableCapture();
+            std::string buildPath(std::string pathToImage);
             std::string buildPath(std::string pathToVideo, JSON & data);
             cv::Scalar getColor(const std::string name);
             bool getDrawTimestamp(){return m_drawTimestamp;};
@@ -59,8 +61,10 @@ namespace kerberos
             void setTimestampColor(cv::Scalar timestampColor){m_timestampColor=timestampColor;};
             std::string getInstanceName(){return m_instanceName;};
             void setInstanceName(std::string instanceName){m_instanceName=instanceName;};
-            std::string getFileFormat(){return m_fileFormat;};
-            void setFileFormat(std::string fileFormat){m_fileFormat = fileFormat;};
+            std::string getVideoFormat(){return m_videoFormat;};
+            void setVideoFileFormat(std::string fileFormat){m_videoFormat = fileFormat;};
+            std::string getImageFormat(){return m_imageFormat;};
+            void setImageFileFormat(std::string fileFormat){m_imageFormat = fileFormat;};
             int getFPS(){return m_fps;};
             void setFPS(int fps){m_fps = fps;};
             bool save(Image & image);

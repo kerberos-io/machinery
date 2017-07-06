@@ -190,8 +190,6 @@ namespace kerberos
             health += "\"uptime\": \"" + System::getUptime() + "\"";
             health += "}";
 
-            LINFO << health;
-
             RestClient::post(url, "application/json", health);
             usleep(5*1000*1000); // every 5s
         }

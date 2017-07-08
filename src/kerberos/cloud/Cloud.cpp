@@ -22,9 +22,6 @@ namespace kerberos
         startPollThread();
         startUploadThread();
 
-        // -------------
-        // Health thread
-
         std::string user = settings.at("clouds.S3.folder");
         std::string publicKey = settings.at("clouds.S3.publicKey");
         std::string privateKey = settings.at("clouds.S3.privateKey");
@@ -96,38 +93,24 @@ namespace kerberos
 
     void * pollContinuously(void * clo)
     {
-        Cloud * cloud = (Cloud *) clo;
-
-        // ----------------------
-        // Create connection object
-
-        RestClient::Connection * conn = cloud->pollConnection;
-        conn->SetTimeout(5); // set connection timeout to 5s
-
-        RestClient::HeaderFields headers;
-        headers["Content-Type"] = "application/json";
-        conn->SetHeaders(headers);
-
         std::string version = "{";
         version += "\"version\": \"" + (std::string) VERSION + "\"";
         version += "}";
 
         while(true)
         {
-            RestClient::Response r = conn->post("/", version);
+            RestClient::post(HADES, "application/json", version);
             usleep(180*1000*1000);
         }
     }
 
     void Cloud::startPollThread()
     {
-        pollConnection = new RestClient::Connection(HADES);
         pthread_create(&m_pollThread, NULL, pollContinuously, this);
     }
 
     void Cloud::stopPollThread()
     {
-        delete pollConnection;
         pthread_cancel(m_pollThread);
         pthread_join(m_pollThread, NULL);
     }
@@ -139,16 +122,6 @@ namespace kerberos
     void * deviceHealth(void * clo)
     {
         Cloud * cloud = (Cloud *) clo;
-
-        // ----------------------
-        // Create connection object
-
-        RestClient::Connection * conn = cloud->cloudConnection;
-        conn->SetTimeout(5); // set connection timeout to 5s
-
-        RestClient::HeaderFields headers;
-        headers["Content-Type"] = "application/json";
-        conn->SetHeaders(headers);
 
         // -----------------------------------
         // Check if we need to generate a
@@ -186,7 +159,7 @@ namespace kerberos
 
         fixedProperties += "\"cloudUser\": \"" + cloud->m_user + "\",";
         fixedProperties += "\"cloudPublicKey\": \"" + cloud->m_publicKey + "\",";
-
+        
         fixedProperties += "\"cameraName\": \"" + cloud->m_name + "\",";
         fixedProperties += "\"cameraType\": \"" + cloud->m_capture + "\",";
 
@@ -199,6 +172,8 @@ namespace kerberos
 
         // ------------------------------------------
         // Send client data to the cloud application.
+
+        std::string url = (std::string) CLOUD + "/api/v1/health";
 
         while(true)
         {
@@ -214,7 +189,7 @@ namespace kerberos
             health += "\"uptime\": \"" + System::getUptime() + "\"";
             health += "}";
 
-            RestClient::Response r = conn->post("/api/v1/health", health);
+            RestClient::post(url, "application/json", health);
             usleep(5*1000*1000); // every 5s
         }
     }
@@ -240,13 +215,11 @@ namespace kerberos
 
     void Cloud::startHealthThread()
     {
-        cloudConnection = new RestClient::Connection(CLOUD);
         pthread_create(&m_healthThread, NULL, deviceHealth, this);
     }
 
     void Cloud::stopHealthThread()
     {
-        delete cloudConnection;
         pthread_cancel(m_healthThread);
         pthread_join(m_healthThread, NULL);
     }

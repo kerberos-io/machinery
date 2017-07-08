@@ -22,7 +22,6 @@
 #ifndef __Cloud_H_INCLUDED__   // if Cloud.h hasn't been included yet...
 #define __Cloud_H_INCLUDED__   // #define this so the compiler knows it has been included
 
-#include "restclient-cpp/connection.h"
 #include "restclient-cpp/restclient.h"
 
 namespace kerberos
@@ -50,8 +49,6 @@ namespace kerberos
             std::string m_user;
             std::string m_publicKey;
             std::string m_privateKey;
-            RestClient::Connection * cloudConnection;
-            RestClient::Connection * pollConnection;
 
             Cloud(){};
             virtual ~Cloud(){};

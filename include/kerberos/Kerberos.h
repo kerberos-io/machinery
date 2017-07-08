@@ -24,7 +24,6 @@
 #include "document.h" // rapidjson
 #include "capture/Stream.h"
 #include "easylogging++.h"
-#include "restclient-cpp/restclient.h"
 
 namespace kerberos
 {

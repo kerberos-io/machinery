@@ -16,15 +16,6 @@ namespace kerberos
         // Get url
 
         setUrl(settings.at("ios.Webhook.url").c_str());
-
-        // ----------------------------
-        // Initialize connection object
-
-        webhookConnection = new RestClient::Connection(m_url);
-        webhookConnection->SetTimeout(5); // set connection timeout to 5s
-        RestClient::HeaderFields headers;
-        headers["Content-Type"] = "application/json";
-        webhookConnection->SetHeaders(headers);
     }
 
     bool IoWebhook::save(Image & image, JSON & data)
@@ -51,7 +42,7 @@ namespace kerberos
         // Send a post to URL
 
         BINFO << "IoWebhook: post to webhook " + (std::string) getUrl();
-        RestClient::Response r = webhookConnection->post("/", buffer.GetString());
+        RestClient::response r = RestClient::post(getUrl(), "application/json", buffer.GetString());
 
         if(r.code == 200)
         {

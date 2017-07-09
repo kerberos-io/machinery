@@ -188,7 +188,7 @@ namespace kerberos
 
 				// Create components
 				state.camera = new Camera(m_frameWidth, m_frameHeight, 0, false, 0, false);
-				state.preview_encode = new VideoEncode(8192, VideoEncode::CodingMJPEG, false, false);
+				state.preview_encode = new VideoEncode(16192, VideoEncode::CodingMJPEG, false, false);
 				state.record_encode = new VideoEncode(4096, VideoEncode::CodingAVC, false, false);
 
 				// Setup camera

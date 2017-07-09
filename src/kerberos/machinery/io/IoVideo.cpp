@@ -714,6 +714,12 @@ namespace kerberos
                 unlink(file.c_str()); // remove symbol link.
                 unlink(originalFile.c_str()); // remove h264 file.
 
+                if(m_createSymbol)
+                {
+                    std::string link = SYMBOL_DIRECTORY + fileParts[0] + "." + m_extension;
+                    symlink(mp4File.c_str(), link.c_str());
+                }
+
                 it++;
             }
 

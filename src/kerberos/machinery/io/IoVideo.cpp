@@ -402,25 +402,9 @@ namespace kerberos
 
         try
         {
-            // convert from h264 to mp4 with avconv of ffmpeg
-            // (ideally this should be executed in a seperate thread).
-            std::string mp4File = video->m_directory + video->m_fileName + "." + video->m_extension;
-
-            std::string command = video->m_encodingBinary; // ffmpeg or avconv
-            command += " -framerate " + std::to_string(video->m_capture->m_framerate);
-            command += " -i " + video->m_path;
-            command += " -c copy " + mp4File;
-
-            system(command.c_str());
-            unlink(video->m_path.c_str()); // remove h264 file.
-
-            // Move to symbol directory if we have cloud setup.
-            if(video->m_createSymbol)
-            {
-                std::string link = SYMBOL_DIRECTORY + video->m_fileName + "." + video->m_extension;
-                std::string pathToVideo = video->m_directory + video->m_fileName + "." + video->m_extension;
-                symlink(pathToVideo.c_str(), link.c_str());
-            }
+            // create link to start processing to mp4
+            std::string link = SYMBOL_DIRECTORY + video->m_fileName + ".h264";
+            symlink(video->m_path.c_str(), link.c_str());
 
             // stop recording thread
             video->m_capture->stopRecord();
@@ -685,5 +669,75 @@ namespace kerberos
     {
         pthread_cancel(m_retrieveThread);
         pthread_join(m_retrieveThread, NULL);
+    }
+
+    void IoVideo::scan()
+    {
+        for(;;)
+        {
+            std::vector<std::string> storage;
+            helper::getFilesInDirectory(storage, SYMBOL_DIRECTORY); // get all symbol links of directory
+
+            std::vector<std::string>::iterator it = storage.begin();
+            while(it != storage.end())
+            {
+                std::string file = *it;
+
+                std::vector<std::string> fileParts;
+                helper::tokenize(file, fileParts, ".");
+
+                if(fileParts[1] != "h264")
+                {
+                    it++;
+                    break;
+                }
+
+                // convert from h264 to mp4 with avconv of ffmpeg
+                // (ideally this should be executed in a seperate thread).
+                std::string originalFile = helper::returnPathOfLink(file.c_str());
+
+                // Strip filename from path
+                fileParts.clear();
+                helper::tokenize(originalFile, fileParts, "/");
+                std::string name = fileParts[fileParts.size()-1];
+                fileParts.clear();
+                helper::tokenize(name, fileParts, ".");
+
+                std::string mp4File = m_directory + fileParts[0] + "." + m_extension;
+
+                std::string command = m_encodingBinary; // ffmpeg or avconv
+                command += " -framerate " + std::to_string(m_capture->m_framerate);
+                command += " -i " + originalFile;
+                command += " -c copy " + mp4File;
+                system(command.c_str());
+
+                unlink(file.c_str()); // remove symbol link.
+                unlink(originalFile.c_str()); // remove h264 file.
+
+                it++;
+            }
+
+            usleep(1000*1000); // every second.
+        }
+    }
+
+    // --------------
+    // Convert thread
+
+    void * convertContinuously(void * self)
+    {
+        IoVideo * video = (IoVideo *) self;
+        video->scan();
+    }
+
+    void IoVideo::startConvertThread()
+    {
+        pthread_create(&m_convertThread, NULL, convertContinuously, this);
+    }
+
+    void IoVideo::stopConvertThread()
+    {
+        pthread_cancel(m_convertThread);
+        pthread_join(m_convertThread, NULL);
     }
 }

@@ -22,6 +22,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include <pthread.h> //for threading , link with lpthread
+#include <sys/stat.h>
 
 namespace kerberos
 {
@@ -43,8 +44,14 @@ namespace kerberos
             std::string m_privateKey;
 
         public:
-            IoVideo(){};
-            ~IoVideo(){};
+            IoVideo()
+            {
+                startConvertThread();
+            };
+            ~IoVideo()
+            {
+                stopConvertThread();
+            };
 
             void setup(const StringMap & settings);
             void fire(JSON & data);
@@ -85,6 +92,7 @@ namespace kerberos
             pthread_t m_recordThread;
             pthread_t m_retrieveThread;
             pthread_t m_recordOnboardThread;
+            pthread_t m_convertThread;
             double m_timeStartedRecording;
 
             void startOnboardRecordThread();
@@ -94,6 +102,9 @@ namespace kerberos
             void startRetrieveThread();
             void stopRetrieveThread();
             Image getImage();
+            void scan();
+            void startConvertThread();
+            void stopConvertThread();
 
             int m_codec;
             int m_fps;

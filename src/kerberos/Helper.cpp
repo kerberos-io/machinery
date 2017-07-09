@@ -404,5 +404,20 @@ namespace kerberos
 
             return data;
         }
+
+        std::string	returnPathOfLink(const char* pathname)
+        {
+          	std::string buffer(64, '\0');
+          	ssize_t	len;
+
+          	while ((len = ::readlink(pathname, &buffer[0], buffer.size())) == static_cast<ssize_t>(buffer.size())) {
+            		// buffer may have been truncated - grow and try again
+            		buffer.resize(buffer.size() * 2);
+          	}
+
+          	buffer.resize(len);
+
+          	return buffer;
+        }
     }
 }

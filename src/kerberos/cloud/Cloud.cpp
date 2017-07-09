@@ -52,6 +52,14 @@ namespace kerberos
             {
                 std::string file = *it;
 
+                std::vector<std::string> fileParts;
+                helper::tokenize(file, fileParts, ".");
+                if(fileParts[1] == "h264")
+                {
+                    it++;
+                    break;
+                }
+
                 bool hasBeenUploaded = upload(file);
                 if(hasBeenUploaded)
                 {

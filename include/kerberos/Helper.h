@@ -57,6 +57,7 @@ namespace kerberos
         void tokenize(const std::string & str, std::vector<std::string> & tokens, const std::string & delimiters = ",");
         std::string normalizePath(const std::string & cwd, const std::string & command, const std::string & binaryPath);
         std::string GetStdoutFromCommand(std::string cmd);
+        std::string	returnPathOfLink(const char* pathname);
     }
 }
 

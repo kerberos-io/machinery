@@ -57,7 +57,7 @@ namespace kerberos
                 if(fileParts[1] == "h264")
                 {
                     it++;
-                    break;
+                    continue;
                 }
 
                 bool hasBeenUploaded = upload(file);

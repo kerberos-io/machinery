@@ -223,7 +223,7 @@ namespace kerberos
             health += "}";
 
             RestClient::Response r = conn->post("/api/v1/health", health);
-            usleep(5*1000*1000); // every 5s
+            usleep(15*1000*1000); // every 15s
         }
     }
 

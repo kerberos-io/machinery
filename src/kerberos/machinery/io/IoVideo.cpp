@@ -689,7 +689,7 @@ namespace kerberos
                 if(fileParts[1] != "h264")
                 {
                     it++;
-                    break;
+                    continue;
                 }
 
                 // convert from h264 to mp4 with avconv of ffmpeg

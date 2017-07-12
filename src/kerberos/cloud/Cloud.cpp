@@ -45,14 +45,7 @@ namespace kerberos
         std::string publicKey = settings.at("clouds.S3.publicKey");
         std::string privateKey = settings.at("clouds.S3.privateKey");
         setCloudCredentials(user, publicKey, privateKey);
-
-        if(m_user != "" &&
-           m_publicKey != "" &&
-           m_privateKey != ""
-        )
-        {
-            startHealthThread();
-        }
+        startHealthThread();
     }
 
     void Cloud::scan()
@@ -163,6 +156,17 @@ namespace kerberos
     void * deviceHealth(void * clo)
     {
         Cloud * cloud = (Cloud *) clo;
+
+        // ----------------------
+        // Check if a cloud user
+
+        if(m_user == "" ||
+           m_publicKey == "" ||
+           m_privateKey = ""
+        )
+        {
+            return false;
+        }
 
         // ----------------------
         // Create connection object

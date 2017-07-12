@@ -58,6 +58,7 @@ namespace kerberos
         std::string normalizePath(const std::string & cwd, const std::string & command, const std::string & binaryPath);
         std::string GetStdoutFromCommand(std::string cmd);
         std::string	returnPathOfLink(const char* pathname);
+        std::string removeUnwantedChars(std::string & text);
     }
 }
 

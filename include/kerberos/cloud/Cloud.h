@@ -24,6 +24,8 @@
 
 #include "restclient-cpp/connection.h"
 #include "restclient-cpp/restclient.h"
+#include <iostream>
+#include <fstream>
 
 namespace kerberos
 {
@@ -41,6 +43,7 @@ namespace kerberos
             pthread_t m_pollThread;
             pthread_t m_uploadThread;
             pthread_t m_healthThread;
+            std::string m_keyFile;
             std::string m_productKey;
             std::string m_name;
             std::string m_capture;

@@ -419,5 +419,15 @@ namespace kerberos
 
           	return buffer;
         }
+
+        std::string removeUnwantedChars(std::string & text)
+        {
+            text.erase(std::remove(text.begin(), text.end(), '\n'), text.end()); // remove newlines.
+            text.erase(std::remove(text.begin(), text.end(), '\t'), text.end()); // remove tabs.
+            text.erase(std::remove(text.begin(), text.end(), '"'), text.end()); // remove quotes.
+            text.erase(0, text.find_first_not_of(' ')); // remove prefixing spaces.
+            text.erase(text.find_last_not_of(' ')+1); // remove surfixing spaces.
+            return text;
+        }
     }
 }

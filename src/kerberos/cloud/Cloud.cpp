@@ -13,11 +13,27 @@ namespace kerberos
         m_interval = m_min;
 
         setConfigurationPath(settings.at("configuration"));
-        setProductKey(settings.at("id"));
         setName(settings.at("name"));
         setCapture(settings.at("capture"));
         setCaptureDirectory(settings.at("ios.Video.directory"));
         generateHash(settings);
+
+        m_keyFile = (std::string) getenv("HOME") + "/kerberosio.key";
+
+        std::ifstream keyFile(m_keyFile);
+        if(keyFile.is_open())
+        {
+            std::string key;
+            while(getline(keyFile,key))
+            {
+                setProductKey(key);
+            }
+            keyFile.close();
+        }
+        else
+        {
+            setProductKey("");
+        }
 
         startPollThread();
         startUploadThread();
@@ -162,24 +178,25 @@ namespace kerberos
         // Check if we need to generate a
         // new product key (first time running)
 
-        if(cloud->m_productKey == "???")
+        if(cloud->m_productKey == "")
         {
             // Generate random key
             std::string key = helper::random_string(26);
 
-            // Set product key
-            std::string command = "sed -i'.b' 's/\?\?\?/";
-            command += key;
-            command += "/g' ";
-            command += cloud->m_configuration_path;
-            system(command.c_str());
+            // Create product key file
+            std::string command = "touch " + cloud->m_keyFile;
+            std::string createProductKeyFile = helper::GetStdoutFromCommand(command);
+            BINFO << "Cloud: create key file";
 
-            // Remove backup file
-            command = "rm " + cloud->m_configuration_path + ".b";
-            system(command.c_str());
+            // Write product key
+            command = "echo " + key + " > " + cloud->m_keyFile;
+            std::string writeProductKey = helper::GetStdoutFromCommand(command);
+            BINFO << "Cloud: write key";
 
             // Reset key
             cloud->setProductKey(key);
+
+            BINFO << "Cloud: reset product key (" << key << ")";
         }
 
         // --------------------------------------------
@@ -223,6 +240,7 @@ namespace kerberos
             health += "}";
 
             RestClient::Response r = conn->post("/api/v1/health", health);
+            BINFO << "Cloud: send device health - " << r.code;
             usleep(15*1000*1000); // every 15s
         }
     }

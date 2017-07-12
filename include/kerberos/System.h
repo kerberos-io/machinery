@@ -20,7 +20,7 @@
 #include "Helper.h"
 #include <string>
 #include <algorithm>
- 
+
 #ifndef __System_H_INCLUDED__   // if System.h hasn't been included yet...
 #define __System_H_INCLUDED__   // #define this so the compiler knows it has been included
 
@@ -28,9 +28,6 @@ namespace kerberos
 {
     class System
     {
-        private:
-            std::string static removeUnwantedChars();
-
         public:
 
             std::string static getHostname();

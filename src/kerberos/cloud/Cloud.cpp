@@ -168,7 +168,7 @@ namespace kerberos
         // Create connection object
 
         RestClient::Connection * conn = cloud->cloudConnection;
-        conn->SetTimeout(5); // set connection timeout to 5s
+        //conn->SetTimeout(5); // set connection timeout to 5s
 
         RestClient::HeaderFields headers;
         headers["Content-Type"] = "application/json";

@@ -18,7 +18,16 @@ namespace kerberos
         setCaptureDirectory(settings.at("ios.Video.directory"));
         generateHash(settings);
 
-        m_keyFile = (std::string) getenv("HOME") + "/kerberosio.key";
+        std::string homePath;
+        if(getenv("HOME") != 0)
+        {
+            homePath = (std::string) getenv("HOME");
+        }
+        else
+        {
+            homePath = "/var/tmp";
+        }
+        m_keyFile = homePath + "/kerberosio.key";
 
         std::ifstream keyFile(m_keyFile);
         if(keyFile.is_open())

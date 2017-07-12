@@ -254,8 +254,14 @@ namespace kerberos
 
 		void RaspiCamera::startRecord(std::string path)
 		{
+				// Restart record_encode component before recording
+				state.record_encode->SetState(Component::StateIdle);
+				state.record_encode->SetState(Component::StateExecuting);
+
+				// Create a new file to which the recording is written
 				file.open(path, std::ofstream::out | std::ofstream::binary);
 
+				// Write some headers
 				const std::map< uint32_t, uint8_t* > headers = state.record_encode->headers();
 				if ( headers.size() > 0 ) {
 					for ( auto hdr : headers ) {
@@ -264,6 +270,7 @@ namespace kerberos
 					}
 				}
 
+				// Enable recording
 				state.recording = true;
 		}
 

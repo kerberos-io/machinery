@@ -160,94 +160,92 @@ namespace kerberos
         // ----------------------
         // Check if a cloud user
 
-        if(m_user == "" ||
-           m_publicKey == "" ||
-           m_privateKey = ""
+        if(cloud->m_user != "" &&
+           cloud->m_publicKey != ""&&
+           cloud->m_privateKey != ""
         )
         {
-            return false;
-        }
+            // ----------------------
+            // Create connection object
 
-        // ----------------------
-        // Create connection object
+            RestClient::Connection * conn = cloud->cloudConnection;
+            //conn->SetTimeout(5); // set connection timeout to 5s
 
-        RestClient::Connection * conn = cloud->cloudConnection;
-        //conn->SetTimeout(5); // set connection timeout to 5s
+            RestClient::HeaderFields headers;
+            headers["Content-Type"] = "application/json";
+            conn->SetHeaders(headers);
 
-        RestClient::HeaderFields headers;
-        headers["Content-Type"] = "application/json";
-        conn->SetHeaders(headers);
+            // -----------------------------------
+            // Check if we need to generate a
+            // new product key (first time running)
 
-        // -----------------------------------
-        // Check if we need to generate a
-        // new product key (first time running)
+            if(cloud->m_productKey == "")
+            {
+                // Generate random key
+                std::string key = helper::random_string(26);
 
-        if(cloud->m_productKey == "")
-        {
-            // Generate random key
-            std::string key = helper::random_string(26);
+                // Create product key file
+                std::string command = "touch " + cloud->m_keyFile;
+                std::string createProductKeyFile = helper::GetStdoutFromCommand(command);
+                BINFO << "Cloud: create key file";
 
-            // Create product key file
-            std::string command = "touch " + cloud->m_keyFile;
-            std::string createProductKeyFile = helper::GetStdoutFromCommand(command);
-            BINFO << "Cloud: create key file";
+                // Write product key
+                command = "echo " + key + " > " + cloud->m_keyFile;
+                std::string writeProductKey = helper::GetStdoutFromCommand(command);
+                BINFO << "Cloud: write key";
 
-            // Write product key
-            command = "echo " + key + " > " + cloud->m_keyFile;
-            std::string writeProductKey = helper::GetStdoutFromCommand(command);
-            BINFO << "Cloud: write key";
+                // Reset key
+                cloud->setProductKey(key);
 
-            // Reset key
-            cloud->setProductKey(key);
+                BINFO << "Cloud: reset product key (" << key << ")";
+            }
 
-            BINFO << "Cloud: reset product key (" << key << ")";
-        }
+            // --------------------------------------------
+            // Generate fixed JSON data which will be send,
+            // over and over again.
 
-        // --------------------------------------------
-        // Generate fixed JSON data which will be send,
-        // over and over again.
+            std:: string fixedProperties = "";
+            fixedProperties += "\"key\": \"" + cloud->m_productKey + "\",";
+            fixedProperties += "\"hash\": \"" + cloud->m_hash + "\",";
+            fixedProperties += "\"version\": \"" + (std::string) VERSION + "\",";
+            fixedProperties += "\"cpuId\": \"" + System::getCPUid() + "\",";
 
-        std:: string fixedProperties = "";
-        fixedProperties += "\"key\": \"" + cloud->m_productKey + "\",";
-        fixedProperties += "\"hash\": \"" + cloud->m_hash + "\",";
-        fixedProperties += "\"version\": \"" + (std::string) VERSION + "\",";
-        fixedProperties += "\"cpuId\": \"" + System::getCPUid() + "\",";
+            fixedProperties += "\"cloudUser\": \"" + cloud->m_user + "\",";
+            fixedProperties += "\"cloudPublicKey\": \"" + cloud->m_publicKey + "\",";
 
-        fixedProperties += "\"cloudUser\": \"" + cloud->m_user + "\",";
-        fixedProperties += "\"cloudPublicKey\": \"" + cloud->m_publicKey + "\",";
+            fixedProperties += "\"cameraName\": \"" + cloud->m_name + "\",";
+            fixedProperties += "\"cameraType\": \"" + cloud->m_capture + "\",";
 
-        fixedProperties += "\"cameraName\": \"" + cloud->m_name + "\",";
-        fixedProperties += "\"cameraType\": \"" + cloud->m_capture + "\",";
+            fixedProperties += "\"hostname\": \"" + System::getHostname() + "\",";
+            fixedProperties += "\"docker\": " + System::isDocker() + ",";
+            fixedProperties += "\"kios\": " + System::isKiOS() + ",";
+            std::string raspberrypi = (RUNNING_ON_A_RASPBERRYPI ? "true" : "false");
+            fixedProperties += "\"raspberrypi\": " + raspberrypi + ",";
+            fixedProperties += "\"board\": \"" + System::getBoard() + "\",";
 
-        fixedProperties += "\"hostname\": \"" + System::getHostname() + "\",";
-        fixedProperties += "\"docker\": " + System::isDocker() + ",";
-        fixedProperties += "\"kios\": " + System::isKiOS() + ",";
-        std::string raspberrypi = (RUNNING_ON_A_RASPBERRYPI ? "true" : "false");
-        fixedProperties += "\"raspberrypi\": " + raspberrypi + ",";
-        fixedProperties += "\"board\": \"" + System::getBoard() + "\",";
+            // ------------------------------------------
+            // Send client data to the cloud application.
 
-        // ------------------------------------------
-        // Send client data to the cloud application.
+            while(true)
+            {
+                std::string health = "{";
+                health += fixedProperties;
+                health += "\"disk1Size\": \"" + System::getDiskPercentage("mmcblk0p1") + "\",";
+                health += "\"disk3Size\": \"" + System::getDiskPercentage("mmcblk0p3") + "\",";
+                health += "\"diskVDASize\": \"" + System::getDiskPercentage("vda1") + "\",";
+                health += "\"numberOfFiles\": \"" + System::getNumberOfFiles(cloud->m_directory) + "\",";
+                health += "\"temperature\": \"" + System::getTemperature() + "\",";
+                health += "\"wifiSSID\": \"" + System::getWifiSSID() + "\",";
+                health += "\"wifiStrength\": \"" + System::getWifiStrength() + "\",";
+                health += "\"uptime\": \"" + System::getUptime() + "\"";
+                health += "}";
 
-        while(true)
-        {
-            std::string health = "{";
-            health += fixedProperties;
-            health += "\"disk1Size\": \"" + System::getDiskPercentage("mmcblk0p1") + "\",";
-            health += "\"disk3Size\": \"" + System::getDiskPercentage("mmcblk0p3") + "\",";
-            health += "\"diskVDASize\": \"" + System::getDiskPercentage("vda1") + "\",";
-            health += "\"numberOfFiles\": \"" + System::getNumberOfFiles(cloud->m_directory) + "\",";
-            health += "\"temperature\": \"" + System::getTemperature() + "\",";
-            health += "\"wifiSSID\": \"" + System::getWifiSSID() + "\",";
-            health += "\"wifiStrength\": \"" + System::getWifiStrength() + "\",";
-            health += "\"uptime\": \"" + System::getUptime() + "\"";
-            health += "}";
-
-            RestClient::Response r = conn->post("/api/v1/health", health);
-            BINFO << "Cloud: data - " << health;
-            BINFO << "Cloud: send device health - " << r.code;
-            BINFO << "Cloud: send device health - " << r.body;
-            usleep(15*1000*1000); // every 15s
+                RestClient::Response r = conn->post("/api/v1/health", health);
+                BINFO << "Cloud: data - " << health;
+                BINFO << "Cloud: send device health - " << r.code;
+                BINFO << "Cloud: send device health - " << r.body;
+                usleep(15*1000*1000); // every 15s
+            }
         }
     }
 

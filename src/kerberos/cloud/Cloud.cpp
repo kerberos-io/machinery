@@ -242,6 +242,8 @@ namespace kerberos
             RestClient::Response r = conn->post("/api/v1/health", health);
             BINFO << "Cloud: data - " << health;
             BINFO << "Cloud: send device health - " << r.code;
+            BINFO << "Cloud: send device health - " << r.headers;
+            BINFO << "Cloud: send device health - " << r.body;
             usleep(15*1000*1000); // every 15s
         }
     }

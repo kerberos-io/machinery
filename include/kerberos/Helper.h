@@ -34,6 +34,7 @@
 #include <sys/stat.h>
 #include <sstream>
 #include <cctype>
+#include <algorithm>
 
 namespace kerberos
 {

@@ -134,8 +134,13 @@ namespace kerberos
         headers["Content-Type"] = "application/json";
         conn->SetHeaders(headers);
 
+        std::string raspberrypi = (RUNNING_ON_A_RASPBERRYPI ? "true" : "false");
+
         std::string version = "{";
         version += "\"version\": \"" + (std::string) VERSION + "\"";
+        version += "\"docker\": " + System::isDocker() + ",";
+        version += "\"kios\": " + System::isKiOS() + ",";
+        version += "\"raspberrypi\": " + raspberrypi;
         version += "}";
 
         while(true)

@@ -19,7 +19,11 @@ namespace kerberos
         generateHash(settings);
 
         std::string homePath;
-        if(getenv("HOME") != 0)
+        if(System::isKiOS())
+        {
+            homePath = "/data/machinery";
+        }
+        else if(getenv("HOME") != 0)
         {
             homePath = (std::string) getenv("HOME");
         }
@@ -27,6 +31,7 @@ namespace kerberos
         {
             homePath = "/var/tmp";
         }
+        
         m_keyFile = homePath + "/kerberosio.key";
 
         std::ifstream keyFile(m_keyFile);

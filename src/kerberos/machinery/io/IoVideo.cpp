@@ -674,8 +674,8 @@ namespace kerberos
     void IoVideo::scan()
     {
         int framerate = m_capture->m_framerate;
-        int directory = m_directory;
-        int extension = m_extension;
+        std::string directory = m_directory;
+        std::string extension = m_extension;
 
         for(;;)
         {

@@ -11,11 +11,13 @@
     <Video>
         <fps type="number">3</fps>
         <recordAfter type="number">5</recordAfter>
-        <maxDuration type="number">120</maxDuration>
+        <maxDuration type="number">30</maxDuration>
         <extension type="number">mp4</extension>
         <codec type="number">h264</codec>
         <fileFormat type="text">timestamp_microseconds_instanceName_regionCoordinates_numberOfChanges_token</fileFormat>
         <directory type="text">/etc/opt/kerberosio/capture/</directory>
+				<hardwareDirectory type="text">/etc/opt/kerberosio/h264/</hardwareDirectory>
+				<enableHardwareEncoding type="bool">true</enableHardwareEncoding>
         <markWithTimestamp type="bool">false</markWithTimestamp>
         <timestampColor type="text">white</timestampColor>
         <privacy type="bool">false</privacy>
@@ -36,5 +38,5 @@
     <Script>
         <path type="text">/etc/opt/kerberosio/scripts/run.sh</path>
     </Script>
-    
+
 </ios>

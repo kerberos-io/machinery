@@ -8,7 +8,7 @@
 //
 //  The copyright to the computer program(s) herein
 //  is the property of Verstraeten.io, Belgium.
-//  The program(s) may be used and/or copied under 
+//  The program(s) may be used and/or copied under
 //  the CC-NC-ND license model.
 //
 //  https://doc.kerberos.io/license
@@ -36,24 +36,24 @@ int main(int argc, char** argv)
         std::cout << "v" << VERSION << std::endl;
         return 1;
     }
-    
+
     // ----------------
     // Disable SIGPIPE
-    
+
     // # old way  -> signal(SIGPIPE, SIG_IGN);
     struct sigaction sa;
     sa.sa_handler = SIG_IGN;
     sa.sa_flags = 0;
     sigaction(SIGPIPE, &sa, 0);
-    
-    // ----------------------------------
+
+    // --------------------------------
     // Get parameters from command line
-    
+
     StringMap parameters = helper::getCommandOptions(argc, argv);
-    
-    // --------------------------z--------
+
+    // -----------------
     // Initialize logger
-                  
+
     easyloggingpp::Configurations config;
     config.setToDefault();
     config.setAll(easyloggingpp::ConfigurationType::Enabled, "true");
@@ -64,21 +64,21 @@ int main(int argc, char** argv)
     easyloggingpp::Loggers::reconfigureAllLoggers(config);
 
     LINFO << "Logging is written to: " + logFile;
-    
+
     while(true)
     {
         try
         {
-            // ----------------------------------
+            // -----------------------------------
             // Bootstrap machinery with parameters
 
             Kerberos::run(parameters);
-            
+
         }
         catch(Exception & ex)
         {
             LERROR << ex.what();
-            
+
             // Try again in 3 seconds..
             usleep(3 * 1000000);
         }

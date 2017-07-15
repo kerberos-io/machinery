@@ -8,7 +8,7 @@
 //
 //  The copyright to the computer program(s) herein
 //  is the property of Verstraeten.io, Belgium.
-//  The program(s) may be used and/or copied under 
+//  The program(s) may be used and/or copied under
 //  the CC-NC-ND license model.
 //
 //  https://doc.kerberos.io/license
@@ -31,9 +31,9 @@ namespace kerberos
             Executor<IPCamera> tryToUpdateCapture;
             std::string m_url;
             std::string m_streamType;
-        
-        public:   
-        
+
+        public:
+
             IPCamera()
             {
                 try
@@ -45,7 +45,7 @@ namespace kerberos
                     throw OpenCVException(ex.msg.c_str());
                 }
             }
-        
+
             IPCamera(int width, int height);
             virtual ~IPCamera(){};
             void setup(StringMap & settings);
@@ -53,11 +53,14 @@ namespace kerberos
             void setUrl(std::string url);
             void setRotation(int angle);
             void setDelay(int msec);
-        
+
             void grab();
             Image retrieve();
+            int32_t retrieveRAW(uint8_t* data){ return 0; }
             Image * takeImage();
-        
+            void startRecord(std::string path){};
+            void stopRecord(){};
+
             void open();
             void open(const char * url);
             void reopen();

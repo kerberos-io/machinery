@@ -15,6 +15,7 @@ RUN ln -sf /bin/true /sbin/initctl
 # Let the container know that there is no tty
 
 ENV DEBIAN_FRONTEND noninteractive
+RUN apt-get update && apt-get install -y libcurl4-openssl-dev
 
 ############################
 # Clone and build machinery

@@ -5,7 +5,9 @@
     	<enabled type="bool">true</enabled>
     	<streamPort type="number">8889</streamPort>
     	<quality type="number">75</quality>
-    	<fps type="number">5</fps>
+    	<fps type="number">15</fps>
+    	<username type="text"></username>
+    	<password type="text"></password>
     </Mjpg>
 
 </streams>

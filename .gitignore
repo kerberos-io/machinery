@@ -34,3 +34,5 @@ build_xcode/*
 config/*
 ide/*
 test/bin/*
+cmake-build*
+.idea*

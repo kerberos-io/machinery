@@ -33,14 +33,21 @@ include( ExternalProject )
     if(${IS_RASPBERRYPI})
 
         # --------------------------------------------------------------------------
-        # RaspiCam
+        # RaspiCam (not longer used, becaused switched to OpenMAX)
         #
 
-        include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/External-RaspiCam.cmake)
-        set(KERBEROS_DEPENDENCIES ${KERBEROS_DEPENDENCIES} raspicamera)
+        # include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/External-RaspiCam.cmake)
+        # set(KERBEROS_DEPENDENCIES ${KERBEROS_DEPENDENCIES} raspicamera)
+
+	      # --------------------------------------------------------------------------
+        # OpenMax library
+        #
+
+      	include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/External-OpenMax.cmake)
+      	set(KERBEROS_DEPENDENCIES ${KERBEROS_DEPENDENCIES} openmax)
 
     endif()
-    
+
 # --------------------------------------------------------------------------
 # Restclient
 

@@ -22,6 +22,11 @@
         <frameHeight type="number">480</frameHeight>
         <delay type="number">500</delay>
         <angle type="number">0</angle>
+        <framerate type="number">20</framerate>
+        <sharpness type="number">0</sharpness>
+        <saturation type="number">0</saturation>
+        <contrast type="number">0</contrast>
+        <brightness type="number">50</brightness>
     </RaspiCamera>
 
     <VideoCapture>

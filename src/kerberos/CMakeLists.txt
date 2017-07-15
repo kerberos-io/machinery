@@ -18,6 +18,7 @@
         Factory.cpp
         Helper.cpp
         Kerberos.cpp
+        System.cpp
     )
 
 # -------------------------------------------------------
@@ -63,9 +64,9 @@
             capture/RaspiCamera.cpp
             machinery/io/IoGPIO.cpp
         )
-        set(KERBEROS_DEPENDENCIES ${KERBEROS_DEPENDENCIES} raspicamera)
-        set(KERBEROS_LIBRARIES ${KERBEROS_LIBRARIES} ${RASPBERRYPI_LIBRARIES})
-        
+        set(KERBEROS_DEPENDENCIES ${KERBEROS_DEPENDENCIES} openmax)
+        set(KERBEROS_LIBRARIES ${KERBEROS_LIBRARIES} ${RASPBERRYPI_LIBRARIES} ${OPENMAX_LIBRARIES})
+
     endif()
 
 # -------------------------------------------

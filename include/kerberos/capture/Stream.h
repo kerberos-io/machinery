@@ -8,7 +8,7 @@
 //
 //  The copyright to the computer program(s) herein
 //  is the property of Verstraeten.io, Belgium.
-//  The program(s) may be used and/or copied under 
+//  The program(s) may be used and/or copied under
 //  the CC-NC-ND license model.
 //
 //  https://doc.kerberos.io/license
@@ -29,6 +29,8 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <sys/ioctl.h>
+#include <map>
+#include "base64.h"
 #define PORT        unsigned short
 #define SOCKET    int
 #define HOSTENT  struct hostent
@@ -43,16 +45,21 @@ namespace kerberos
     class Stream
     {
         std::map<int, int> packetsSend;
+        std::map<int,  std::vector<uchar> > buffers;
+        std::map<int, int> pos;
+        std::map<int, bool> written;
         std::vector<SOCKET> clients;
         SOCKET sock;
         fd_set master;
+        std::string m_username;
+        std::string m_password;
         bool m_enabled;
         int m_streamPort;
         int m_timeout; // master sock timeout, shutdown after timeout millis.
         int m_quality; // jpeg compression [1..100]
 
-        int _write( int sock, char *s, int len ) 
-        { 
+        int _write( int sock, char *s, int len )
+        {
             if ( len < 1 ) { len = strlen(s); }
             #if defined(__APPLE_CC__) || defined(BSD)
                 return send(sock, s, len, 0);
@@ -68,18 +75,23 @@ namespace kerberos
             FD_ZERO( &master );
         }
 
-        ~Stream() 
+        ~Stream()
         {
             release();
         }
+
+        double wait;
 
         void configureStream(StringMap & settings);
         bool release();
         bool open();
         bool isOpened();
+        bool hasClients();
         bool connect();
+        std::map<std::string, std::string> getRequestInfo(SOCKET client);
+        bool authenticate(std::map<std::string, std::string> & requestInfo);
         void write(Image image);
-        double wait;
+        void writeRAW(uint8_t* data, int32_t length);
     };
 }
 #endif

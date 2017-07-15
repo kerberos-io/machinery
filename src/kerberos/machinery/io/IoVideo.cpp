@@ -129,6 +129,11 @@ namespace kerberos
 
         m_hardwareDirectory = settings.at("ios.Video.hardwareDirectory");
         m_enableHardwareEncoding = (settings.at("ios.Video.enableHardwareEncoding") == "true");
+
+        // ------------------------
+        // Start conversion thread.
+        
+        startConvertThread();
     }
 
     cv::Scalar IoVideo::getColor(const std::string name)

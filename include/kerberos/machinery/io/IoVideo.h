@@ -44,10 +44,7 @@ namespace kerberos
             std::string m_privateKey;
 
         public:
-            IoVideo()
-            {
-                startConvertThread();
-            };
+            IoVideo(){};
             ~IoVideo()
             {
                 stopConvertThread();

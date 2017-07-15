@@ -673,6 +673,10 @@ namespace kerberos
 
     void IoVideo::scan()
     {
+        int framerate = m_capture->m_framerate;
+        int directory = m_directory;
+        int extension = m_extension;
+
         for(;;)
         {
             std::vector<std::string> storage;
@@ -703,10 +707,10 @@ namespace kerberos
                 fileParts.clear();
                 helper::tokenize(name, fileParts, ".");
 
-                std::string mp4File = m_directory + fileParts[0] + "." + m_extension;
+                std::string mp4File = directory + fileParts[0] + "." + extension;
 
                 std::string command = m_encodingBinary; // ffmpeg or avconv
-                command += " -framerate " + std::to_string(m_capture->m_framerate);
+                command += " -framerate " + std::to_string(framerate);
                 command += " -i " + originalFile;
                 command += " -c copy " + mp4File;
                 system(command.c_str());
@@ -716,7 +720,7 @@ namespace kerberos
 
                 if(m_createSymbol)
                 {
-                    std::string link = SYMBOL_DIRECTORY + fileParts[0] + "." + m_extension;
+                    std::string link = SYMBOL_DIRECTORY + fileParts[0] + "." + extension;
                     symlink(mp4File.c_str(), link.c_str());
                 }
 

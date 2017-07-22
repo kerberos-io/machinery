@@ -8,7 +8,7 @@
 //
 //  The copyright to the computer program(s) herein
 //  is the property of Verstraeten.io, Belgium.
-//  The program(s) may be used and/or copied under 
+//  The program(s) may be used and/or copied under
 //  the CC-NC-ND license model.
 //
 //  https://doc.kerberos.io/license
@@ -31,27 +31,29 @@ namespace kerberos
     class S3 : public CloudCreator<S3Name, S3>
     {
         private:
-        
+
             std::string m_bucket;
             std::string m_folder;
             std::string m_publicKey;
             std::string m_privateKey;
-            
+
         public:
-        
+
             S3(){};
             virtual ~S3(){};
-        
+
             void setup(StringMap & settings);
             void setBucket(std::string bucket);
             void setFolder(std::string folder);
             void setPublicKey(std::string key);
             void setPrivateKey(std::string key);
-        
+
             bool upload(std::string pathToImage);
+            bool doesExist(std::string pathToImage);
             std::string authorize(const std::string request);
             std::string getDate();
             bool put(const std::string & url, const std::vector<std::string> & headers, const std::vector<std::string> & body);
+            bool head(const std::string & url, const std::vector<std::string> & headers);
             static size_t write(void *contents, size_t size, size_t nmemb, void *userp);
             static size_t reader(void *ptr, size_t size, size_t nmemb, FILE *stream);
     };

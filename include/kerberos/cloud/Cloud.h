@@ -60,6 +60,7 @@ namespace kerberos
             virtual ~Cloud(){};
             virtual void setup(kerberos::StringMap & settings) = 0;
             virtual bool upload(std::string pathToImage) = 0;
+            virtual bool doesExist(std::string pathToImage) = 0;
 
             void startUploadThread();
             void stopUploadThread();

@@ -1,6 +1,6 @@
 # Docker
 
-This branch contains a docker file which builds the web repository for the x86 architecture.
+This branch contains a docker file which builds the machinery repository for the x86 architecture.
 
 https://hub.docker.com/r/kerberos/machinery/
 

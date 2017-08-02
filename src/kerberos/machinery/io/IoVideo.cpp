@@ -132,7 +132,7 @@ namespace kerberos
 
         // ------------------------
         // Start conversion thread.
-        
+
         startConvertThread();
     }
 
@@ -259,7 +259,7 @@ namespace kerberos
 
         // ------------------
         // Check if the camera supports on board recording (camera specific),
-        // and if you want to user it. If not it will fallback on the video writer
+        // and if you want to use it. If not it will fallback on the video writer
         // that ships with OpenCV/FFmpeg.
 
         if(m_capture->m_onBoardRecording && m_enableHardwareEncoding)
@@ -275,6 +275,22 @@ namespace kerberos
                 m_path = m_hardwareDirectory + m_fileName + ".h264";
 
                 startOnboardRecordThread();
+                m_recording = true;
+            }
+        }
+        else if(m_capture->m_onFFMPEGrecording) // Use FFMPEG to record.
+        {
+            if(!m_recording)
+            {
+                // ----------------------------------------
+                // The naming convention that will be used
+                // for the image.
+
+                std::string pathToVideo = getVideoFormat();
+                m_fileName = buildPath(pathToVideo, data) + "." + m_extension;
+                m_path = m_directory + m_fileName;
+
+                startFFMPEGRecordThread();
                 m_recording = true;
             }
         }
@@ -358,7 +374,7 @@ namespace kerberos
         return true;
     }
 
-    void * recordOnboad(void * self)
+    void * recordOnFFMPEG(void * self)
     {
         IoVideo * video = (IoVideo *) self;
 
@@ -366,7 +382,82 @@ namespace kerberos
         double cronoTime = (double) (cv::getTickCount() / cv::getTickFrequency());
         double startedRecording = cronoTime;
 
-        BINFO << "IoVideo: start writing images";
+        BINFO << "IoVideo (FFMPEG): start writing images";
+
+        pthread_mutex_lock(&video->m_write_lock);
+
+        // Todo write video with FFMPEG..
+        // .. (video->m_path);
+
+        BINFO << "IoVideo: locked write thread";
+
+        pthread_mutex_lock(&video->m_time_lock);
+        double timeToRecord = video->m_timeStartedRecording + video->m_recordingTimeAfter;
+        pthread_mutex_unlock(&video->m_time_lock);
+
+        try
+        {
+            while(cronoTime < timeToRecord
+                && cronoTime - startedRecording <= video->m_maxDuration) // lower than max recording time (especially for memory)
+            {
+                // update time to record; (locking)
+                pthread_mutex_lock(&video->m_time_lock);
+                timeToRecord = video->m_timeStartedRecording + video->m_recordingTimeAfter;
+                pthread_mutex_unlock(&video->m_time_lock);
+
+                cronoPause = (double) cv::getTickCount();
+                cronoTime = cronoPause / cv::getTickFrequency();
+
+                usleep(1000); // sleep 1s
+            }
+        }
+        catch(cv::Exception & ex)
+        {
+            pthread_mutex_unlock(&video->m_lock);
+            pthread_mutex_unlock(&video->m_time_lock);
+            LERROR << ex.what();
+        }
+
+        BINFO << "IoVideo: end writing images";
+
+        pthread_mutex_lock(&video->m_release_lock);
+
+        try
+        {
+            // Todo stop writing video with FFMPEG..
+            // ...
+            video->m_recording = false;
+
+            if(video->m_createSymbol)
+            {
+                std::string link = SYMBOL_DIRECTORY + video->m_fileName;
+                std::string pathToVideo = video->m_directory + video->m_fileName;
+                symlink(pathToVideo.c_str(), link.c_str());
+            }
+        }
+        catch(cv::Exception & ex)
+        {
+            LERROR << ex.what();
+        }
+
+
+        BINFO << "IoVideo: remove videowriter";
+
+        pthread_mutex_unlock(&video->m_release_lock);
+        pthread_mutex_unlock(&video->m_write_lock);
+
+        BINFO << "IoVideo: unlocking write thread";
+    }
+
+    void * recordOnboard(void * self)
+    {
+        IoVideo * video = (IoVideo *) self;
+
+        double cronoPause = (double)cvGetTickCount();
+        double cronoTime = (double) (cv::getTickCount() / cv::getTickFrequency());
+        double startedRecording = cronoTime;
+
+        BINFO << "IoVideo (OnBoard): start writing images";
 
         pthread_mutex_lock(&video->m_write_lock);
 
@@ -444,7 +535,7 @@ namespace kerberos
         double timeToSleep = 0;
         double startedRecording = cronoTime;
 
-        BINFO << "IoVideo: start writing images";
+        BINFO << "IoVideo (OpenCV): start writing images";
 
         pthread_mutex_lock(&video->m_write_lock);
 
@@ -642,7 +733,7 @@ namespace kerberos
 
     void IoVideo::startOnboardRecordThread()
     {
-        pthread_create(&m_recordOnboardThread, NULL, recordOnboad, this);
+        pthread_create(&m_recordOnboardThread, NULL, recordOnboard, this);
         pthread_detach(m_recordOnboardThread);
     }
 
@@ -650,6 +741,18 @@ namespace kerberos
     {
         pthread_cancel(m_recordOnboardThread);
         pthread_join(m_recordOnboardThread, NULL);
+    }
+
+    void IoVideo::startFFMPEGRecordThread()
+    {
+        pthread_create(&m_recordOnFFMPEGThread, NULL, recordOnFFMPEG, this);
+        pthread_detach(m_recordOnFFMPEGThread);
+    }
+
+    void IoVideo::stopFFMPEGRecordThread()
+    {
+        pthread_cancel(m_recordOnFFMPEGThread);
+        pthread_join(m_recordOnFFMPEGThread, NULL);
     }
 
     void IoVideo::startRecordThread()

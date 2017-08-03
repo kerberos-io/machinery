@@ -278,7 +278,7 @@ namespace kerberos
                 m_recording = true;
             }
         }
-        else if(m_capture->m_onFFMPEGrecording) // Use FFMPEG to record.
+        /*else if(m_capture->m_onFFMPEGrecording) // TODO: Use FFMPEG to record.
         {
             if(!m_recording)
             {
@@ -293,7 +293,7 @@ namespace kerberos
                 startFFMPEGRecordThread();
                 m_recording = true;
             }
-        }
+        }*/
         else // Use built-in OpenCV
         {
             if(m_capture && m_writer == 0 && !m_recording)

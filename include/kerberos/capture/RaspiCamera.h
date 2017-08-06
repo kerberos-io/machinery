@@ -59,6 +59,7 @@ namespace kerberos
             Image * takeImage();
             void startRecord(std::string path);
             void stopRecord();
+            void stopThreads();
 
             void open();
             void close();

@@ -229,20 +229,39 @@ namespace kerberos
 				state.recording = false;
 
 				// Start threads
-				pthread_create( &state.preview_thid, nullptr, &preview_thread, this );
-				pthread_create( &state.record_thid, nullptr, &record_thread, this );
+				pthread_create(&state.preview_thid, nullptr, &preview_thread, this);
+				pthread_create(&state.record_thid, nullptr, &record_thread, this);
     }
+
+		void RaspiCamera::stopThreads()
+		{
+				// -------------------------
+				// Cancel the record thread.
+
+				pthread_join(state.record_thid, nullptr);
+
+				// -------------------------
+				// Cancel the preview thread.
+
+				pthread_join(state.preview_thid, nullptr);
+		}
 
 		RaspiCamera::~RaspiCamera()
 		{
-				delete state.camera;
 				delete state.preview_encode;
 				delete state.record_encode;
+				delete state.camera;
 		}
 
     void RaspiCamera::close()
     {
         state.running = false;
+				stopThreads();
+
+				state.camera->SetCapturing( false );
+				state.camera->SetState(Component::StateIdle);
+				state.preview_encode->SetState(Component::StateIdle);
+				state.record_encode->SetState(Component::StateIdle);
     }
 
     void RaspiCamera::update(){}

@@ -313,6 +313,7 @@ namespace kerberos
         }
 
         pthread_create(&m_streamThread, NULL, streamContinuously, this);
+        pthread_detach(m_streamThread);
     }
 
     void Kerberos::stopStreamThread()
@@ -395,6 +396,7 @@ namespace kerberos
         // Start a new thread that cheks for detections
 
         pthread_create(&m_ioThread, NULL, checkDetectionsContinuously, this);
+        pthread_detach(m_ioThread);
     }
 
     void Kerberos::stopIOThread()

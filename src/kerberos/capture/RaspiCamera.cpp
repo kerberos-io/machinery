@@ -16,46 +16,50 @@ struct State {
 
 std::ofstream file;
 
-static int HighPri( const int pri )
+static int HighPri(const int pri)
 {
-	struct sched_param sched;
-	memset( &sched, 0, sizeof(sched) );
+		struct sched_param sched;
+		memset(&sched, 0, sizeof(sched));
 
-	if ( pri > sched_get_priority_max( SCHED_RR ) ) {
-		sched.sched_priority = sched_get_priority_max( SCHED_RR );
-	} else {
-		sched.sched_priority = pri;
-	}
+		if (pri > sched_get_priority_max(SCHED_RR))
+		{
+				sched.sched_priority = sched_get_priority_max( SCHED_RR );
+		}
+		else
+		{
+				sched.sched_priority = pri;
+		}
 
-	return sched_setscheduler( 0, SCHED_RR, &sched );
+		return sched_setscheduler(0, SCHED_RR, &sched);
 }
 
-void* preview_thread( void* self )
+void* preview_thread(void* self)
 {
-	kerberos::RaspiCamera * capture = (kerberos::RaspiCamera *) self;
+		kerberos::RaspiCamera * capture = (kerberos::RaspiCamera *) self;
 
-	// Retrieve OMX buffer
-	capture->data_buffer = state.camera->outputPorts()[70].buffer->pBuffer;
-	capture->mjpeg_data_buffer = state.preview_encode->outputPorts()[201].buffer->pBuffer;
+		// Retrieve OMX buffer
+		capture->data_buffer = state.camera->outputPorts()[70].buffer->pBuffer;
+		capture->mjpeg_data_buffer = state.preview_encode->outputPorts()[201].buffer->pBuffer;
 
-	HighPri(99); // Mark the thread as high priority
+		HighPri(99); // Mark the thread as high priority
 
-	// ATTENTION : Each loop must take less time than it takes to the camera to take one frame
-	// otherwise it will cause underflow which can lead to camera stalling
-	// a good solution is to implement frame skipping (measure time between to loops, if this time
-	// is too big, just skip image processing and MJPEG sendout)
+		// ATTENTION : Each loop must take less time than it takes to the camera to take one frame
+		// otherwise it will cause underflow which can lead to camera stalling
+		// a good solution is to implement frame skipping (measure time between to loops, if this time
+		// is too big, just skip image processing and MJPEG sendout)
 
-	while ( state.running ) {
-		// Get YUV420 image from preview port, this is a blocking call
-		// If zero-copy is activated, we don't pass any buffer
-		capture->data_length  = state.camera->getOutputData(70, nullptr);
-	}
+		while (state.running)
+		{
+				// Get YUV420 image from preview port, this is a blocking call
+				// If zero-copy is activated, we don't pass any buffer
+				capture->data_length  = state.camera->getOutputData(70, nullptr);
+		}
 
-	return nullptr;
+		return nullptr;
 }
 
 
-void* record_thread( void* argp )
+void* record_thread(void* argp)
 {
 	uint8_t* data = new uint8_t[65536*4];
 	while ( state.running ) {
@@ -230,11 +234,16 @@ namespace kerberos
 
 				// Start threads
 				pthread_create(&state.preview_thid, nullptr, &preview_thread, this);
+				pthread_detach(state.preview_thid);
+
 				pthread_create(&state.record_thid, nullptr, &record_thread, this);
+				pthread_detach(state.record_thid);
     }
 
 		void RaspiCamera::stopThreads()
 		{
+				state.running = false;
+
 				// -------------------------
 				// Cancel the record thread.
 
@@ -255,10 +264,8 @@ namespace kerberos
 
     void RaspiCamera::close()
     {
-        state.running = false;
 				stopThreads();
-
-				state.camera->SetCapturing( false );
+				state.camera->SetCapturing(false);
 				state.camera->SetState(Component::StateIdle);
 				state.preview_encode->SetState(Component::StateIdle);
 				state.record_encode->SetState(Component::StateIdle);
@@ -268,7 +275,7 @@ namespace kerberos
 
     bool RaspiCamera::isOpened()
     {
-        return true;
+        return state.running;
     }
 
 		void RaspiCamera::startRecord(std::string path)

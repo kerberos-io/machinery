@@ -269,6 +269,7 @@ namespace kerberos
 				state.camera->SetState(Component::StateIdle);
 				state.preview_encode->SetState(Component::StateIdle);
 				state.record_encode->SetState(Component::StateIdle);
+				Component::DestroyTunnel(state.record_encode);
     }
 
     void RaspiCamera::update(){}

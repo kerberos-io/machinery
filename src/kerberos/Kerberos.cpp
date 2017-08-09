@@ -9,7 +9,6 @@ namespace kerberos
 
         setParameters(parameters);
 
-
         // ---------------------
         // initialize RestClient
 

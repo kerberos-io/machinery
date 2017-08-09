@@ -48,30 +48,39 @@ void* preview_thread(void* self)
 		// a good solution is to implement frame skipping (measure time between to loops, if this time
 		// is too big, just skip image processing and MJPEG sendout)
 
+		BINFO << "RaspiCamera: Entering preview thread.";
 		while (state.running)
 		{
 				// Get YUV420 image from preview port, this is a blocking call
 				// If zero-copy is activated, we don't pass any buffer
 				capture->data_length  = state.camera->getOutputData(70, nullptr);
 		}
+		BINFO << "RaspiCamera: Exiting preview thread.";
 
 		return nullptr;
 }
 
 
-void* record_thread(void* argp)
+void* record_thread(void* self)
 {
-	uint8_t* data = new uint8_t[65536*4];
-	while ( state.running ) {
-		// Consume h264 data, this is a blocking call
-		int32_t datalen = state.record_encode->getOutputData(data);
-		if ( datalen > 0 && state.recording ) {
-			file.write((char*) data, datalen);
-			file.flush();
-		}
-	}
+		kerberos::RaspiCamera * capture = (kerberos::RaspiCamera *) self;
 
-	return nullptr;
+		uint8_t* data = new uint8_t[65536*4];
+
+		BINFO << "RaspiCamera: Entering record thread.";
+		while(state.running)
+		{
+				// Consume h264 data, this is a blocking call
+				int32_t datalen = state.record_encode->getOutputData(data);
+				if(datalen > 0 && state.recording)
+				{
+						file.write((char*) data, datalen);
+						file.flush();
+				}
+		}
+		BINFO << "RaspiCamera: Exiting record thread.";
+
+		return nullptr;
 }
 
 namespace kerberos

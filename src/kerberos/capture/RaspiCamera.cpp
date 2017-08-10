@@ -266,15 +266,12 @@ namespace kerberos
 
 		RaspiCamera::~RaspiCamera()
 		{
-				delete state.preview_encode;
-				delete state.record_encode;
-				delete state.camera;
+				Component::DestroyAll();
 		}
 
     void RaspiCamera::close()
     {
 				stopThreads();
-				Component::DestroyAll();
     }
 
     void RaspiCamera::update(){}

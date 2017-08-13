@@ -13,18 +13,18 @@ namespace kerberos
         // Initialize executor (update the usb camera at specific times).
         tryToUpdateCapture.setAction(this, &USBCamera::update);
         tryToUpdateCapture.setInterval("thrice in 10 functions calls");
-        
+
         // Save width and height in settings
         Capture::setup(settings, width, height, angle);
         setImageSize(width, height);
         setRotation(angle);
         setDelay(delay);
         setDeviceNumber(deviceNumber);
-        
+
         // Initialize USB Camera
         open();
     }
-    
+
     USBCamera::USBCamera(int width, int height)
     {
         try
@@ -37,12 +37,13 @@ namespace kerberos
             throw OpenCVException(ex.msg.c_str());
         }
     };
-    
+
     void USBCamera::grab()
     {
         try
         {
             pthread_mutex_lock(&m_lock);
+            healthCounter = std::rand() % 10000;
             m_camera->grab();
             pthread_mutex_unlock(&m_lock);
         }
@@ -53,7 +54,7 @@ namespace kerberos
             throw OpenCVException(ex.msg.c_str());
         }
     }
-    
+
     Image USBCamera::retrieve()
     {
         try
@@ -71,29 +72,29 @@ namespace kerberos
             throw OpenCVException(ex.msg.c_str());
         }
     }
-    
+
     Image * USBCamera::takeImage()
     {
         // Update camera, call executor's functor.
         tryToUpdateCapture();
-        
+
         // Take image
         try
         {
             // Delay camera for some time..
             usleep(m_delay*1000);
-            
+
             // Get image from camera
             Image * image = new Image();
-            
+
             pthread_mutex_lock(&m_lock);
             m_camera->grab();
             m_camera->retrieve(image->getImage());
             pthread_mutex_unlock(&m_lock);
-            
+
             // Check if need to rotate the image
             image->rotate(m_angle);
-            
+
             return image;
         }
         catch(cv::Exception & ex)
@@ -102,8 +103,8 @@ namespace kerberos
             throw OpenCVException(ex.msg.c_str());
         }
     }
-    
-    
+
+
     void USBCamera::setImageSize(int width, int height)
     {
         Capture::setImageSize(width, height);
@@ -117,7 +118,7 @@ namespace kerberos
             throw OpenCVException(ex.msg.c_str());
         }
     }
-    
+
     void USBCamera::open()
     {
         try
@@ -127,7 +128,7 @@ namespace kerberos
                 m_camera->release();
                 m_camera->open(getDeviceNumber());
                 setImageSize(m_frameWidth, m_frameHeight);
-                
+
                 if(!isOpened())
                 {
                     throw OpenCVException("can't open usb camera");
@@ -139,7 +140,7 @@ namespace kerberos
             throw OpenCVException(ex.msg.c_str());
         }
     }
-    
+
     void USBCamera::close()
     {
         try
@@ -153,9 +154,9 @@ namespace kerberos
             throw OpenCVException(ex.msg.c_str());
         }
     }
-    
+
     void USBCamera::update(){}
-    
+
     bool USBCamera::isOpened()
     {
         return m_camera->isOpened();

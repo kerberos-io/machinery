@@ -119,4 +119,45 @@ namespace kerberos
 
         pthread_cancel(m_captureThread);
     }
+
+
+    // -------------------------------------------
+    // Function ran in a thread, which continously
+    // checkes the health of the camera.
+
+    void * healthContinuously(void * self)
+    {
+        Capture * capture = (Capture *) self;
+
+        int healthCounter = capture->healthCounter.load();
+        for(;;)
+        {
+            usleep(30000*1000); // every 30s.
+            LINFO << "Capture: checking health status of camera.";
+
+            if(healthCounter == capture->healthCounter.load())
+            {
+                LINFO << "Capture: devices is blocking, and not grabbing any more frames.";
+                throw KerberosCouldNotGrabFromCamera("devices is blocking, and not grabbin any more frames.");
+            }
+        }
+    }
+
+    void Capture::startHealthThread()
+    {
+        // ------------------------------------------------
+        // Start a new thread that verifies the health of the camera.
+
+        pthread_create(&m_healthThread, NULL, healthContinuously, this);
+        pthread_detach(m_healthThread);
+    }
+
+    void Capture::stopHealthThread()
+    {
+        // ----------------------------------
+        // Cancel the existing health thread,
+        // before deleting the device.
+
+        pthread_cancel(m_healthThread);
+    }
 }

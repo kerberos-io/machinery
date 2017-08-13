@@ -8,7 +8,7 @@
 //
 //  The copyright to the computer program(s) herein
 //  is the property of Verstraeten.io, Belgium.
-//  The program(s) may be used and/or copied under 
+//  The program(s) may be used and/or copied under
 //  the CC-NC-ND license model.
 //
 //  https://doc.kerberos.io/license
@@ -26,12 +26,16 @@ namespace kerberos
 	class KerberosException : public Exception
 	{
 		public:
+			KerberosException(const char * msg):message(msg){};
 		 	virtual const char* what() const throw()
 		 	{
 		 		char * output = new char[300];
-                strcpy (output, "Kerberos : A problem occured in the kerberos source.");
+        strcpy (output, "Kerberos : General : A problem occured : ");
+				strcat (output, message);
 		 		return output;
 		 	};
+		private:
+		 const char * message;
 	};
 
 	class KerberosFactoryCouldNotCreateException : public Exception
@@ -40,15 +44,15 @@ namespace kerberos
 			KerberosFactoryCouldNotCreateException(const char * message):message(message){};
 		 	virtual const char * what() const throw()
 		 	{
-		 		char * output = new char[300];
-                strcpy (output, "Kerberos : Factory : Could not create an instance of message: ");
-                strcat (output, message);
-                return output;
+		 			char * output = new char[300];
+          strcpy (output, "Kerberos : Factory : Could not create an instance of message: ");
+          strcat (output, message);
+          return output;
 		 	};
 		 private:
 		 	const char * message;
 	};
-                
+
     class KerberosCouldNotOpenCamera  : public Exception
     {
         public:
@@ -57,6 +61,21 @@ namespace kerberos
             {
                 char * output = new char[300];
                 strcpy (output, "Kerberos : Capture : Could not open capture: ");
+                strcat (output, message);
+                return output;
+            };
+        private:
+            const char * message;
+    };
+
+		class KerberosCouldNotGrabFromCamera  : public Exception
+    {
+        public:
+            KerberosCouldNotGrabFromCamera(const char * message):message(message){};
+            virtual const char* what() const throw()
+            {
+                char * output = new char[300];
+                strcpy (output, "Kerberos : Capture : Could not grab from capture: ");
                 strcat (output, message);
                 return output;
             };

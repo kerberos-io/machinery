@@ -212,6 +212,7 @@ namespace kerberos
             {
                 machinery->disableCapture();
                 capture->stopGrabThread();
+                capture->stopHealthThread();
                 capture->close();
             }
             delete capture;
@@ -225,6 +226,7 @@ namespace kerberos
         capture = Factory<Capture>::getInstance()->create(settings.at("capture"));
         capture->setup(settings);
         capture->startGrabThread();
+        capture->startHealthThread();
 
         // ------------------
         // Initialize stream

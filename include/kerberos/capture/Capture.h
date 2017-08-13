@@ -28,6 +28,7 @@
 #include<arpa/inet.h> //inet_addr
 #include<unistd.h>    //write
 #include<pthread.h> //for threading , link with lpthread
+#include <atomic>
 
 namespace kerberos
 {
@@ -40,6 +41,8 @@ namespace kerberos
         public:
             pthread_mutex_t m_lock;
             pthread_t m_captureThread;
+            pthread_t m_healthThread;
+            std::atomic<int> healthCounter; // increment to check if capture is still grabbing images.
 
             int m_frameWidth, m_frameHeight;
             int m_angle; // 90, 180, 270
@@ -75,6 +78,8 @@ namespace kerberos
 
             void startGrabThread();
             void stopGrabThread();
+            void startHealthThread();
+            void stopHealthThread();
     };
 
     template<const char * Alias, typename Class>

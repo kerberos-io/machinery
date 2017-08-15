@@ -273,6 +273,10 @@ namespace kerberos
 
             LINFO << "Stream: authentication failed.";
 
+            FD_CLR(client, &master);
+            shutdown(client, 2);
+            close(client);
+
             return false;
         }
     }
@@ -310,8 +314,10 @@ namespace kerberos
 
                   if (retval != 0 || error != 0 || socketState == -1)
                   {
-                      shutdown(clients[i], 2);
                       FD_CLR(clients[i],&master);
+                      shutdown(clients[i], 2);
+                      close(clients[i]);
+
                       std::vector<int>::iterator position = std::find(clients.begin(), clients.end(), clients[i]);
                       if (position != clients.end())
                       {

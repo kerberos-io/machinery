@@ -7,7 +7,7 @@ ExternalProject_Add(restclient
   BUILD_IN_SOURCE 1
   UPDATE_COMMAND ""
   PATCH_COMMAND ""
-  CONFIGURE_COMMAND ./autogen.sh && ./configure
+  CONFIGURE_COMMAND ./autogen.sh && ./configure --host=arm-buildroot-linux-gnueabihf
   BUILD_COMMAND make && mkdir -p ../thirdparty/lib/ && cp .libs/librestclient-cpp.a ../thirdparty/lib/
   INSTALL_COMMAND ""
 )

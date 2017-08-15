@@ -48,12 +48,13 @@ ExternalProject_Add(opencv
     -DBUILD_ZLIB:BOOL=ON
     -DBUILD_WITH_STATIC_CRT:BOOL=ON
     -DBUILD_FAT_JAVA_LIB=OFF
-    -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_BINARY_DIR}/thirdparty
+    -DCMAKE_TOOLCHAIN_FILE=${CMAKE_SOURCE_DIR}/../../host/usr/share/buildroot/toolchainfile.cmake
+    -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_SOURCE_DIR}/../../host/usr/arm-buildroot-linux-gnueabihf/sysroot/usr/
 )
 
-set(OPENCV_INCLUDE_DIR ${CMAKE_BINARY_DIR}/thirdparty/include/)
+set(OPENCV_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/../../host/usr/arm-buildroot-linux-gnueabihf/sysroot/usr/include/)
 if(NOT WIN32)
-  set(OPENCV_LIBRARY_DIR ${CMAKE_BINARY_DIR}/thirdparty/lib/)
+  set(OPENCV_LIBRARY_DIR ${CMAKE_SOURCE_DIR}/../../host/usr/arm-buildroot-linux-gnueabihf/sysroot/usr/lib/)
 else()
   set(OPENCV_LIBRARY_DIR ${CMAKE_BINARY_DIR}/thirdparty/x86/vc12/lib)
 endif()
@@ -63,8 +64,8 @@ set(OPENCV_LIBRARIES opencv_imgproc opencv_core opencv_highgui opencv_video open
 include_directories(${OPENCV_INCLUDE_DIR})
 link_directories(${OPENCV_LIBRARY_DIR})
 
-if(EXISTS "${CMAKE_BINARY_DIR}/thirdparty/share/OpenCV/OpenCVConfig.cmake")
-    include(${CMAKE_BINARY_DIR}/thirdparty/share/OpenCV/OpenCVConfig.cmake)
+if(EXISTS "${CMAKE_SOURCE_DIR}/../../host/usr/arm-buildroot-linux-gnueabihf/sysroot/usr/share/OpenCV/OpenCVConfig.cmake")
+    include(${CMAKE_SOURCE_DIR}/../../host/usr/arm-buildroot-linux-gnueabihf/sysroot/usr/share/OpenCV/OpenCVConfig.cmake)
     add_custom_target(rerun)
 else()
     add_custom_target(rerun ${CMAKE_COMMAND} ${CMAKE_SOURCE_DIR} DEPENDS opencv)

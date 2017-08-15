@@ -11,6 +11,7 @@ ExternalProject_Add(googletest
     -DCMAKE_BUILD_TYPE:STRING=Release
     -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_BINARY_DIR}/thirdparty
     -Dgtest_force_shared_crt=OFF
+    -DCMAKE_TOOLCHAIN_FILE=${CMAKE_SOURCE_DIR}/../../host/usr/share/buildroot/toolchainfile.cmake
   INSTALL_DIR ${CMAKE_BINARY_DIR}/thirdparty
   INSTALL_COMMAND ""
 )

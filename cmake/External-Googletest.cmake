@@ -2,6 +2,7 @@ message("External project: Googletest")
 
 ExternalProject_Add(googletest
   GIT_REPOSITORY https://github.com/google/googletest
+  GIT_TAG 673c975a963f356b19fea90cb57b69192253da2a
   SOURCE_DIR googletest
   BUILD_IN_SOURCE 1
   UPDATE_COMMAND ""

@@ -16,58 +16,73 @@ struct State {
 
 std::ofstream file;
 
-static int HighPri( const int pri )
+static int HighPri(const int pri)
 {
-	struct sched_param sched;
-	memset( &sched, 0, sizeof(sched) );
+		struct sched_param sched;
+		memset(&sched, 0, sizeof(sched));
 
-	if ( pri > sched_get_priority_max( SCHED_RR ) ) {
-		sched.sched_priority = sched_get_priority_max( SCHED_RR );
-	} else {
-		sched.sched_priority = pri;
-	}
-
-	return sched_setscheduler( 0, SCHED_RR, &sched );
-}
-
-void* preview_thread( void* self )
-{
-	kerberos::RaspiCamera * capture = (kerberos::RaspiCamera *) self;
-
-	// Retrieve OMX buffer
-	capture->data_buffer = state.camera->outputPorts()[70].buffer->pBuffer;
-	capture->mjpeg_data_buffer = state.preview_encode->outputPorts()[201].buffer->pBuffer;
-
-	HighPri(99); // Mark the thread as high priority
-
-	// ATTENTION : Each loop must take less time than it takes to the camera to take one frame
-	// otherwise it will cause underflow which can lead to camera stalling
-	// a good solution is to implement frame skipping (measure time between to loops, if this time
-	// is too big, just skip image processing and MJPEG sendout)
-
-	while ( state.running ) {
-		// Get YUV420 image from preview port, this is a blocking call
-		// If zero-copy is activated, we don't pass any buffer
-		capture->data_length  = state.camera->getOutputData(70, nullptr);
-	}
-
-	return nullptr;
-}
-
-
-void* record_thread( void* argp )
-{
-	uint8_t* data = new uint8_t[65536*4];
-	while ( state.running ) {
-		// Consume h264 data, this is a blocking call
-		int32_t datalen = state.record_encode->getOutputData(data);
-		if ( datalen > 0 && state.recording ) {
-			file.write((char*) data, datalen);
-			file.flush();
+		if (pri > sched_get_priority_max(SCHED_RR))
+		{
+				sched.sched_priority = sched_get_priority_max( SCHED_RR );
 		}
-	}
+		else
+		{
+				sched.sched_priority = pri;
+		}
 
-	return nullptr;
+		return sched_setscheduler(0, SCHED_RR, &sched);
+}
+
+void* preview_thread(void* self)
+{
+		kerberos::RaspiCamera * capture = (kerberos::RaspiCamera *) self;
+
+		// Retrieve OMX buffer
+		capture->data_buffer = state.camera->outputPorts()[70].buffer->pBuffer;
+		capture->mjpeg_data_buffer = state.preview_encode->outputPorts()[201].buffer->pBuffer;
+
+		HighPri(99); // Mark the thread as high priority
+
+		// ATTENTION : Each loop must take less time than it takes to the camera to take one frame
+		// otherwise it will cause underflow which can lead to camera stalling
+		// a good solution is to implement frame skipping (measure time between to loops, if this time
+		// is too big, just skip image processing and MJPEG sendout)
+
+		BINFO << "RaspiCamera: Entering preview thread.";
+		while (state.running)
+		{
+				capture->healthCounter = std::rand() % 10000;
+
+				// Get YUV420 image from preview port, this is a blocking call
+				// If zero-copy is activated, we don't pass any buffer
+				capture->data_length  = state.camera->getOutputData(70, nullptr);
+		}
+		BINFO << "RaspiCamera: Exiting preview thread.";
+
+		return nullptr;
+}
+
+
+void* record_thread(void* self)
+{
+		kerberos::RaspiCamera * capture = (kerberos::RaspiCamera *) self;
+
+		uint8_t* data = new uint8_t[65536*4];
+
+		BINFO << "RaspiCamera: Entering record thread.";
+		while(state.running)
+		{
+				// Consume h264 data, this is a blocking call
+				int32_t datalen = state.record_encode->getOutputData(data);
+				if(datalen > 0 && state.recording)
+				{
+						file.write((char*) data, datalen);
+						file.flush();
+				}
+		}
+		BINFO << "RaspiCamera: Exiting record thread.";
+
+		return nullptr;
 }
 
 namespace kerberos
@@ -229,27 +244,43 @@ namespace kerberos
 				state.recording = false;
 
 				// Start threads
-				pthread_create( &state.preview_thid, nullptr, &preview_thread, this );
-				pthread_create( &state.record_thid, nullptr, &record_thread, this );
+				pthread_create(&state.preview_thid, nullptr, &preview_thread, this);
+				pthread_detach(state.preview_thid);
+
+				pthread_create(&state.record_thid, nullptr, &record_thread, this);
+				pthread_detach(state.record_thid);
     }
+
+		void RaspiCamera::stopThreads()
+		{
+				state.running = false;
+
+				// -------------------------
+				// Cancel the record thread.
+
+				pthread_join(state.record_thid, nullptr);
+
+				// -------------------------
+				// Cancel the preview thread.
+
+				pthread_join(state.preview_thid, nullptr);
+		}
 
 		RaspiCamera::~RaspiCamera()
 		{
-				delete state.camera;
-				delete state.preview_encode;
-				delete state.record_encode;
+				Component::DestroyAll();
 		}
 
     void RaspiCamera::close()
     {
-        state.running = false;
+				stopThreads();
     }
 
     void RaspiCamera::update(){}
 
     bool RaspiCamera::isOpened()
     {
-        return true;
+        return state.running;
     }
 
 		void RaspiCamera::startRecord(std::string path)

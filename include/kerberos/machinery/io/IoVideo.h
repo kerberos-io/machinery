@@ -89,11 +89,14 @@ namespace kerberos
             pthread_t m_recordThread;
             pthread_t m_retrieveThread;
             pthread_t m_recordOnboardThread;
+            pthread_t m_recordOnFFMPEGThread;
             pthread_t m_convertThread;
             double m_timeStartedRecording;
 
             void startOnboardRecordThread();
             void stopOnboardRecordThread();
+            void startFFMPEGRecordThread();
+            void stopFFMPEGRecordThread();
             void startRecordThread();
             void stopRecordThread();
             void startRetrieveThread();

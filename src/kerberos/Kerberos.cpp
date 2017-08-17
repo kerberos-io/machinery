@@ -9,7 +9,6 @@ namespace kerberos
 
         setParameters(parameters);
 
-
         // ---------------------
         // initialize RestClient
 
@@ -213,6 +212,7 @@ namespace kerberos
             {
                 machinery->disableCapture();
                 capture->stopGrabThread();
+                capture->stopHealthThread();
                 capture->close();
             }
             delete capture;
@@ -226,6 +226,7 @@ namespace kerberos
         capture = Factory<Capture>::getInstance()->create(settings.at("capture"));
         capture->setup(settings);
         capture->startGrabThread();
+        capture->startHealthThread();
 
         // ------------------
         // Initialize stream
@@ -313,6 +314,7 @@ namespace kerberos
         }
 
         pthread_create(&m_streamThread, NULL, streamContinuously, this);
+        pthread_detach(m_streamThread);
     }
 
     void Kerberos::stopStreamThread()
@@ -395,6 +397,7 @@ namespace kerberos
         // Start a new thread that cheks for detections
 
         pthread_create(&m_ioThread, NULL, checkDetectionsContinuously, this);
+        pthread_detach(m_ioThread);
     }
 
     void Kerberos::stopIOThread()

@@ -47,6 +47,7 @@ namespace kerberos
         kerberos::StringMap getSettingsFromXML(const std::string & path);
         std::string printStringMap(const std::string & prefix, const kerberos::StringMap & map);
         bool replace(std::string& str, const std::string& from, const std::string& to);
+        void replaceAll(std::string& str, const std::string& from, const std::string& to);
         std::string to_string (const int & t);
         std::string generatePath(const std::string timezone, const std::string & subDirectory = "");
         std::string getTimestamp();

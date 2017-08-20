@@ -134,8 +134,8 @@ namespace kerberos
         {
             healthCounter = capture->healthCounter.load();
 
-            usleep(30000*1000); // every 30s.
-            LINFO << "Capture: checking health status of camera.";
+            usleep(5000*1000); // every 5s.
+            BINFO << "Capture: checking health status of camera.";
 
             if(healthCounter == capture->healthCounter.load())
             {

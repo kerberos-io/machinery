@@ -129,9 +129,11 @@ namespace kerberos
     {
         Capture * capture = (Capture *) self;
 
-        int healthCounter = capture->healthCounter.load();
+        int healthCounter = 0;
         for(;;)
         {
+            healthCounter = capture->healthCounter.load();
+
             usleep(30000*1000); // every 30s.
             LINFO << "Capture: checking health status of camera.";
 

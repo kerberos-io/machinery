@@ -46,6 +46,7 @@
         machinery/io/IoTCP.cpp
         machinery/io/IoWebhook.cpp
         machinery/io/IoScript.cpp
+        machinery/io/IoMQTT.cpp
     )
 
     set(KERBEROS_DEPENDENCIES ${KERBEROS_DEPENDENCIES} opencv restclient)

@@ -145,6 +145,11 @@ namespace kerberos
         }
     }
 
+    void Capture::incrementHealth()
+    {
+        healthCounter = (healthCounter.load() + 1) % 1024;
+    }
+
     void Capture::startHealthThread()
     {
         // ------------------------------------------------

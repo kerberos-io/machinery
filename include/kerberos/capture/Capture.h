@@ -80,6 +80,7 @@ namespace kerberos
             void stopGrabThread();
             void startHealthThread();
             void stopHealthThread();
+            void incrementHealth();
     };
 
     template<const char * Alias, typename Class>

@@ -16,6 +16,7 @@ message("External project: OpenMaxIL-cpp")
 
 ExternalProject_Add(openmax
   GIT_REPOSITORY ${git_protocol}://github.com/dridri/OpenMaxIL-cpp
+  GIT_TAG 905b9c0ad45b32c4fb0bd7a169bc1f1b06b534c1
   SOURCE_DIR openmax
   BINARY_DIR openmax-build
   UPDATE_COMMAND ""
@@ -24,7 +25,7 @@ ExternalProject_Add(openmax
   INSTALL_COMMAND ""
   CMAKE_ARGS
     -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_BINARY_DIR}/thirdparty
-    -DBUILD_SHARED_LIBS=OFF   
+    -DBUILD_SHARED_LIBS=OFF
 )
 
 set(OPENMAX_INCLUDE_DIR ${CMAKE_BINARY_DIR}/openmax/include/)

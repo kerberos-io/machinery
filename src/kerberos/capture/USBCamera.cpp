@@ -43,7 +43,7 @@ namespace kerberos
         try
         {
             pthread_mutex_lock(&m_lock);
-            healthCounter = std::rand() % 10000;
+            incrementHealth();
             m_camera->grab();
             pthread_mutex_unlock(&m_lock);
         }

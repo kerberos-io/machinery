@@ -51,7 +51,7 @@ void* preview_thread(void* self)
 		BINFO << "RaspiCamera: Entering preview thread.";
 		while (state.running)
 		{
-				capture->healthCounter = std::rand() % 10000;
+				capture->incrementHealth();
 
 				// Get YUV420 image from preview port, this is a blocking call
 				// If zero-copy is activated, we don't pass any buffer

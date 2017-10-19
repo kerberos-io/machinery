@@ -291,7 +291,6 @@ namespace kerberos
     {
         cloudConnection = new RestClient::Connection(CLOUD);
         pthread_create(&m_healthThread, NULL, deviceHealth, this);
-        pthread_detach(m_healthThread);
     }
 
     void Cloud::stopHealthThread()

@@ -64,8 +64,7 @@ namespace kerberos
 
     void Cloud::scan()
     {
-
-        for(;;)
+        while(m_uploadThread_running)
         {
             std::vector<std::string> storage;
             helper::getFilesInDirectory(storage, SYMBOL_DIRECTORY); // get all symbol links of directory
@@ -113,11 +112,13 @@ namespace kerberos
 
     void Cloud::startUploadThread()
     {
+        m_uploadThread_running = true;
         pthread_create(&m_uploadThread, NULL, uploadContinuously, this);
     }
 
     void Cloud::stopUploadThread()
     {
+        m_uploadThread_running = false;
         pthread_cancel(m_uploadThread);
         pthread_join(m_uploadThread, NULL);
     }
@@ -148,7 +149,7 @@ namespace kerberos
         version += "\"raspberrypi\": " + raspberrypi;
         version += "}";
 
-        while(true)
+        while(cloud->m_pollThread_running)
         {
             RestClient::Response r = conn->post("/", version);
             usleep(180*1000*1000);
@@ -157,15 +158,17 @@ namespace kerberos
 
     void Cloud::startPollThread()
     {
+        m_pollThread_running = true;
         pollConnection = new RestClient::Connection(HADES);
         pthread_create(&m_pollThread, NULL, pollContinuously, this);
     }
 
     void Cloud::stopPollThread()
     {
-        delete pollConnection;
+        m_pollThread_running = false;
         pthread_cancel(m_pollThread);
         pthread_join(m_pollThread, NULL);
+        delete pollConnection;
     }
 
     // ------------------------------------
@@ -245,7 +248,7 @@ namespace kerberos
             // ------------------------------------------
             // Send client data to the cloud application.
 
-            while(true)
+            while(cloud->m_healthThread_running)
             {
                 std::string health = "{";
                 health += fixedProperties;
@@ -263,6 +266,7 @@ namespace kerberos
                 BINFO << "Cloud: data - " << health;
                 BINFO << "Cloud: send device health - " << r.code;
                 BINFO << "Cloud: send device health - " << r.body;
+
                 usleep(15*1000*1000); // every 15s
             }
         }
@@ -289,12 +293,14 @@ namespace kerberos
 
     void Cloud::startHealthThread()
     {
+        m_healthThread_running = true;
         cloudConnection = new RestClient::Connection(CLOUD);
         pthread_create(&m_healthThread, NULL, deviceHealth, this);
     }
 
     void Cloud::stopHealthThread()
     {
+        m_healthThread_running = false;
         delete cloudConnection;
         pthread_cancel(m_healthThread);
         pthread_join(m_healthThread, NULL);

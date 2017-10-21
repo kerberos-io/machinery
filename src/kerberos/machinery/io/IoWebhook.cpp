@@ -17,6 +17,11 @@ namespace kerberos
 
         setUrl(settings.at("ios.Webhook.url").c_str());
 
+        // -------------
+        // Set throttler
+
+        throttle.setRate(std::stoi(settings.at("ios.Webhook.throttler")));
+
         // ----------------------------
         // Initialize connection object
 

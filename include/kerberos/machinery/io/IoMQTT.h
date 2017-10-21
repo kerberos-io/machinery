@@ -18,6 +18,7 @@
 #define __IoMQTT_H_INCLUDED__   // #define this so the compiler knows it has been included
 
 #include "machinery/io/Io.h"
+#include "Throttler.h"
 
 namespace kerberos
 {
@@ -26,6 +27,7 @@ namespace kerberos
     {
         private:
             //std::string m_private_prop;
+            Throttler throttle;
 
         public:
             IoMQTT(){};

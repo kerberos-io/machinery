@@ -9,7 +9,7 @@
 //
 //  The copyright to the computer program(s) herein
 //  is the property of Verstraeten.io, Belgium.
-//  The program(s) may be used and/or copied under 
+//  The program(s) may be used and/or copied under
 //  the CC-NC-ND license model.
 //
 //  https://doc.kerberos.io/license
@@ -22,6 +22,7 @@
 #include "machinery/io/Io.h"
 #include "document.h"
 #include "writer.h"
+#include "Throttler.h"
 
 namespace kerberos
 {
@@ -31,18 +32,19 @@ namespace kerberos
         private:
             std::string m_path;
             std::string m_instanceName;
+            Throttler throttle;
 
         public:
             IoScript(){};
             void setup(const StringMap & settings);
             void fire(JSON & data){};
             void disableCapture(){};
-            
+
             void setPath(std::string path){m_path=path;};
             const char * getPath(){return m_path.c_str();};
             void setInstanceName(std::string instanceName){m_instanceName=instanceName;};
             std::string getInstanceName(){return m_instanceName;};
-            
+
             bool save(Image & image){ return true; };
             bool save(Image & image, JSON & data);
     };

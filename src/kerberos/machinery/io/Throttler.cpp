@@ -4,8 +4,7 @@ namespace kerberos
 {
     bool Throttler::canExecute()
     {
-        std::string timestamp = helper::getTimestamp();
-        LINFO << "Timestamp: " << timestamp;
-        return false;
+        int timestamp = std::stoi(helper::getTimestamp());
+        return (timestamp - m_lastTimestamp > m_rate) && (m_lastTimestamp = timestamp);
     }
 }

@@ -9,7 +9,7 @@
 //
 //  The copyright to the computer program(s) herein
 //  is the property of Verstraeten.io, Belgium.
-//  The program(s) may be used and/or copied under 
+//  The program(s) may be used and/or copied under
 //  the CC-NC-ND license model.
 //
 //  https://doc.kerberos.io/license
@@ -21,6 +21,7 @@
 
 #include "machinery/io/Io.h"
 #include "mmapGpio.h"
+#include "Throttler.h"
 
 namespace kerberos
 {
@@ -32,7 +33,8 @@ namespace kerberos
             unsigned int m_pin;
             unsigned int m_periods;
             unsigned int m_periodTime;
-        
+            Throttler throttle;
+
         public:
             IoGPIO(){};
             void setup(const StringMap & settings);

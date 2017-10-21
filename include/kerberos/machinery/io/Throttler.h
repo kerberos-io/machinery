@@ -26,11 +26,11 @@ namespace kerberos
     class Throttler
     {
         private:
-            double m_rate;
-            double m_lastTimestamp;
+            double m_rate; // if rate is 5, than canExecute will only execute once in 5 secs.
+            int m_lastTimestamp;
 
         public:
-            Throttler(){};
+            Throttler():m_lastTimestamp(0),m_rate(5){};
             ~Throttler(){};
 
             void setRate(double rate){m_rate = rate;}

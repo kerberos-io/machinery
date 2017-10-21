@@ -199,7 +199,7 @@ namespace kerberos
     void RaspiCamera::open()
     {
 				LINFO << "Capture: Trying to open Raspberry Pi camera module.";
-				LINFO << "Capture: (Warning) If you see a OMX_GETHANDLE error, this means that you don't have a working RPi camera module attached.";
+				LINFO << "Capture: (Warning) If you see a OMX_GetHandle error, this means that you don't have a working RPi camera module attached.";
 				LINFO << "Capture: (Warning) You can change the capture device with the configuration files.";
 
 				// Initialize hardware

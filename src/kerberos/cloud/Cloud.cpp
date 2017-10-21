@@ -301,8 +301,8 @@ namespace kerberos
     void Cloud::stopHealthThread()
     {
         m_healthThread_running = false;
-        delete cloudConnection;
         pthread_cancel(m_healthThread);
         pthread_join(m_healthThread, NULL);
+        delete cloudConnection;
     }
 }

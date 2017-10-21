@@ -329,6 +329,7 @@ namespace kerberos
         // Cancel the existing stream thread,
 
         m_streamThread_running = false;
+        pthread_cancel(m_streamThread);
         pthread_join(m_streamThread, NULL);
     }
 
@@ -412,6 +413,7 @@ namespace kerberos
         // Cancel the existing io thread,
 
         m_ioThread_running = false;
+        pthread_cancel(m_ioThread);
         pthread_join(m_ioThread, NULL);
     }
 }

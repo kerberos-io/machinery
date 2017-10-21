@@ -787,7 +787,7 @@ namespace kerberos
             helper::getFilesInDirectory(storage, SYMBOL_DIRECTORY); // get all symbol links of directory
 
             std::vector<std::string>::iterator it = storage.begin();
-            while(it != storage.end())// && !m_recording) // When videos to process and not recording.
+            while(it != storage.end() && !m_recording) // When videos to process and not recording.
             {
                 std::string file = *it;
 

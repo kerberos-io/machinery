@@ -264,12 +264,12 @@ namespace kerberos
 				// -------------------------
 				// Cancel the record thread.
 
-				pthread_cancel(state.record_thid);
+				pthread_join(state.record_thid, nullptr);
 
 				// -------------------------
 				// Cancel the preview thread.
 
-				pthread_cancel(state.preview_thid);
+				pthread_join(state.preview_thid, nullptr);
 		}
 
 		RaspiCamera::~RaspiCamera()

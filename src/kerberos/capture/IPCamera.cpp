@@ -186,9 +186,13 @@ namespace kerberos
         {
             throw OpenCVException(ex.msg.c_str());
         }
+
     }
     void IPCamera::reopen()
     {
+        LINFO << "Capture: Trying to open IP camera.";
+        LINFO << "Capture: (Warning) You can change the capture device with the configuration files.";
+
         m_camera->release();
         open(m_url.c_str());
 
@@ -203,6 +207,8 @@ namespace kerberos
                 throw OpenCVException("can't open url of ip camera");
             }
         }
+
+        LINFO << "Capture: Succesfully opened IP camera.";
     }
 
     void IPCamera::close()

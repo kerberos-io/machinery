@@ -855,7 +855,6 @@ namespace kerberos
     void IoVideo::stopConvertThread()
     {
         m_convertThread_running = false;
-        pthread_cancel(m_convertThread);
         pthread_join(m_convertThread, NULL);
     }
 }

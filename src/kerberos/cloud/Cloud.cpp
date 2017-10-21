@@ -119,7 +119,6 @@ namespace kerberos
     void Cloud::stopUploadThread()
     {
         m_uploadThread_running = false;
-        pthread_cancel(m_uploadThread);
         pthread_join(m_uploadThread, NULL);
     }
 
@@ -166,7 +165,6 @@ namespace kerberos
     void Cloud::stopPollThread()
     {
         m_pollThread_running = false;
-        pthread_cancel(m_pollThread);
         pthread_join(m_pollThread, NULL);
         delete pollConnection;
     }
@@ -302,7 +300,6 @@ namespace kerberos
     {
         m_healthThread_running = false;
         delete cloudConnection;
-        pthread_cancel(m_healthThread);
         pthread_join(m_healthThread, NULL);
     }
 }

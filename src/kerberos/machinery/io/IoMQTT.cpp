@@ -12,17 +12,15 @@ namespace kerberos
         setTopic(settings.at("ios.MQTT.topic").c_str());
 
 	reinitialise(settings.at("name").c_str(),true);
-
-	mosqpp::lib_init();
-	connect_async(m_server_ip.c_str(),m_port);
-	loop_start();
-
-
     }
 
     bool IoMQTT::save(Image & image)
     { 
-	    return true; 
+	mosqpp::lib_init();
+	connect_async(m_server_ip.c_str(),m_port);
+	loop_start();
+
+	return true; 
     } 
 
     bool IoMQTT::save(Image & image, JSON & data)

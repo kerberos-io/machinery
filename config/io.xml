@@ -42,5 +42,11 @@
         <path type="text">/etc/opt/kerberosio/scripts/run.sh</path>
 				<throttler type="number">0</throttler>
     </Script>
+    <MQTT>
+	<server type="number">127.0.0.1</server> 
+        <port type="number">1883</port>
+	<topic type="text">kios/mqtt</topic>
+	<throttler type="number">0</throttler> 
+    </MQTT>
 
 </ios>

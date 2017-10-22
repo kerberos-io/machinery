@@ -1,9 +1,9 @@
 //
 //  Class: IoMQTT
-//  Description: A MQTT class ..
-//  Created:     25/07/2015
-//  Author:      ...
-//  Mail:        ...
+//  Description:  Send message to MQTT topic 
+//  Created:     20/10/2017
+//  Author:      Gianrico D'Angelis
+//  Mail:        gianrico.dangelis@gmail.com
 //
 //  The copyright to the computer program(s) herein
 //  is the property of Verstraeten.io, Belgium.

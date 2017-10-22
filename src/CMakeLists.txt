@@ -50,7 +50,8 @@
   endif()
 
   add_dependencies(kerberosio rerun ${KERBEROS_DEPENDENCIES})
-  target_link_libraries(kerberosio ${KERBEROS_CORE_LIBRARY} ${KERBEROS_LIBRARIES})
+  find_library(MOSQPP mosquittopp)
+  target_link_libraries(kerberosio ${KERBEROS_CORE_LIBRARY} ${KERBEROS_LIBRARIES} ${MOSQPP})
 
 # -----------------------------------------
 # Write variables to parent CMakeLists.txt

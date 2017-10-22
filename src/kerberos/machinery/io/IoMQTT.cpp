@@ -5,7 +5,6 @@ namespace kerberos
     void IoMQTT::setup(const StringMap & settings)
     {
         Io::setup(settings);
-	BINFO << "IoMQTT setup";
 
         throttle.setRate(std::stoi(settings.at("ios.MQTT.throttler")));
         setIp(settings.at("ios.MQTT.server").c_str());
@@ -23,7 +22,6 @@ namespace kerberos
 
     bool IoMQTT::save(Image & image)
     { 
-	    BINFO << "IOMQTT save"; 
 	    return true; 
     } 
 
@@ -41,7 +39,8 @@ namespace kerberos
 
 	   std::string message { buffer.GetString() };
 	  
-	   BINFO << "IoMQTT: sending message..."<<((send_message(message))?"sent":"error");
+	   BINFO << "IoMQTT: sending message..." << ((send_message(message))?"sent":"error");
+
            return true;
         }
 

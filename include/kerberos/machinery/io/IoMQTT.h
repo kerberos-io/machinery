@@ -35,13 +35,12 @@ namespace kerberos
             	Throttler throttle;
 
         public:
-            IoMQTT(){BINFO << "IoMQTT Costructor";};
+            IoMQTT(){};
             virtual ~IoMQTT()
             {
 		disconnect();
 		loop_stop();   
 		mosqpp::lib_cleanup();
-		BINFO << "IoMQTT Destructor";
             };
 
             void setup(const StringMap & settings);

@@ -32,7 +32,10 @@ namespace kerberos
     {
         private:
 
-            Kerberos(){};
+            Kerberos(){
+                m_ioThread_running = false;
+                m_streamThread_running = false;
+            };
             ~Kerberos(){delete guard; delete capture; delete machinery;};
 
             void bootstrap(StringMap & parameters);

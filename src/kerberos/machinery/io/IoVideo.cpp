@@ -740,7 +740,6 @@ namespace kerberos
     void IoVideo::stopOnboardRecordThread()
     {
         pthread_cancel(m_recordOnboardThread);
-        pthread_join(m_recordOnboardThread, NULL);
     }
 
     void IoVideo::startFFMPEGRecordThread()
@@ -752,7 +751,6 @@ namespace kerberos
     void IoVideo::stopFFMPEGRecordThread()
     {
         pthread_cancel(m_recordOnFFMPEGThread);
-        pthread_join(m_recordOnFFMPEGThread, NULL);
     }
 
     void IoVideo::startRecordThread()
@@ -764,7 +762,6 @@ namespace kerberos
     void IoVideo::stopRecordThread()
     {
         pthread_cancel(m_recordThread);
-        pthread_join(m_recordThread, NULL);
     }
 
     void IoVideo::startRetrieveThread()
@@ -776,7 +773,6 @@ namespace kerberos
     void IoVideo::stopRetrieveThread()
     {
         pthread_cancel(m_retrieveThread);
-        pthread_join(m_retrieveThread, NULL);
     }
 
     void IoVideo::scan()
@@ -785,13 +781,13 @@ namespace kerberos
         std::string directory = m_directory;
         std::string extension = m_extension;
 
-        for(;;)
+        while(m_convertThread_running)
         {
             std::vector<std::string> storage;
             helper::getFilesInDirectory(storage, SYMBOL_DIRECTORY); // get all symbol links of directory
 
             std::vector<std::string>::iterator it = storage.begin();
-            while(it != storage.end())// && !m_recording) // When videos to process and not recording.
+            while(it != storage.end() && !m_recording) // When videos to process and not recording.
             {
                 std::string file = *it;
 
@@ -852,11 +848,13 @@ namespace kerberos
 
     void IoVideo::startConvertThread()
     {
+        m_convertThread_running = true;
         pthread_create(&m_convertThread, NULL, convertContinuously, this);
     }
 
     void IoVideo::stopConvertThread()
     {
+        m_convertThread_running = false;
         pthread_cancel(m_convertThread);
         pthread_join(m_convertThread, NULL);
     }

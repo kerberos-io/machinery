@@ -91,6 +91,7 @@ namespace kerberos
             pthread_t m_recordOnboardThread;
             pthread_t m_recordOnFFMPEGThread;
             pthread_t m_convertThread;
+            bool m_convertThread_running;
             double m_timeStartedRecording;
 
             void startOnboardRecordThread();

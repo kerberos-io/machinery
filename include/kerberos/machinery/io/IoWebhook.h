@@ -23,6 +23,7 @@
 #include "writer.h"
 #include "restclient-cpp/connection.h"
 #include "restclient-cpp/restclient.h"
+#include "Throttler.h"
 
 namespace kerberos
 {
@@ -33,6 +34,7 @@ namespace kerberos
             std::string m_url;
             std::string m_instanceName;
             RestClient::Connection * webhookConnection;
+            Throttler throttle;
 
         public:
             IoWebhook(){};

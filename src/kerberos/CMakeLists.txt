@@ -15,6 +15,7 @@
         machinery/expositor/Expositor.cpp
         machinery/io/Io.cpp
         machinery/io/FileManager.cpp
+        machinery/io/Throttler.cpp
         Factory.cpp
         Helper.cpp
         Kerberos.cpp

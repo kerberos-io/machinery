@@ -17,6 +17,11 @@ namespace kerberos
 
         setUrl(settings.at("ios.Webhook.url").c_str());
 
+        // -------------
+        // Set throttler
+
+        throttle.setRate(std::stoi(settings.at("ios.Webhook.throttler")));
+
         // ----------------------------
         // Initialize connection object
 
@@ -29,35 +34,40 @@ namespace kerberos
 
     bool IoWebhook::save(Image & image, JSON & data)
     {
-        // ---------------------------------------
-        // Attach additional fields to JSON object
-
-        JSON dataCopy;
-        JSON::AllocatorType& allocator = dataCopy.GetAllocator();
-        dataCopy.CopyFrom(data, allocator);
-
-        JSONValue instanceName;
-        instanceName.SetString(getInstanceName().c_str(), allocator);
-        dataCopy.AddMember("instanceName", instanceName, allocator);
-
-        // -----------------------------
-        // Convert JSON object to string
-
-        rapidjson::StringBuffer buffer;
-        rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);
-        dataCopy.Accept(writer);
-
-        // -------------------
-        // Send a post to URL
-
-        BINFO << "IoWebhook: post to webhook " + (std::string) getUrl();
-        RestClient::Response r = webhookConnection->post("/", buffer.GetString());
-
-        if(r.code == 200)
+        if(throttle.canExecute())
         {
-            return true;
-        }
+            // ---------------------------------------
+            // Attach additional fields to JSON object
 
-        return false;
+            JSON dataCopy;
+            JSON::AllocatorType& allocator = dataCopy.GetAllocator();
+            dataCopy.CopyFrom(data, allocator);
+
+            JSONValue instanceName;
+            instanceName.SetString(getInstanceName().c_str(), allocator);
+            dataCopy.AddMember("instanceName", instanceName, allocator);
+
+            // -----------------------------
+            // Convert JSON object to string
+
+            rapidjson::StringBuffer buffer;
+            rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);
+            dataCopy.Accept(writer);
+
+            // -------------------
+            // Send a post to URL
+
+            BINFO << "IoWebhook: post to webhook " + (std::string) getUrl();
+            RestClient::Response r = webhookConnection->post("/", buffer.GetString());
+
+            if(r.code == 200)
+            {
+                return true;
+            }
+
+            return false;
+      }
+
+      return true;
     }
 }

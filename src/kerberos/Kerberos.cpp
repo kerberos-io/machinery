@@ -165,7 +165,10 @@ namespace kerberos
         // ------------------
         // Stop the io thread
 
-        stopIOThread();
+        if(m_ioThread_running)
+        {
+            stopIOThread();
+        }
 
         // --------------------
         // Initialize machinery

@@ -31,7 +31,11 @@ namespace kerberos
 	    	std::string m_server_ip;
 		unsigned short m_port;
 	        std::string m_topic;
-		
+		std::string m_username;	
+		std::string m_password;	
+		bool m_secure;
+		bool m_verifycn;
+
             	Throttler throttle;
 
         public:
@@ -54,6 +58,12 @@ namespace kerberos
 	    unsigned short getPort(){return m_port;};
 	    void setTopic(std::string topic){m_topic=topic;};
 	    const char * getTopic(){return m_topic.c_str();};
+	    void setUsername(std::string username){m_username=username;};
+	    std::string getUsername(){return m_username;};
+	    void setPassword(std::string password){m_password=password;};
+	    std::string getPassword(){return m_password;};
+	    void setSecure(bool secure){m_secure=secure;};
+	    void setVerifycn(bool verifycn){m_verifycn=verifycn;};
 
 	    bool send_message(std::string &message);
 

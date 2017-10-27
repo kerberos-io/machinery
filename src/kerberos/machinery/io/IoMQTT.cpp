@@ -10,6 +10,10 @@ namespace kerberos
         setIp(settings.at("ios.MQTT.server").c_str());
         setPort(std::atoi(settings.at("ios.MQTT.port").c_str()));
         setTopic(settings.at("ios.MQTT.topic").c_str());
+	setUsername(settings.at("ios.MQTT.username"));
+	setPassword(settings.at("ios.MQTT.password"));
+	setSecure(settings.at("ios.MQTT.secure")=="true");
+	setVerifycn(settings.at("ios.MQTT.verifycn")=="true");
 
 	reinitialise(settings.at("name").c_str(),true);
     }
@@ -17,6 +21,14 @@ namespace kerberos
     bool IoMQTT::save(Image & image)
     { 
 	mosqpp::lib_init();
+	if(m_username.length()==0)
+		username_pw_set(nullptr,nullptr);
+	else
+		username_pw_set(m_username.c_str(),m_password.c_str());
+	if(!m_verifycn)
+		tls_insecure_set(true);
+	if(m_secure)
+		tls_set(nullptr,"/etc/ssl/certs/",nullptr,nullptr,nullptr);
 	connect_async(m_server_ip.c_str(),m_port);
 	loop_start();
 

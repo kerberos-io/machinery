@@ -2,7 +2,7 @@ message("External project: OpenCV")
 
 ExternalProject_Add(opencv
   GIT_REPOSITORY ${git_protocol}://github.com/cedricve/opencv
-  GIT_TAG master
+  GIT_TAG h264-preset
   SOURCE_DIR opencv
   BINARY_DIR opencv-build
   UPDATE_COMMAND ""

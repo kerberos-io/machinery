@@ -528,12 +528,13 @@ namespace kerberos
     {
         IoVideo * video = (IoVideo *) self;
 
+        double tickFrequency = cv::getTickFrequency();
         double cronoPause = (double)cvGetTickCount();
         double cronoFPS = cronoPause;
-        double cronoTime = (double) (cv::getTickCount() / cv::getTickFrequency());
-        double timeElapsed = 0;
+        double cronoTime = (double) (cv::getTickCount() / tickFrequency);
         double timeToSleep = 0;
         double startedRecording = cronoTime;
+        double fpsToTime = 1. / video->m_fps;
 
         BINFO << "IoVideo (OpenCV): start writing images";
 
@@ -570,10 +571,8 @@ namespace kerberos
                 pthread_mutex_unlock(&video->m_time_lock);
 
                 cronoPause = (double) cv::getTickCount();
-                cronoTime = cronoPause / cv::getTickFrequency();
-                timeElapsed = (cronoPause - cronoFPS) / cv::getTickFrequency();
-                double fpsToTime = 1. / video->m_fps;
-                timeToSleep = fpsToTime - timeElapsed;
+                cronoTime = cronoPause / tickFrequency;
+                timeToSleep = fpsToTime - ((cronoPause - cronoFPS) / tickFrequency);
 
                 if(timeToSleep > 0)
                 {

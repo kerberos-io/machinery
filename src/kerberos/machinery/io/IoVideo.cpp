@@ -274,11 +274,25 @@ namespace kerberos
                 m_fileName = buildPath(pathToVideo, data);
                 m_path = m_hardwareDirectory + m_fileName + ".h264";
 
+                // -------------------------------------------------------
+                // Add path to JSON object, so other IO devices can use it
+
+                JSONValue path;
+                JSON::AllocatorType& allocator = data.GetAllocator();
+                std::string expectedPath = m_fileName + "." + m_extension;
+                path.SetString(expectedPath.c_str(), allocator);
+                data.AddMember("pathToVideo", path, allocator);
+
+                // ---------------
+                // Start recording
+
                 startOnboardRecordThread();
                 m_recording = true;
             }
         }
-        /*else if(m_capture->m_onFFMPEGrecording) // TODO: Use FFMPEG to record.
+        // Won't use as we use hardware encoding in the else branch beneath.
+        // Found a work-a-round how to use h264_omx directly with OpenCV and FFMPEG.
+        /*else if(m_capture->m_onFFMPEGrecording)
         {
             if(!m_recording)
             {
@@ -306,6 +320,17 @@ namespace kerberos
                 m_fileName = buildPath(pathToVideo, data) + "." + m_extension;
                 m_path = m_directory + m_fileName;
                 Image image = m_capture->retrieve();
+
+                // -------------------------------------------------------
+                // Add path to JSON object, so other IO devices can use it
+
+                JSONValue path;
+                JSON::AllocatorType& allocator = data.GetAllocator();
+                path.SetString(m_fileName.c_str(), allocator);
+                data.AddMember("pathToVideo", path, allocator);
+
+                // ---------------
+                // Start recording
 
                 BINFO << "IoVideo: start new recording " << m_fileName;
 
@@ -528,12 +553,13 @@ namespace kerberos
     {
         IoVideo * video = (IoVideo *) self;
 
+        double tickFrequency = cv::getTickFrequency();
         double cronoPause = (double)cvGetTickCount();
         double cronoFPS = cronoPause;
-        double cronoTime = (double) (cv::getTickCount() / cv::getTickFrequency());
-        double timeElapsed = 0;
+        double cronoTime = (double) (cv::getTickCount() / tickFrequency);
         double timeToSleep = 0;
         double startedRecording = cronoTime;
+        double fpsToTime = 1. / video->m_fps;
 
         BINFO << "IoVideo (OpenCV): start writing images";
 
@@ -570,10 +596,8 @@ namespace kerberos
                 pthread_mutex_unlock(&video->m_time_lock);
 
                 cronoPause = (double) cv::getTickCount();
-                cronoTime = cronoPause / cv::getTickFrequency();
-                timeElapsed = (cronoPause - cronoFPS) / cv::getTickFrequency();
-                double fpsToTime = 1. / video->m_fps;
-                timeToSleep = fpsToTime - timeElapsed;
+                cronoTime = cronoPause / tickFrequency;
+                timeToSleep = fpsToTime - ((cronoPause - cronoFPS) / tickFrequency);
 
                 if(timeToSleep > 0)
                 {

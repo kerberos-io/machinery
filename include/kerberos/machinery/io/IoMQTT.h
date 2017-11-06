@@ -18,7 +18,7 @@
 #define __IoMQTT_H_INCLUDED__   // #define this so the compiler knows it has been included
 
 #include "machinery/io/Io.h"
-#include <mosquittopp.h>
+#include "mosquittopp.h"
 #include "writer.h"
 #include "Throttler.h"
 

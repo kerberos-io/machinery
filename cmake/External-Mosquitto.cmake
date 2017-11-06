@@ -12,7 +12,7 @@ ExternalProject_Add(mosquitto
   INSTALL_COMMAND ""
 )
 
-set(MOSQUITTO_INCLUDE_DIR ${CMAKE_BINARY_DIR}/mosquitto/lib/cpp/)
+set(MOSQUITTO_INCLUDE_DIR ${CMAKE_BINARY_DIR}/mosquitto/lib/ ${CMAKE_BINARY_DIR}/mosquitto/lib/cpp/)
 set(MOSQUITTO_LIBRARY_DIR ${CMAKE_BINARY_DIR}/thirdparty/lib/)
 
 set(MOSQUITTO_LIBRARIES  mosquitto-cpp)

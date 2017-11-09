@@ -50,8 +50,8 @@
         machinery/io/IoMQTT.cpp
     )
 
-    set(KERBEROS_DEPENDENCIES ${KERBEROS_DEPENDENCIES} opencv restclient)
-    set(KERBEROS_LIBRARIES ${KERBEROS_LIBRARIES} ${OPENCV_LIBRARIES} ${RESTCLIENT_LIBRARIES} pthread)
+    set(KERBEROS_DEPENDENCIES ${KERBEROS_DEPENDENCIES} opencv restclient mosquitto)
+    set(KERBEROS_LIBRARIES ${KERBEROS_LIBRARIES} ${OPENCV_LIBRARIES} ${RESTCLIENT_LIBRARIES} ${MOSQUITTO_LIBRARIES} crypto ssl pthread)
 
 
 # -------------------------------------------

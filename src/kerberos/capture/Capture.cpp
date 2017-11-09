@@ -129,11 +129,13 @@ namespace kerberos
     {
         Capture * capture = (Capture *) self;
 
-        int healthCounter = capture->healthCounter.load();
+        int healthCounter = 0;
         for(;;)
         {
-            usleep(30000*1000); // every 30s.
-            LINFO << "Capture: checking health status of camera.";
+            healthCounter = capture->healthCounter.load();
+
+            usleep(5000*1000); // every 5s.
+            BINFO << "Capture: checking health status of camera.";
 
             if(healthCounter == capture->healthCounter.load())
             {
@@ -141,6 +143,11 @@ namespace kerberos
                 throw KerberosCouldNotGrabFromCamera("devices is blocking, and not grabbin any more frames.");
             }
         }
+    }
+
+    void Capture::incrementHealth()
+    {
+        healthCounter = (healthCounter.load() + 1) % 1024;
     }
 
     void Capture::startHealthThread()

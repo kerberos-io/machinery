@@ -9,7 +9,7 @@
         <privacy type="bool">false</privacy>
     </Disk>
     <Video>
-        <fps type="number">3</fps>
+        <fps type="number">30</fps>
         <recordAfter type="number">5</recordAfter>
         <maxDuration type="number">30</maxDuration>
         <extension type="number">mp4</extension>
@@ -26,17 +26,21 @@
         <pin type="number">17</pin>
         <periods type="number">1</periods>
         <periodTime type="number">100000</periodTime>
+				<throttler type="number">0</throttler>
     </GPIO>
     <TCPSocket>
         <server type="number">127.0.0.1</server>
         <port type="number">1337</port>
-        <message type="text">motion detected</message>
+        <message type="text">motion-detected</message>
+				<throttler type="number">0</throttler>
     </TCPSocket>
     <Webhook>
         <url type="text">http://localhost/api/v1/webhook</url>
+				<throttler type="number">0</throttler>
     </Webhook>
     <Script>
         <path type="text">/etc/opt/kerberosio/scripts/run.sh</path>
+				<throttler type="number">0</throttler>
     </Script>
 
 </ios>

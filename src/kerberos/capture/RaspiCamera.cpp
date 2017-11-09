@@ -51,7 +51,7 @@ void* preview_thread(void* self)
 		BINFO << "RaspiCamera: Entering preview thread.";
 		while (state.running)
 		{
-				capture->healthCounter = std::rand() % 10000;
+				capture->incrementHealth();
 
 				// Get YUV420 image from preview port, this is a blocking call
 				// If zero-copy is activated, we don't pass any buffer
@@ -198,6 +198,10 @@ namespace kerberos
 
     void RaspiCamera::open()
     {
+				LINFO << "Capture: Trying to open Raspberry Pi camera module.";
+				LINFO << "Capture: (Warning) If you see a OMX_GetHandle error, this means that you don't have a working RPi camera module attached.";
+				LINFO << "Capture: (Warning) You can change the capture device with the configuration files.";
+
 				// Initialize hardware
 				bcm_host_init();
 
@@ -249,6 +253,8 @@ namespace kerberos
 
 				pthread_create(&state.record_thid, nullptr, &record_thread, this);
 				pthread_detach(state.record_thid);
+
+				LINFO << "Capture: Succesfully opened Raspberry Pi camera module.";
     }
 
 		void RaspiCamera::stopThreads()

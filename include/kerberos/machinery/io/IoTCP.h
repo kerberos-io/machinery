@@ -10,7 +10,7 @@
 //
 //  The copyright to the computer program(s) herein
 //  is the property of Verstraeten.io, Belgium.
-//  The program(s) may be used and/or copied under 
+//  The program(s) may be used and/or copied under
 //  the CC-NC-ND license model.
 //
 //  https://doc.kerberos.io/license
@@ -28,6 +28,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include "Throttler.h"
 
 namespace kerberos
 {
@@ -38,20 +39,21 @@ namespace kerberos
             std::string m_server_ip;
             unsigned short m_port;
             std::string m_message;
-        
+            Throttler throttle;
+
         public:
             IoTCP(){};
             void setup(const StringMap & settings);
             void fire(JSON & data){};
             void disableCapture(){};
-        
+
             void setIp(const std::string server_ip){m_server_ip=server_ip;};
             const char * getIp(){return m_server_ip.c_str();};
             void setPort(const unsigned short port){m_port=port;};
             unsigned short getPort(){return m_port;};
             void setMessage(std::string message){m_message=message;};
             const char * getMessage(){return m_message.c_str();};
-        
+
             bool save(Image & image){ return true; };
             bool save(Image & image, JSON & data);
     };

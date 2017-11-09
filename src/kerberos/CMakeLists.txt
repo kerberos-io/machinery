@@ -15,6 +15,7 @@
         machinery/expositor/Expositor.cpp
         machinery/io/Io.cpp
         machinery/io/FileManager.cpp
+        machinery/io/Throttler.cpp
         Factory.cpp
         Helper.cpp
         Kerberos.cpp
@@ -46,6 +47,7 @@
         machinery/io/IoTCP.cpp
         machinery/io/IoWebhook.cpp
         machinery/io/IoScript.cpp
+        machinery/io/IoMQTT.cpp
     )
 
     set(KERBEROS_DEPENDENCIES ${KERBEROS_DEPENDENCIES} opencv restclient)

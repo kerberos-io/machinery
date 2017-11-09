@@ -1,20 +1,24 @@
 message("External project: Mosquitto")
 
-ExternalProject_Add(mosquitto 
+ExternalProject_Add(mosquitto
   GIT_REPOSITORY ${git_protocol}://github.com/eclipse/mosquitto.git
-  GIT_TAG master
+  GIT_TAG develop
   SOURCE_DIR mosquitto
-  BUILD_IN_SOURCE 1
+  BINARY_DIR mosquitto-build
   UPDATE_COMMAND ""
   PATCH_COMMAND ""
-  CONFIGURE_COMMAND ""
-  BUILD_COMMAND cd lib && make WITH_UUID=no WITH_WEBSOCKETS=no WITH_SRV=no && mkdir -p ../../thirdparty/lib/ && ar rcT ../../thirdparty/lib/libmosquitto-cpp.a libmosquitto.a cpp/mosquittopp.o
-  INSTALL_COMMAND ""
+  CMAKE_GENERATOR ${gen}
+  INSTALL_COMMAND mkdir -p ../thirdparty/lib/ && cp lib/cpp/libmosquittopp.a ../thirdparty/lib/
+  CMAKE_ARGS
+    -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_BINARY_DIR}/thirdparty
+    -DWITH_UUID=no
+    -DWITH_WEBSOCKETS=no
+    -DWITH_SRV=no
 )
 
 set(MOSQUITTO_INCLUDE_DIR ${CMAKE_BINARY_DIR}/mosquitto/lib/ ${CMAKE_BINARY_DIR}/mosquitto/lib/cpp/)
-set(MOSQUITTO_LIBRARY_DIR ${CMAKE_BINARY_DIR}/thirdparty/lib/)
+set(MOSQUITTO_LIBRARY_DIR  ${CMAKE_BINARY_DIR}/mosquitto-build/lib/cpp/)
 
-set(MOSQUITTO_LIBRARIES  mosquitto-cpp)
+set(MOSQUITTO_LIBRARIES  mosquittopp.a)
 
 include_directories(${MOSQUITTO_INCLUDE_DIR})

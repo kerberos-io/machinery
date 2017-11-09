@@ -9,7 +9,7 @@
         <privacy type="bool">false</privacy>
     </Disk>
     <Video>
-        <fps type="number">3</fps>
+        <fps type="number">30</fps>
         <recordAfter type="number">5</recordAfter>
         <maxDuration type="number">30</maxDuration>
         <extension type="number">mp4</extension>

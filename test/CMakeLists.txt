@@ -36,7 +36,7 @@
 		set(EXECUTABLE_OUTPUT_PATH ${CMAKE_SOURCE_DIR}/test/bin)
 		add_executable(kerberos-test ${TEST_SRC} ${KERBEROS_FACTORY_ENTITIES_TEMP})
 		add_dependencies(kerberos-test ${KERBEROS_TEST_DEPENDENCIES} ${KERBEROS_DEPENDENCIES})
-		target_link_libraries(kerberos-test ${KERBEROS_CORE_LIBRARY} ${KERBEROS_LIBRARIES} ${GOOGLETEST_LIBRARIES} ${GOOGLEMOCK_LIBRARIES})
+		target_link_libraries(kerberos-test ${KERBEROS_CORE_LIBRARY} ${KERBEROS_LIBRARIES} ${GOOGLETEST_LIBRARIES} ${GOOGLEMOCK_LIBRARIES} )
 		add_test(testing-kerberos ${CMAKE_SOURCE_DIR}/test/bin/kerberos-test)
 
 # ----------------------------------------------

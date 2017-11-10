@@ -50,7 +50,7 @@
   endif()
 
   add_dependencies(kerberosio rerun ${KERBEROS_DEPENDENCIES})
-  target_link_libraries(kerberosio ${KERBEROS_CORE_LIBRARY} ${KERBEROS_LIBRARIES})
+  target_link_libraries(kerberosio ${KERBEROS_CORE_LIBRARY} ${KERBEROS_LIBRARIES} )
 
 # -----------------------------------------
 # Write variables to parent CMakeLists.txt

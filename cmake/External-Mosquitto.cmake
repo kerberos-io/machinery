@@ -10,6 +10,7 @@ ExternalProject_Add(mosquitto
   CMAKE_GENERATOR ${gen}
   INSTALL_COMMAND mkdir -p ../thirdparty/lib/ && cp lib/cpp/libmosquittopp.a ../thirdparty/lib/
   CMAKE_ARGS
+    -DCMAKE_TOOLCHAIN_FILE=${CMAKE_SOURCE_DIR}/../../host/usr/share/buildroot/toolchainfile.cmake
     -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_BINARY_DIR}/thirdparty
     -DWITH_UUID=no
     -DWITH_WEBSOCKETS=no

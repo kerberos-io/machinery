@@ -2,7 +2,7 @@ message("External project: Mosquitto")
 
 ExternalProject_Add(mosquitto
   GIT_REPOSITORY ${git_protocol}://github.com/eclipse/mosquitto.git
-  GIT_TAG develop
+  GIT_TAG d3239920d789a16cb9c54c598f4fc7d5ef03f2e9
   SOURCE_DIR mosquitto
   BINARY_DIR mosquitto-build
   UPDATE_COMMAND ""

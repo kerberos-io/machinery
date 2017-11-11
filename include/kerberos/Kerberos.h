@@ -75,6 +75,7 @@ namespace kerberos
             ImageVector m_images;
             int m_captureDelayTime;
             StringMap m_parameters;
+            std::string m_name;
 
             // -----------
             // Singleton

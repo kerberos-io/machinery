@@ -92,6 +92,10 @@ namespace kerberos
     {
         JSON::AllocatorType& allocator = data.GetAllocator();
 
+        JSONValue name;
+        name.SetString(m_name.c_str(), allocator);
+        data.AddMember("name", name, allocator);
+
         JSONValue timestamp;
         timestamp.SetString(kerberos::helper::getTimestamp().c_str(), allocator);
         data.AddMember("timestamp", timestamp, allocator);
@@ -134,9 +138,13 @@ namespace kerberos
 
         LINFO << helper::printStringMap("Final configuration:", settings);
 
+        // -----------------
+        // Get instance name
+
+        m_name = settings.at("name");
+
         // -------------------------------------------
         // Check if we need to disable verbose logging
-
 
         easyloggingpp::Logger * logger = easyloggingpp::Loggers::getLogger("business");
         easyloggingpp::Configurations & config = logger->configurations();

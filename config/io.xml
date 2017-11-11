@@ -7,6 +7,7 @@
         <markWithTimestamp type="bool">false</markWithTimestamp>
         <timestampColor type="text">white</timestampColor>
         <privacy type="bool">false</privacy>
+				<throttler type="number">0</throttler>
     </Disk>
     <Video>
         <fps type="number">30</fps>
@@ -21,6 +22,7 @@
         <markWithTimestamp type="bool">false</markWithTimestamp>
         <timestampColor type="text">white</timestampColor>
         <privacy type="bool">false</privacy>
+				<throttler type="number">0</throttler>
     </Video>
     <GPIO>
         <pin type="number">17</pin>
@@ -45,12 +47,12 @@
     <MQTT>
         <secure type="bool">false</secure>
         <verifycn type="bool">false</verifycn>
-	<server type="number">127.0.0.1</server> 
+				<server type="number">127.0.0.1</server>
         <port type="number">1883</port>
-	<topic type="text">kios/mqtt</topic>
+				<topic type="text">kios/mqtt</topic>
         <username type="text"></username>
         <password type="text"></password>
-	<throttler type="number">0</throttler> 
+				<throttler type="number">0</throttler>
     </MQTT>
 
 </ios>

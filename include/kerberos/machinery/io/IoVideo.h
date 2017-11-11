@@ -23,6 +23,7 @@
 #include <time.h>
 #include <pthread.h> //for threading , link with lpthread
 #include <sys/stat.h>
+#include "Throttler.h"
 
 namespace kerberos
 {
@@ -42,6 +43,7 @@ namespace kerberos
             FileManager m_fileManager;
             std::string m_publicKey;
             std::string m_privateKey;
+            Throttler throttle;
 
         public:
             IoVideo(){};
@@ -119,6 +121,7 @@ namespace kerberos
             std::string m_hardwareDirectory;
             std::string m_path;
             std::string m_encodingBinary;
+            std::string m_currentVideoPath;
     };
 }
 #endif

@@ -21,6 +21,7 @@
 #include "mosquittopp.h"
 #include "writer.h"
 #include "Throttler.h"
+#include "base64.h"
 
 namespace kerberos
 {

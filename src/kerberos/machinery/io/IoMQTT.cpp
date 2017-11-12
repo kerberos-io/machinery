@@ -50,8 +50,18 @@ namespace kerberos
     {
         if(throttle.canExecute())
         {
+            JSON::AllocatorType& allocator = data.GetAllocator();
+
+            // -----------------------------------------------
+            // It's possible to encode the image directly, and
+            // send it over to the MQTT broker.
+
+            //JSONValue path;
+            //std::string imageEncoded = base64_encode(image.getImage().data, image.getColumns() * image.getRows());
+            //path.SetString(imageEncoded.c_str(), allocator);
+            //data.AddMember("imageEncoded", path, allocator);
+
             JSON dataCopy;
-        	  JSON::AllocatorType& allocator = dataCopy.GetAllocator();
         	  dataCopy.CopyFrom(data, allocator);
 
         	  rapidjson::StringBuffer buffer;

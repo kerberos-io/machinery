@@ -5,13 +5,13 @@
 using namespace IL;
 
 struct State {
-	Camera* camera;
-	VideoEncode* preview_encode;
-	VideoEncode* record_encode;
-	bool recording; // TODO : set this variable to true from an external thread to activate recording
-	bool running;
-	pthread_t preview_thid;
-	pthread_t record_thid;
+		Camera* camera;
+		VideoEncode* preview_encode;
+		VideoEncode* record_encode;
+		bool recording;
+		bool running;
+		pthread_t preview_thid;
+		pthread_t record_thid;
 } state = { nullptr, nullptr, nullptr, false, false };
 
 std::ofstream file;
@@ -142,14 +142,16 @@ namespace kerberos
 		{
 				try
 				{
-						if (data_length > 0) {
-							// Send it to the MJPEG encoder
-							state.preview_encode->fillInput(200, data_buffer, data_length, false, true);
+						if(data_length > 0)
+						{
+								// Send it to the MJPEG encoder
+								state.preview_encode->fillInput(200, data_buffer, data_length, false, true);
 						}
 
 						int length = 0;
-						while ( ( length = state.preview_encode->getOutputData(data, false ) ) > 0 ) {
-							mjpeg_data_length = length;
+						while((length = state.preview_encode->getOutputData(data, false)) > 0)
+						{
+								mjpeg_data_length = length;
 						}
 
 						return mjpeg_data_length;
@@ -301,11 +303,13 @@ namespace kerberos
 
 				// Write some headers
 				const std::map< uint32_t, uint8_t* > headers = state.record_encode->headers();
-				if ( headers.size() > 0 ) {
-					for ( auto hdr : headers ) {
-						file.write((char*) hdr.second, hdr.first);
-						file.flush();
-					}
+				if(headers.size() > 0)
+				{
+						for(auto hdr : headers)
+						{
+								file.write((char*) hdr.second, hdr.first);
+								file.flush();
+						}
 				}
 
 				// Enable recording

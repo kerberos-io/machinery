@@ -1,17 +1,10 @@
 //
-//  Class: IoPushbullet
-//  Description: A pushbullet class that posts to a specific URL.
-//  Created:     25/07/2015
-//  Author:      Cédric Verstraeten
-//  Mail:        cedric@verstraeten.io
-//  Website:     www.verstraeten.io
+//  Class: 	IoPushbullet
+//  Description: A pushbullet class .
+//  Created:     13/11/2017
+//  Author:      Gianrico D'Angelis
+//  Mail:        gianrico.dangelis@gmail.com
 //
-//  The copyright to the computer program(s) herein
-//  is the property of Verstraeten.io, Belgium.
-//  The program(s) may be used and/or copied under
-//  the CC-NC-ND license model.
-//
-//  https://doc.kerberos.io/license
 //
 /////////////////////////////////////////////////////
 

@@ -20,6 +20,6 @@ ExternalProject_Add(mosquitto
 set(MOSQUITTO_INCLUDE_DIR ${CMAKE_BINARY_DIR}/mosquitto/lib/ ${CMAKE_BINARY_DIR}/mosquitto/lib/cpp/)
 set(MOSQUITTO_LIBRARY_DIR  ${CMAKE_BINARY_DIR}/mosquitto-build/lib/cpp/)
 
-set(MOSQUITTO_LIBRARIES  mosquittopp.a crypto ssl)
+set(MOSQUITTO_LIBRARIES  mosquittopp.a crypto.a ssl.a)
 
 include_directories(${MOSQUITTO_INCLUDE_DIR})

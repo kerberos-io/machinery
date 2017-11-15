@@ -8,7 +8,7 @@
 //
 //  The copyright to the computer program(s) herein
 //  is the property of Verstraeten.io, Belgium.
-//  The program(s) may be used and/or copied under 
+//  The program(s) may be used and/or copied under
 //  the CC-NC-ND license model.
 //
 //  https://doc.kerberos.io/license
@@ -19,6 +19,7 @@
 #define __IoDisk_H_INCLUDED__   // #define this so the compiler knows it has been included
 
 #include "machinery/io/Io.h"
+#include "Throttler.h"
 
 namespace kerberos
 {
@@ -39,6 +40,7 @@ namespace kerberos
             bool m_createSymbol;
             Image m_mask;
             bool m_privacy;
+            Throttler throttle;
 
         public:
             IoDisk(){};

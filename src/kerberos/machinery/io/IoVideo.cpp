@@ -6,6 +6,9 @@ namespace kerberos
     {
         Io::setup(settings);
 
+        throttle.setRate(std::stoi(settings.at("ios.Video.throttler")));
+
+        m_currentVideoPath = "";
         m_writer = 0;
         m_recording = false;
         pthread_mutex_init(&m_lock, NULL);
@@ -241,108 +244,106 @@ namespace kerberos
 
     void IoVideo::fire(JSON & data)
     {
-        // ----------------------------------------------------------
-        // If a video is recording, and a new detection is coming in,
-        // we'll reset the timer. So the video is expaned.
-        // timer = ...
-
-        pthread_mutex_lock(&m_time_lock);
-        m_timeStartedRecording = (double) (cv::getTickCount() / cv::getTickFrequency());
-        pthread_mutex_unlock(&m_time_lock);
-
-        // -----------------------------------------------------
-        // Check if already recording, if not start a new video
-
-        pthread_mutex_lock(&m_release_lock);
-
-        BINFO << "IoVideo: firing";
-
-        // ------------------
-        // Check if the camera supports on board recording (camera specific),
-        // and if you want to use it. If not it will fallback on the video writer
-        // that ships with OpenCV/FFmpeg.
-
-        if(m_capture->m_onBoardRecording && m_enableHardwareEncoding)
+        if(throttle.canExecute())
         {
-            if(!m_recording)
+            // ----------------------------------------------------------
+            // If a video is recording, and a new detection is coming in,
+            // we'll reset the timer. So the video is expaned.
+            // timer = ...
+
+            pthread_mutex_lock(&m_time_lock);
+            m_timeStartedRecording = (double) (cv::getTickCount() / cv::getTickFrequency());
+            pthread_mutex_unlock(&m_time_lock);
+
+            // -----------------------------------------------------
+            // Check if already recording, if not start a new video
+
+            pthread_mutex_lock(&m_release_lock);
+
+            BINFO << "IoVideo: firing";
+
+            // ------------------
+            // Check if the camera supports on board recording (camera specific),
+            // and if you want to use it. If not it will fallback on the video writer
+            // that ships with OpenCV/FFmpeg.
+
+            if(m_capture->m_onBoardRecording && m_enableHardwareEncoding)
             {
-                // ----------------------------------------
-                // The naming convention that will be used
-                // for the image.
+                if(!m_recording)
+                {
+                    // ----------------------------------------
+                    // The naming convention that will be used
+                    // for the image.
 
-                std::string pathToVideo = getVideoFormat();
-                m_fileName = buildPath(pathToVideo, data);
-                m_path = m_hardwareDirectory + m_fileName + ".h264";
+                    std::string pathToVideo = getVideoFormat();
+                    m_fileName = buildPath(pathToVideo, data);
+                    m_path = m_hardwareDirectory + m_fileName + ".h264";
 
-                // -------------------------------------------------------
-                // Add path to JSON object, so other IO devices can use it
+                    std::string expectedPath = m_fileName + "." + m_extension;
+                    m_currentVideoPath = expectedPath;
 
-                JSONValue path;
-                JSON::AllocatorType& allocator = data.GetAllocator();
-                std::string expectedPath = m_fileName + "." + m_extension;
-                path.SetString(expectedPath.c_str(), allocator);
-                data.AddMember("pathToVideo", path, allocator);
+                    // ---------------
+                    // Start recording
 
-                // ---------------
-                // Start recording
-
-                startOnboardRecordThread();
-                m_recording = true;
+                    startOnboardRecordThread();
+                    m_recording = true;
+                }
             }
+            // Won't use as we use hardware encoding in the else branch beneath.
+            // Found a work-a-round how to use h264_omx directly with OpenCV and FFMPEG.
+            /*else if(m_capture->m_onFFMPEGrecording)
+            {
+                if(!m_recording)
+                {
+                    // ----------------------------------------
+                    // The naming convention that will be used
+                    // for the image.
+
+                    std::string pathToVideo = getVideoFormat();
+                    m_fileName = buildPath(pathToVideo, data) + "." + m_extension;
+                    m_path = m_directory + m_fileName;
+
+                    startFFMPEGRecordThread();
+                    m_recording = true;
+                }
+            }*/
+            else // Use built-in OpenCV
+            {
+                if(m_capture && m_writer == 0 && !m_recording)
+                {
+                    // ----------------------------------------
+                    // The naming convention that will be used
+                    // for the image.
+
+                    std::string pathToVideo = getVideoFormat();
+                    m_fileName = buildPath(pathToVideo, data) + "." + m_extension;
+                    m_path = m_directory + m_fileName;
+                    Image image = m_capture->retrieve();
+                    m_currentVideoPath = m_fileName;
+
+                    // ---------------
+                    // Start recording
+
+                    BINFO << "IoVideo: start new recording " << m_fileName;
+
+                    m_writer = new cv::VideoWriter();
+                    m_writer->open(m_path, m_codec, m_fps, cv::Size(image.getColumns(), image.getRows()));
+
+                    startRecordThread();
+                    m_recording = true;
+                }
+            }
+
+            // -------------------------------------------------------
+            // Add path to JSON object, so other IO devices can use it
+
+            JSONValue path;
+            JSON::AllocatorType& allocator = data.GetAllocator();
+            path.SetString(m_currentVideoPath.c_str(), allocator);
+            data.AddMember("pathToVideo", path, allocator);
+
+            pthread_mutex_unlock(&m_release_lock);
         }
-        // Won't use as we use hardware encoding in the else branch beneath.
-        // Found a work-a-round how to use h264_omx directly with OpenCV and FFMPEG.
-        /*else if(m_capture->m_onFFMPEGrecording)
-        {
-            if(!m_recording)
-            {
-                // ----------------------------------------
-                // The naming convention that will be used
-                // for the image.
-
-                std::string pathToVideo = getVideoFormat();
-                m_fileName = buildPath(pathToVideo, data) + "." + m_extension;
-                m_path = m_directory + m_fileName;
-
-                startFFMPEGRecordThread();
-                m_recording = true;
-            }
-        }*/
-        else // Use built-in OpenCV
-        {
-            if(m_capture && m_writer == 0 && !m_recording)
-            {
-                // ----------------------------------------
-                // The naming convention that will be used
-                // for the image.
-
-                std::string pathToVideo = getVideoFormat();
-                m_fileName = buildPath(pathToVideo, data) + "." + m_extension;
-                m_path = m_directory + m_fileName;
-                Image image = m_capture->retrieve();
-
-                // -------------------------------------------------------
-                // Add path to JSON object, so other IO devices can use it
-
-                JSONValue path;
-                JSON::AllocatorType& allocator = data.GetAllocator();
-                path.SetString(m_fileName.c_str(), allocator);
-                data.AddMember("pathToVideo", path, allocator);
-
-                // ---------------
-                // Start recording
-
-                BINFO << "IoVideo: start new recording " << m_fileName;
-
-                m_writer = new cv::VideoWriter();
-                m_writer->open(m_path, m_codec, m_fps, cv::Size(image.getColumns(), image.getRows()));
-
-                startRecordThread();
-                m_recording = true;
-            }
-        }
-
-        pthread_mutex_unlock(&m_release_lock);
     }
 
     void IoVideo::disableCapture()

@@ -77,6 +77,7 @@ namespace kerberos
         std::string instanceName = settings.at("name");
         setInstanceName(instanceName);
 
+        m_captureName = settings.at("capture");
         m_fps = std::atoi(settings.at("ios.Video.fps").c_str());
         m_width = std::atoi(settings.at("capture.width").c_str());
         m_height = std::atoi(settings.at("capture.height").c_str());
@@ -329,7 +330,17 @@ namespace kerberos
                     m_writer = new cv::VideoWriter();
                     m_writer->open(m_path, m_codec, m_fps, cv::Size(image.getColumns(), image.getRows()));
 
-                    startRecordThread();
+                    // ---------------
+                    // Todo write expl.
+                    if(m_captureName == "IPCamera")
+                    {
+                        startRecordThread();
+                    }
+                    else
+                    {
+                        startSyncRecordThread();
+                    }
+
                     m_recording = true;
                 }
             }
@@ -655,6 +666,109 @@ namespace kerberos
         BINFO << "IoVideo: unlocking write thread";
     }
 
+    // -------------------------------------------
+    // Function ran in a thread, which records for
+    // a specific amount of time.
+
+    void * recordSyncContinuously(void * self)
+    {
+        IoVideo * video = (IoVideo *) self;
+
+        double tickFrequency = cv::getTickFrequency();
+        double cronoPause = (double)cvGetTickCount();
+        double cronoFPS = cronoPause;
+        double cronoTime = (double) (cv::getTickCount() / tickFrequency);
+        double timeToSleep = 0;
+        double startedRecording = cronoTime;
+        double fpsToTime = 1. / video->m_fps;
+
+        BINFO << "IoVideo (OpenCV): start writing images";
+
+        pthread_mutex_lock(&video->m_write_lock);
+
+        BINFO << "IoVideo: locked write thread";
+
+        pthread_mutex_lock(&video->m_time_lock);
+        double timeToRecord = video->m_timeStartedRecording + video->m_recordingTimeAfter;
+        pthread_mutex_unlock(&video->m_time_lock);
+
+        try
+        {
+            while(cronoTime < timeToRecord
+                && cronoTime - startedRecording <= video->m_maxDuration) // lower than max recording time (especially for memory)
+            {
+                cronoFPS = (double) cv::getTickCount();
+
+                // -----------------------------
+                // Write the frames to the video
+
+                video->m_writer->write(video->m_capture->retrieve().getImage());
+                BINFO << "IoVideo: writing image";
+
+                // update time to record; (locking)
+                pthread_mutex_lock(&video->m_time_lock);
+                timeToRecord = video->m_timeStartedRecording + video->m_recordingTimeAfter;
+                pthread_mutex_unlock(&video->m_time_lock);
+
+                cronoPause = (double) cv::getTickCount();
+                cronoTime = cronoPause / tickFrequency;
+                timeToSleep = fpsToTime - ((cronoPause - cronoFPS) / tickFrequency);
+
+                if(timeToSleep > 0)
+                {
+                    usleep(timeToSleep * 1000 * 1000);
+                }
+                else
+                {
+                    BINFO << "IoVideo: framerate is too fast, can't record video at this speed (" << video->m_fps << "/FPS)";
+                }
+            }
+        }
+        catch(cv::Exception & ex)
+        {
+            pthread_mutex_unlock(&video->m_lock);
+            pthread_mutex_unlock(&video->m_time_lock);
+            LERROR << ex.what();
+        }
+
+        BINFO << "IoVideo: end writing images";
+
+        pthread_mutex_lock(&video->m_release_lock);
+
+        try
+        {
+            if(video->m_writer)
+            {
+                if(video->m_writer->isOpened())
+                {
+                    video->m_writer->release();
+                }
+                delete video->m_writer;
+                video->m_writer = 0;
+            }
+            video->m_recording = false;
+
+            if(video->m_createSymbol)
+            {
+                std::string link = SYMBOL_DIRECTORY + video->m_fileName;
+                std::string pathToVideo = video->m_directory + video->m_fileName;
+                symlink(pathToVideo.c_str(), link.c_str());
+            }
+        }
+        catch(cv::Exception & ex)
+        {
+            LERROR << ex.what();
+        }
+
+
+        BINFO << "IoVideo: remove videowriter";
+
+        pthread_mutex_unlock(&video->m_release_lock);
+        pthread_mutex_unlock(&video->m_write_lock);
+
+        BINFO << "IoVideo: unlocking write thread";
+    }
+
     void IoVideo::drawDateOnImage(Image & image, std::string timestamp)
     {
         if(m_drawTimestamp)
@@ -787,6 +901,17 @@ namespace kerberos
     void IoVideo::stopRecordThread()
     {
         pthread_cancel(m_recordThread);
+    }
+
+    void IoVideo::startSyncRecordThread()
+    {
+        pthread_create(&m_recordSyncThread, NULL, recordSyncContinuously, this);
+        pthread_detach(m_recordSyncThread);
+    }
+
+    void IoVideo::stopSyncRecordThread()
+    {
+        pthread_cancel(m_recordSyncThread);
     }
 
     void IoVideo::startRetrieveThread()

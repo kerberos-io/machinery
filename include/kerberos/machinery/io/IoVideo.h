@@ -89,7 +89,6 @@ namespace kerberos
             pthread_mutex_t m_write_lock;
             pthread_mutex_t m_release_lock;
             pthread_t m_recordThread;
-            pthread_t m_recordSyncThread;
             pthread_t m_retrieveThread;
             pthread_t m_recordOnboardThread;
             pthread_t m_recordOnFFMPEGThread;
@@ -103,8 +102,6 @@ namespace kerberos
             void stopFFMPEGRecordThread();
             void startRecordThread();
             void stopRecordThread();
-            void startSyncRecordThread();
-            void stopSyncRecordThread();
             void startRetrieveThread();
             void stopRetrieveThread();
             Image getImage();
@@ -125,7 +122,6 @@ namespace kerberos
             std::string m_path;
             std::string m_encodingBinary;
             std::string m_currentVideoPath;
-            std::string m_captureName;
     };
 }
 #endif

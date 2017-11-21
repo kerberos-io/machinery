@@ -9,6 +9,7 @@ namespace kerberos
         int deviceNumber = std::atoi(settings.at("captures.USBCamera.deviceNumber").c_str());
         int angle = std::atoi(settings.at("captures.USBCamera.angle").c_str());
         int delay = std::atoi(settings.at("captures.USBCamera.delay").c_str());
+        std::string fourcc = settings.at("captures.USBCamera.fourcc");
 
         // Initialize executor (update the usb camera at specific times).
         tryToUpdateCapture.setAction(this, &USBCamera::update);
@@ -20,6 +21,7 @@ namespace kerberos
         setRotation(angle);
         setDelay(delay);
         setDeviceNumber(deviceNumber);
+        setFourcc(fourcc);
 
         // Initialize USB Camera
         open();
@@ -112,7 +114,7 @@ namespace kerberos
         {
             m_camera->set(CV_CAP_PROP_FRAME_WIDTH, m_frameWidth);
             m_camera->set(CV_CAP_PROP_FRAME_HEIGHT, m_frameHeight);
-            m_camera->set(CV_CAP_PROP_FOURCC ,CV_FOURCC('Y', 'U', 'Y', 'V') );
+            m_camera->set(CV_CAP_PROP_FOURCC, CV_FOURCC(m_fourcc[0], m_fourcc[1], m_fourcc[2], m_fourcc[3]));
         }
         catch(cv::Exception & ex)
         {

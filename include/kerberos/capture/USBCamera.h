@@ -30,6 +30,7 @@ namespace kerberos
             cv::VideoCapture * m_camera;
             Executor<USBCamera> tryToUpdateCapture;
             int m_deviceNumber;
+            std::string m_fourcc;
 
         public:
             USBCamera()
@@ -52,6 +53,8 @@ namespace kerberos
             void setDelay(int msec){Capture::setDelay(msec);}
             void setDeviceNumber(int number){m_deviceNumber=number;}
             int getDeviceNumber(){return m_deviceNumber;}
+            void setFourcc(std::string fourcc){m_fourcc=fourcc;}
+            std::string getFourcc(){return m_fourcc;}
 
             void grab();
             Image retrieve();

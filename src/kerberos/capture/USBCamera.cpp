@@ -112,7 +112,7 @@ namespace kerberos
         {
             m_camera->set(CV_CAP_PROP_FRAME_WIDTH, m_frameWidth);
             m_camera->set(CV_CAP_PROP_FRAME_HEIGHT, m_frameHeight);
-            m_camera->set(CV_CAP_PROP_FOURCC ,CV_FOURCC('Y', 'U', 'V', 'Y') );
+            m_camera->set(CV_CAP_PROP_FOURCC ,CV_FOURCC('Y', 'U', 'Y', 'V') );
         }
         catch(cv::Exception & ex)
         {

@@ -48,6 +48,7 @@ namespace kerberos
             void setPublicKey(std::string key);
             void setPrivateKey(std::string key);
 
+            std::vector<std::string> convertMediaInfoToAWSResourceHeaders(std::string path, std::string fileFormat);
             bool upload(std::string pathToImage);
             bool doesExist(std::string pathToImage);
             std::string authorize(const std::string request);

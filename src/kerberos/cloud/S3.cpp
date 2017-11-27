@@ -58,6 +58,89 @@ namespace kerberos
         return stringBuffer;
     }
 
+    // ----------------------------------
+    // Convert information to AWS headers
+    // Important: headers need to be sorted, as AWS expect this.
+    // otherwise the request is invalid.
+
+    std::vector<std::string> S3::convertMediaInfoToAWSResourceHeaders(std::string path, std::string fileFormat)
+    {
+        std::vector<std::string> tokens;
+        helper::tokenize(path, tokens, "/");
+        std::string fileName = tokens[tokens.size()-1];
+
+        std::vector<std::string> extensions;
+        helper::tokenize(fileName, extensions, ".");
+
+        // ------------------------------------------------
+        // Machine and video/image specific metadata
+
+        std::vector<std::string> canonicalizedAmzHeaders;
+        canonicalizedAmzHeaders.push_back("x-amz-meta-capture:" + m_parameters.at("capture"));
+        canonicalizedAmzHeaders.push_back("x-amz-meta-productid:" + m_productKey);
+        canonicalizedAmzHeaders.push_back("x-amz-meta-uploadtime:" + getDate());
+
+        if(extensions[1] == "mp4")
+        {
+            std::string probingBinary = "ffprobe";
+            if(!system("which avconv > /dev/null 2>&1"))
+            {
+                probingBinary = "avprobe";
+            }
+
+            std::string fps = helper::GetStdoutFromCommand(probingBinary + "  -v 0 -of csv=p=0 -select_streams 0 -show_entries stream=r_frame_rate " + path);
+            fps = helper::removeUnwantedChars(fps);
+            canonicalizedAmzHeaders.push_back("x-amz-meta-video-fps:" + fps);
+
+            std::string duration = helper::GetStdoutFromCommand(probingBinary + " -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 " + path);
+            duration = helper::removeUnwantedChars(duration);
+            canonicalizedAmzHeaders.push_back("x-amz-meta-video-duration:" + duration);
+        }
+
+        // ------------------------------------------------
+        // Get event info from filename (using fileFormat) and convert it
+        // to x-amz-meta headers which are stored in the S3 object.
+        // timestamp_microseconds_instanceName_regionCoordinates_numberOfChanges_token.jpg
+        // The idea is that we not longer store data into the file name, but
+        // store them in the metadata key-value store of the S3 object.
+
+        std::vector<std::string> formatNameTokens;
+        helper::tokenize(fileFormat, formatNameTokens, ".");
+
+        std::vector<std::string> fileFormatTokens;
+        helper::tokenize(formatNameTokens[0], fileFormatTokens, "_");
+        std::vector<std::string> fileFormatTokensSorted = fileFormatTokens;
+        std::sort(fileFormatTokensSorted.begin(), fileFormatTokensSorted.end());
+
+        std::vector<std::string> mediaValues;
+        helper::tokenize(extensions[0], mediaValues, "_");
+
+        for(int i = 0; i < fileFormatTokensSorted.size(); i++)
+        {
+            std::string element = fileFormatTokensSorted[i];
+
+            std::vector<std::string>::iterator it = std::find(fileFormatTokens.begin(), fileFormatTokens.end(), element);
+            int position = distance(fileFormatTokens.begin(), it);
+
+            for (int i=0; element[i]; i++) element[i] = tolower(element[i]);
+
+            canonicalizedAmzHeaders.push_back("x-amz-meta-event-" + element + ":" + mediaValues[position]);
+        }
+
+        // ----------------------------------------------
+        // Before send the headers, we need to sort them!
+
+        std::sort(canonicalizedAmzHeaders.begin(), canonicalizedAmzHeaders.end());
+
+        for(int i = 0; i < canonicalizedAmzHeaders.size(); i++)
+        {
+            LINFO << canonicalizedAmzHeaders[i];
+        }
+
+        return canonicalizedAmzHeaders;
+    }
+
+
     bool S3::upload(std::string pathToImage)
     {
         std::vector<std::string> headers;
@@ -79,14 +162,30 @@ namespace kerberos
         std::vector<std::string> extensions;
         helper::tokenize(fileName, extensions, ".");
         std::string extension = helper::urlencode(extensions[extensions.size()-1]);
+        std::string fileFormat = "";
         if(extension == "mp4")
         {
             contentType = "video/mp4";
+            fileFormat = m_parameters.at("ios.Video.fileFormat");
+        }
+        else
+        {
+            fileFormat = m_parameters.at("ios.Disk.fileFormat");
         }
 
         headers.push_back("Content-Type: " + contentType);
 
-        // folder
+        // Constructing amzHeader object
+        std::string canonicalizedAmzHeadersString = "";
+        std::vector<std::string> canonicalizedAmzHeaders = convertMediaInfoToAWSResourceHeaders(pathToImage, fileFormat);
+        for(int i = 0; i < canonicalizedAmzHeaders.size(); i++)
+        {
+            std::string amzHeader = canonicalizedAmzHeaders[i];
+            headers.push_back(amzHeader);
+            canonicalizedAmzHeadersString += amzHeader + "\n";
+        }
+
+        // AWS S3 Folder
         std::string folder = (m_folder == "") ? "" : m_folder + "/";
 
         // Authorize request
@@ -94,6 +193,7 @@ namespace kerberos
         request += "\n";
         request += contentType + "\n";
         request += date + "\n";
+        request += canonicalizedAmzHeadersString;
         request += "/" + m_bucket + "/" + folder + fileName;
         headers.push_back("Authorization: " + authorize(request));
 

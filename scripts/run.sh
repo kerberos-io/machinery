@@ -18,5 +18,5 @@ JSON=$1
 
 name=$(echo $JSON | python -c "import sys, json; print json.load(sys.stdin)['instanceName']")
 coordinates=$(echo $JSON | python -c "import sys, json; print json.load(sys.stdin)['regionCoordinates']")
-changes=$(echo $JSON | pythfon -c "import sys, json; print json.load(sys.stdin)['numberOfChanges']")
+changes=$(echo $JSON | python -c "import sys, json; print json.load(sys.stdin)['numberOfChanges']")
 image=$(echo $JSON | python -c "import sys, json; print json.load(sys.stdin)['pathToImage']")

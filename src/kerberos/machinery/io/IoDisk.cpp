@@ -275,5 +275,7 @@ namespace kerberos
 
             return m_fileManager.save(image, pathToImage, m_createSymbol);
         }
+
+        return true;
     }
 }

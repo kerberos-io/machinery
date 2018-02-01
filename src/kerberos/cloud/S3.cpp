@@ -204,23 +204,14 @@ namespace kerberos
         std::vector<std::string> body;
         body.push_back(pathToImage);
 
-        // Execute get operation
-        bool uploaded = put(url, headers, body);
+        // Execute HEAD operation
+        bool uploaded = put(pathToImage, url, headers, body);
 
-        if(uploaded)
-        {
-            // Check if file really was uploaded.
-            // We'll query the S3 bucket and check if it's there.
-            return doesExist(pathToImage);
-        }
-        else
-        {
-            return false;
-        }
+        return uploaded;
     }
 
 
-    bool S3::put(const std::string & url, const std::vector<std::string> & headers, const std::vector<std::string> & body)
+    bool S3::put(const std::string & pathToImage, const std::string & url, const std::vector<std::string> & headers, const std::vector<std::string> & body)
     {
         // If no credentials are set do nothing..
         if(m_bucket == "" || m_folder == "" || m_privateKey == "" || m_publicKey == "") return false;
@@ -272,7 +263,22 @@ namespace kerberos
             curl_slist_free_all(httpHeaders);
             fclose(fd);
 
-            return (http_code == 200 && result != CURLE_ABORTED_BY_CALLBACK);
+            if(http_code == 200 && result != CURLE_ABORTED_BY_CALLBACK) {
+
+              // Check if file really was uploaded.
+              // We'll query the S3 bucket and check if it's there.
+
+              return doesExist(pathToImage);
+
+            }
+            else if (http_code == 403) {
+
+              // User is not allowed to push with these credentials.
+              // We remove the symbol.
+
+              return true;
+
+            }
         }
 
         return false;

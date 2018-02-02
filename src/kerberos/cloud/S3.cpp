@@ -78,6 +78,7 @@ namespace kerberos
         std::vector<std::string> canonicalizedAmzHeaders;
         canonicalizedAmzHeaders.push_back("x-amz-meta-capture:" + m_parameters.at("capture"));
         canonicalizedAmzHeaders.push_back("x-amz-meta-productid:" + m_productKey);
+        canonicalizedAmzHeaders.push_back("x-amz-meta-publickey:" + m_publicKey);
         canonicalizedAmzHeaders.push_back("x-amz-meta-uploadtime:" + getDate());
 
         if(extensions[1] == "mp4")

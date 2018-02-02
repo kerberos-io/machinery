@@ -8,7 +8,7 @@ ExternalProject_Add(mosquitto
   UPDATE_COMMAND ""
   PATCH_COMMAND ""
   CMAKE_GENERATOR ${gen}
-  INSTALL_COMMAND mkdir -p ../thirdparty/lib/ && cp lib/cpp/libmosquittopp.a ../thirdparty/lib/
+  INSTALL_COMMAND mkdir -p ../thirdparty/lib/ && cp lib/cpp/libmosquittopp.a ../thirdparty/lib/ && cp lib/libmosquitto.a ../thirdparty/lib/
   CMAKE_ARGS
     -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_BINARY_DIR}/thirdparty
     -DWITH_WEBSOCKETS=OFF

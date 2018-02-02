@@ -2,7 +2,7 @@ message("External project: Mosquitto")
 
 ExternalProject_Add(mosquitto
   GIT_REPOSITORY ${git_protocol}://github.com/eclipse/mosquitto.git
-  GIT_TAG d3239920d789a16cb9c54c598f4fc7d5ef03f2e9
+  GIT_TAG ff55499725e8ae5cf4ab6a441541f0a6d1fe30f1
   SOURCE_DIR mosquitto
   BINARY_DIR mosquitto-build
   UPDATE_COMMAND ""
@@ -11,9 +11,9 @@ ExternalProject_Add(mosquitto
   INSTALL_COMMAND mkdir -p ../thirdparty/lib/ && cp lib/cpp/libmosquittopp.a ../thirdparty/lib/
   CMAKE_ARGS
     -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_BINARY_DIR}/thirdparty
-    -DWITH_UUID=no
-    -DWITH_WEBSOCKETS=no
-    -DWITH_SRV=no
+    -DWITH_WEBSOCKETS=OFF
+    -DWITH_SRV=OFF
+    -DWITH_STATIC_LIBRARIES=ON
 )
 
 set(MOSQUITTO_INCLUDE_DIR ${CMAKE_BINARY_DIR}/mosquitto/lib/ ${CMAKE_BINARY_DIR}/mosquitto/lib/cpp/)

@@ -34,12 +34,14 @@
 #include <sys/stat.h>
 #include <sstream>
 #include <cctype>
+#include <fstream>
 #include <algorithm>
 
 namespace kerberos
 {
     namespace helper
     {
+        int getFilesize(std::string filename);
         void getFilesInDirectory(std::vector<std::string> &out, const std::string &directory);
         std::string urlencode(const std::string &value);
         const char * getValueByKey(kerberos::StringMap & map, const std::string & key);

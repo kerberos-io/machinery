@@ -45,7 +45,7 @@ namespace kerberos
 
             pthread_t m_uploadThread;
             bool m_uploadThread_running;
-            
+
             pthread_t m_healthThread;
             bool m_healthThread_running;
 
@@ -59,6 +59,7 @@ namespace kerberos
             std::string m_user;
             std::string m_publicKey;
             std::string m_privateKey;
+            StringMap m_parameters;
             RestClient::Connection * cloudConnection;
             RestClient::Connection * pollConnection;
 
@@ -99,6 +100,10 @@ namespace kerberos
             };
             void setCloudCredentials(std::string user, std::string publicKey, std::string privateKey);
 
+            void setParameters(StringMap & parameters)
+            {
+                m_parameters = parameters;
+            };
     };
 
     template<const char * Alias, typename Class>

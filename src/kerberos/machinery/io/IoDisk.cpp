@@ -147,7 +147,7 @@ namespace kerberos
 
             tstruct = *localtime(&now);
             strftime(buf, sizeof(buf), timeformat, &tstruct);
-
+            cv::rectangle(image.getImage(), cv::Point(7,16), cv::Point(200,37), CV_RGB(0,0,0), CV_FILLED);
             cv::putText(image.getImage(), buf, cv::Point(10,30), cv::FONT_HERSHEY_SIMPLEX, 0.5, getTimestampColor());
         }
     }
@@ -275,5 +275,7 @@ namespace kerberos
 
             return m_fileManager.save(image, pathToImage, m_createSymbol);
         }
+
+        return true;
     }
 }

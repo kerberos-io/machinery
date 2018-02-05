@@ -12,6 +12,7 @@ namespace kerberos
         m_max = 256000;
         m_interval = m_min;
 
+        setParameters(settings);
         setConfigurationPath(settings.at("configuration"));
         setName(settings.at("name"));
         setCapture(settings.at("capture"));
@@ -86,11 +87,11 @@ namespace kerberos
                 if(hasBeenUploaded)
                 {
                     unlink(file.c_str()); // remove symbol link
-                    m_interval = m_min; // reset interval
+                    //m_interval = m_min; // reset interval
                 }
                 else
                 {
-                    m_interval = (m_interval * 2 < m_max) ? m_interval * 2 : m_max; // update interval exponential.
+                    //m_interval = (m_interval * 2 < m_max) ? m_interval * 2 : m_max; // update interval exponential.
                     break;
                 }
 

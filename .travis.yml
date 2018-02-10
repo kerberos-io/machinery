@@ -31,12 +31,14 @@ notifications:
 after_success:
     - if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then
         cd ../docker;
-        docker login -e="$DOCKER_EMAIL" -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
+        docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
         if [ "$TRAVIS_BRANCH" == "master" ]; then
-            docker build -t kerberos/machinery:latest .;
+            docker build -t machinery .;
+            docker tag machinery kerberos/machinery:latest;
             docker push kerberos/machinery:latest;
         else
-            docker build --build-arg APP_ENV="$TRAVIS_BRANCH" -t kerberos/machinery:$TRAVIS_BRANCH .;
+            docker build --build-arg APP_ENV="$TRAVIS_BRANCH" -t machinery .;
+            docker tag machinery kerberos/machinery:$TRAVIS_BRANCH;
             docker push kerberos/machinery:$TRAVIS_BRANCH;
         fi
       fi

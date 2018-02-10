@@ -81,23 +81,6 @@ namespace kerberos
         canonicalizedAmzHeaders.push_back("x-amz-meta-publickey:" + m_publicKey);
         canonicalizedAmzHeaders.push_back("x-amz-meta-uploadtime:" + getDate());
 
-        if(extensions[1] == "mp4")
-        {
-            std::string probingBinary = "ffprobe";
-            if(!system("which avconv > /dev/null 2>&1"))
-            {
-                probingBinary = "avprobe";
-            }
-
-            std::string fps = helper::GetStdoutFromCommand(probingBinary + "  -v 0 -of csv=p=0 -select_streams 0 -show_entries stream=r_frame_rate " + path);
-            fps = helper::removeUnwantedChars(fps);
-            canonicalizedAmzHeaders.push_back("x-amz-meta-video-fps:" + fps);
-
-            std::string duration = helper::GetStdoutFromCommand(probingBinary + " -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 " + path);
-            duration = helper::removeUnwantedChars(duration);
-            canonicalizedAmzHeaders.push_back("x-amz-meta-video-duration:" + duration);
-        }
-
         // ------------------------------------------------
         // Get event info from filename (using fileFormat) and convert it
         // to x-amz-meta headers which are stored in the S3 object.

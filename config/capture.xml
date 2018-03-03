@@ -13,6 +13,7 @@
         <frameWidth type="number">640</frameWidth>
         <frameHeight type="number">480</frameHeight>
         <deviceNumber type="number">0</deviceNumber>
+        <fourcc type="text">MJPG</fourcc>
         <delay type="number">500</delay>
         <angle type="number">0</angle>
     </USBCamera>

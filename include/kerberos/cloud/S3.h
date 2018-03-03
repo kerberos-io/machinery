@@ -48,11 +48,12 @@ namespace kerberos
             void setPublicKey(std::string key);
             void setPrivateKey(std::string key);
 
+            std::vector<std::string> convertMediaInfoToAWSResourceHeaders(std::string path, std::string fileFormat);
             bool upload(std::string pathToImage);
             bool doesExist(std::string pathToImage);
             std::string authorize(const std::string request);
             std::string getDate();
-            bool put(const std::string & url, const std::vector<std::string> & headers, const std::vector<std::string> & body);
+            bool put(const std::string & pathToImage, const std::string & url, const std::vector<std::string> & headers, const std::vector<std::string> & body);
             bool head(const std::string & url, const std::vector<std::string> & headers);
             static size_t write(void *contents, size_t size, size_t nmemb, void *userp);
             static size_t reader(void *ptr, size_t size, size_t nmemb, FILE *stream);

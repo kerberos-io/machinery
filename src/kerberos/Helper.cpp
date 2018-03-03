@@ -4,6 +4,14 @@ namespace kerberos
 {
     namespace helper
     {
+        int getFilesize(std::string filename)
+        {
+            std::ifstream file( filename, std::ios::binary | std::ios::ate );
+            size_t fileSize = file.tellg();
+            file.close();
+            return fileSize;
+        }
+
         void getFilesInDirectory(std::vector<std::string> &out, const std::string &directory)
         {
             DIR *dir;

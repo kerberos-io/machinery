@@ -29,6 +29,7 @@ namespace kerberos
             std::string m_pbToken;
             RestClient::Connection * pushbulletConnection;
             Throttler throttle;
+	    FileManager m_fileManager;
 
         public:
             IoPushbullet(){};
@@ -49,6 +50,8 @@ namespace kerberos
 
             bool save(Image & image){ return true; };
             bool save(Image & image, JSON & data);
+
+	    bool pbUploadImage(std::string tmpFile, std::string upUrl);
     };
 }
 #endif

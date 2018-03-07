@@ -63,37 +63,42 @@ namespace kerberos
 
 	    std::string upUrl ;
 	    std::string fileUrl ;
+	    RestClient::Response r;
 	    
 	    /*
 	     * Step 1 : save file to tmp and provide  path in a string var
 	     */
 	    	std::string tmpFile = "/tmp/detection.jpg";
-	    /*
-	     * Step 2 : create push for file
-	     */
+		if(image.save(tmpFile))
+		{
 
-            RestClient::Response r = pushbulletConnection->post("/v2/upload-request", "{\"file_name\":\"detection.jpg\",\"file_type\":\"image/jpeg\"}");
-	
-	    if(r.code == 200){
-	    	pbResp.Parse(r.body.c_str());
-	    	upUrl = pbResp["upload_url"].GetString();
-	    	fileUrl = pbResp["file_url"].GetString();
-	    	BINFO << "IoPushbullet: response to upload request " + r.body;
+		    /*
+		     * Step 2 : create push for file
+		     */
 
-	    	/*
-	     	* Step 3 : upload file to pushbullet
-	     	*/
-	    	if (pbUploadImage(tmpFile, upUrl)) {	
+		    r = pushbulletConnection->post("/v2/upload-request", "{\"file_name\":\"detection.jpg\",\"file_type\":\"image/jpeg\"}");
+		
+		    if(r.code == 200){
+			pbResp.Parse(r.body.c_str());
+			upUrl = pbResp["upload_url"].GetString();
+			fileUrl = pbResp["file_url"].GetString();
+			BINFO << "IoPushbullet: response to upload request " + r.body;
 
-	    	/*
-	     	* Step 4 : create text push for detection
-	     	*/
-	     		r = pushbulletConnection->post("/v2/pushes", "{\"type\":\"file\",\"file_url\":\""+ fileUrl +"\"}");
-			if(r.code==200)	
-	     			BINFO << "IoPushbullet: response to push file request " + r.body ;
+			/*
+			* Step 3 : upload file to pushbullet
+			*/
+			if (pbUploadImage(tmpFile, upUrl)) {	
+
+			/*
+			* Step 4 : create text push for detection
+			*/
+				r = pushbulletConnection->post("/v2/pushes", "{\"type\":\"file\",\"file_url\":\""+ fileUrl +"\"}");
+				if(r.code==200)	
+					BINFO << "IoPushbullet: response to push file request " + r.body ;
+		    	}
+
+	     	   }		
 		}
-
-	     }	
             // -------------------
             // Send a message  to pushbullet
 

@@ -29,7 +29,6 @@ namespace kerberos
             std::string m_pbToken;
             RestClient::Connection * pushbulletConnection;
             Throttler throttle;
-	    FileManager m_fileManager;
 
         public:
             IoPushbullet(){};

@@ -12,8 +12,8 @@
 
 Below you can find a list of cameras that users confirmed working properly. Do you have a working camera missing from this list? Report your camera [**here**](https://github.com/kerberos-io/machinery/issues/136).
 
-[x] Raspberry Pi Camera v1.3
-[x] Raspberry Pi Camera v2
+- [x] Raspberry Pi Camera v1.3
+- [x] Raspberry Pi Camera v2
 
 # CC-NC-ND license
 

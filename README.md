@@ -19,7 +19,7 @@ Below you can find a list of cameras that users confirmed working properly. Do y
 
 THE WORK (AS DEFINED BELOW) IS PROVIDED UNDER THE TERMS OF THIS CREATIVE COMMONS PUBLIC LICENSE ("CCPL" OR "LICENSE"). THE WORK IS PROTECTED BY COPYRIGHT AND/OR OTHER APPLICABLE LAW. ANY USE OF THE WORK OTHER THAN AS AUTHORIZED UNDER THIS LICENSE OR COPYRIGHT LAW IS PROHIBITED.
 
-More information [**about this license**](https://doc.kerberos.io/license).
+More information [**about this license**](https://doc.kerberos.io/2.0/license).
 
 ## Why Kerberos.io?
 

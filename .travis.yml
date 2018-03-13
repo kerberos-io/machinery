@@ -13,15 +13,19 @@ before_install:
 - sudo apt-get install x264 v4l-utils
 script: mkdir build && cd build && cmake .. && make && make check && sudo make install
 notifications:
-  recipients:
-  - hello@cedric.ws
   email:
+    recipients:
+      - cedric@verstraeten.io
     on_success: always
     on_failure: always
-  irc: chat.freenode.net#kerberos.io
+  irc:
+    channels:
+      - chat.freenode.net#kerberos.io
+    on_success: always
+    on_failure: always
   slack:
     rooms:
-      secure: al5feIEwM2uhvRtvhoYpr3+lwzyQcAqAMWuGR4TTVq/11J0EcSDMpGskmgFsrIsOC+9BxxplxmGWSWMaKEbWzLT9RcUw6PsKOhUjtuoWz1RA1NwoJ/KNAnTJaxvVnoIhtNNqhnMvhhgofkFVAH+n/qg4n2kq5zpnSfeU3XJaWvc=
+      secure: pBC48TUzwFhXs2maG9a+Sd0+P3OBAS0vXi4xSraIrk0IBJCQjwH+yu3/RFT0nzCrltWuLr6e+iGtnBAl8P3QuijaNaBNJly5m1LI+Z4iGH2KzUdX/2wBOP+ALsv+mXnM3ORguBwcrMDpXMaH7UDcVQARoPxvK35Opr1RKPuQtLo=
     on_success: always
     on_failure: always
 after_success:

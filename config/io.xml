@@ -53,7 +53,7 @@
 	<throttler type="number">0</throttler> 
     </MQTT>
     <Pushbullet>
-	 <url type="text">https://api.pushbullet.com/v2/pushes</url>
+	 <url type="text">https://api.pushbullet.com</url>
         <token type="text">o.mC5LPVCvPCphtSsEgWZQpFM86w9ciWQ3</token>
 	<throttler type="number">10</throttler> 
     </Pushbullet>

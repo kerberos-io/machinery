@@ -3,46 +3,39 @@ branches:
     - buildroot-patch
 
 sudo:
-    - false
-
+- false
 os:
-    - linux
-
+- linux
 language:
-    - cpp
-
+- cpp
 services:
-    - docker
-    
+- docker
 compiler:
-    - gcc
-
+- gcc
 before_install:
-    - sudo apt-get update
-    - sudo apt-get install x264 v4l-utils
-
-script:
-    mkdir build && cd build && cmake .. && make && make check && sudo make install
-
+- sudo apt-get update
+- sudo apt-get install x264 v4l-utils
+script: mkdir build && cd build && cmake .. && make && make check && sudo make install
 notifications:
+  email:
     recipients:
-        - hello@cedric.ws
-    irc: "chat.freenode.net#kerberos.io"
-    email:
-        on_success: always
-        on_failure: always
-
+      - cedric@verstraeten.io
+    on_success: always
+    on_failure: always
+  irc:
+    channels:
+      - chat.freenode.net#kerberos.io
+    on_success: always
+    on_failure: always
+  slack:
+    rooms:
+      secure: pBC48TUzwFhXs2maG9a+Sd0+P3OBAS0vXi4xSraIrk0IBJCQjwH+yu3/RFT0nzCrltWuLr6e+iGtnBAl8P3QuijaNaBNJly5m1LI+Z4iGH2KzUdX/2wBOP+ALsv+mXnM3ORguBwcrMDpXMaH7UDcVQARoPxvK35Opr1RKPuQtLo=
+    on_success: always
+    on_failure: always
 after_success:
-    - if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then
-        cd ../docker;
-        docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
-        if [ "$TRAVIS_BRANCH" == "master" ]; then
-            docker build -t machinery .;
-            docker tag machinery kerberos/machinery:latest;
-            docker push kerberos/machinery:latest;
-        else
-            docker build --build-arg APP_ENV="$TRAVIS_BRANCH" -t machinery .;
-            docker tag machinery kerberos/machinery:$TRAVIS_BRANCH;
-            docker push kerberos/machinery:$TRAVIS_BRANCH;
-        fi
-      fi
+- if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then cd ../docker; docker login -u="$DOCKER_USERNAME"
+  -p="$DOCKER_PASSWORD"; if [ "$TRAVIS_BRANCH" == "master" ]; then docker build -t
+  machinery .; docker tag machinery kerberos/machinery:latest; docker push kerberos/machinery:latest;
+  else docker build --build-arg APP_ENV="$TRAVIS_BRANCH" -t machinery .; docker tag
+  machinery kerberos/machinery:$TRAVIS_BRANCH; docker push kerberos/machinery:$TRAVIS_BRANCH;
+  fi fi

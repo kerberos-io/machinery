@@ -15,19 +15,16 @@ script: mkdir build && cd build && cmake .. && make && make check && sudo make i
 notifications:
   email:
     recipients:
-      - cedric@verstraeten.io
+    - cedric@verstraeten.io
     on_success: always
     on_failure: always
   irc:
     channels:
-      - chat.freenode.net#kerberos.io
+    - chat.freenode.net#kerberos.io
     on_success: always
     on_failure: always
   slack:
-    rooms:
-      secure: pBC48TUzwFhXs2maG9a+Sd0+P3OBAS0vXi4xSraIrk0IBJCQjwH+yu3/RFT0nzCrltWuLr6e+iGtnBAl8P3QuijaNaBNJly5m1LI+Z4iGH2KzUdX/2wBOP+ALsv+mXnM3ORguBwcrMDpXMaH7UDcVQARoPxvK35Opr1RKPuQtLo=
-    on_success: always
-    on_failure: always
+    secure: NuArqSKx18HzjhX1il38z3Kz348WyG0RVUNCLuLWeQpPvGI4UizA4Qo+XoLHKkaPT5JtROd09UOYZtqbQNAdeHY3xNZAoJTUkAI9oGi/+10WqJ9emcY1F5CxBT93CFtrUfoHTdeqJCFWht1SvCBosKFOQGfcw7ooD5i2ND6Oc/Y=
 after_success:
 - if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then cd ../docker; docker login -u="$DOCKER_USERNAME"
   -p="$DOCKER_PASSWORD"; if [ "$TRAVIS_BRANCH" == "master" ]; then docker build -t

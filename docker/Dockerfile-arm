@@ -25,8 +25,12 @@ RUN export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig/
 RUN	git clone https://github.com/kerberos-io/machinery /tmp/machinery && \
     cd /tmp/machinery && git checkout ${APP_ENV} && \
     mkdir build && cd build && \
-    cmake .. && make && make check && make install && \
-    rm -rf /tmp/machinery && \
+    cmake .. && make && make install
+
+RUN cd /tmp/machinery && \
+  make check
+
+RUN rm -rf /tmp/machinery && \
     chown -Rf www-data.www-data /etc/opt/kerberosio && \
     chmod -Rf 777 /etc/opt/kerberosio/config
 

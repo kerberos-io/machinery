@@ -52,6 +52,31 @@ namespace kerberos
             setProductKey("");
         }
 
+        // -----------------------------------
+        // Check if we need to generate a
+        // new product key (first time running)
+
+        if(m_productKey == "")
+        {
+            // Generate random key
+            std::string key = helper::random_string(26);
+
+            // Create product key file
+            std::string command = "touch " + m_keyFile;
+            std::string createProductKeyFile = helper::GetStdoutFromCommand(command);
+            BINFO << "Cloud: create key file";
+
+            // Write product key
+            command = "echo " + key + " > " + m_keyFile;
+            std::string writeProductKey = helper::GetStdoutFromCommand(command);
+            BINFO << "Cloud: write key";
+
+            // Reset key
+            setProductKey(key);
+
+            BINFO << "Cloud: reset product key (" << key << ")";
+        }
+
         startPollThread();
         startUploadThread();
 
@@ -212,31 +237,6 @@ namespace kerberos
             RestClient::HeaderFields headers;
             headers["Content-Type"] = "application/json";
             conn->SetHeaders(headers);
-
-            // -----------------------------------
-            // Check if we need to generate a
-            // new product key (first time running)
-
-            if(cloud->m_productKey == "")
-            {
-                // Generate random key
-                std::string key = helper::random_string(26);
-
-                // Create product key file
-                std::string command = "touch " + cloud->m_keyFile;
-                std::string createProductKeyFile = helper::GetStdoutFromCommand(command);
-                BINFO << "Cloud: create key file";
-
-                // Write product key
-                command = "echo " + key + " > " + cloud->m_keyFile;
-                std::string writeProductKey = helper::GetStdoutFromCommand(command);
-                BINFO << "Cloud: write key";
-
-                // Reset key
-                cloud->setProductKey(key);
-
-                BINFO << "Cloud: reset product key (" << key << ")";
-            }
 
             // --------------------------------------------
             // Start livestreaming

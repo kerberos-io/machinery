@@ -347,13 +347,13 @@ namespace kerberos
                 {
                     Image image = cloud->m_capturedevice->retrieve();
                     cloud->fstream.forward(image);
-                    usleep(200 * 1000); // 5 fps
+                    usleep(1000 * 1000); // 1 fps
                     //printf("Sending livestream.\n");
                 }
             }
 
             pthread_mutex_unlock(&cloud->m_capture_lock);
-            
+
             usleep(3000 * 1000);
         }
     }

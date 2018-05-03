@@ -5,6 +5,8 @@ namespace kerberos
 {
     void Cloud::setup(kerberos::StringMap & settings)
     {
+        pthread_mutex_init(&m_capture_lock, NULL);
+
         // -------------------------------
         // Upload interval [1.5sec;4.2min]
 
@@ -61,6 +63,19 @@ namespace kerberos
         std::string privateKey = settings.at("clouds.S3.privateKey");
         setCloudCredentials(user, publicKey, privateKey);
         startHealthThread();
+
+        // -------------------
+        // Start livestreaming
+
+        fstream.setup(m_publicKey, m_productKey);
+        startLivestreamThread();
+    }
+
+    void Cloud::disableCapture()
+    {
+        pthread_mutex_lock(&m_capture_lock);
+        m_capturedevice = 0;
+        pthread_mutex_unlock(&m_capture_lock);
     }
 
     void Cloud::scan()
@@ -224,6 +239,13 @@ namespace kerberos
             }
 
             // --------------------------------------------
+            // Start livestreaming
+            /*std::cout << cloud->m_publicKey << std::endl;
+            std::cout << cloud->m_productKey << std::endl;
+            cloud->fstream.setup(cloud->m_publicKey, cloud->m_productKey);
+            cloud->startLivestreamThread();*/
+
+            // --------------------------------------------
             // Generate fixed JSON data which will be send,
             // over and over again.
 
@@ -305,5 +327,47 @@ namespace kerberos
         pthread_cancel(m_healthThread);
         pthread_join(m_healthThread, NULL);
         delete cloudConnection;
+    }
+
+    // ------------------------------------
+    // Send live stream to cloud, if
+    // subscribed to our cloud plan.
+
+    void * livestream (void * clo)
+    {
+        Cloud * cloud = (Cloud *) clo;
+
+        while(cloud->m_livestreamThread_running)
+        {
+            pthread_mutex_lock(&cloud->m_capture_lock);
+
+            if(cloud->m_capturedevice != 0)
+            {
+                while(cloud->fstream.isRequestingLiveStream())
+                {
+                    Image image = cloud->m_capturedevice->retrieve();
+                    cloud->fstream.forward(image);
+                    usleep(200 * 1000); // 5 fps
+                    //printf("Sending livestream.\n");
+                }
+
+                usleep(3000 * 1000);
+            }
+
+            pthread_mutex_unlock(&cloud->m_capture_lock);
+        }
+    }
+
+    void Cloud::startLivestreamThread()
+    {
+        m_livestreamThread_running = true;
+        pthread_create(&m_livestreamThread, NULL, livestream, this);
+    }
+
+    void Cloud::stopLivestreamThread()
+    {
+        m_livestreamThread_running = false;
+        pthread_cancel(m_livestreamThread);
+        pthread_join(m_livestreamThread, NULL);
     }
 }

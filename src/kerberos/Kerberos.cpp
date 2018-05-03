@@ -227,6 +227,8 @@ namespace kerberos
             if(capture->isOpened())
             {
                 machinery->disableCapture();
+                cloud->disableCapture();
+                cloud->stopLivestreamThread();
                 capture->stopGrabThread();
                 capture->stopHealthThread();
                 capture->close();
@@ -272,6 +274,7 @@ namespace kerberos
 
         LINFO << "Starting cloud service: " + settings.at("cloud");
         cloud = Factory<Cloud>::getInstance()->create(settings.at("cloud"));
+        cloud->setCapture(capture);
         cloud->setup(settings);
     }
 

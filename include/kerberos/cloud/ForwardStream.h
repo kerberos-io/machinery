@@ -56,6 +56,7 @@ namespace kerberos
             unsigned short getPort(){return m_port;};
             void setTopic(std::string topic){m_topic=topic;};
             const char * getTopic(){return m_topic.c_str();};
+            cv::Mat GetSquareImage(const cv::Mat& img, int target_width = 500);
             bool forward(Image & cleanImage);
             bool isRequestingLiveStream();
 

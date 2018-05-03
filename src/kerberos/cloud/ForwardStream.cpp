@@ -19,12 +19,42 @@ namespace kerberos
         m_lastReceived = std::stoi(timestamp) - 10;
 
         m_encode_params.push_back(cv::IMWRITE_JPEG_QUALITY);
-        m_encode_params.push_back(20);
+        m_encode_params.push_back(50);
+    }
+
+    cv::Mat ForwardStream::GetSquareImage(const cv::Mat& img, int target_width)
+    {
+        int width = img.cols,
+           height = img.rows;
+
+        cv::Mat square = cv::Mat::zeros( target_width, target_width, img.type() );
+
+        int max_dim = ( width >= height ) ? width : height;
+        float scale = ( ( float ) target_width ) / max_dim;
+        cv::Rect roi;
+        if ( width >= height )
+        {
+            roi.width = target_width;
+            roi.x = 0;
+            roi.height = height * scale;
+            roi.y = ( target_width - roi.height ) / 2;
+        }
+        else
+        {
+            roi.y = 0;
+            roi.height = target_width;
+            roi.width = width * scale;
+            roi.x = ( target_width - roi.width ) / 2;
+        }
+
+        cv::resize( img, square( roi ), roi.size() );
+
+        return square;
     }
 
     bool ForwardStream::forward(Image & cleanImage)
     {
-        cv::Mat img = cleanImage.getImage();
+        cv::Mat img = GetSquareImage(cleanImage.getImage(), 250);
 
         std::vector<uchar> buf;
         cv::imencode(".jpg", img, buf, m_encode_params);

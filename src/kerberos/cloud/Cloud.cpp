@@ -341,20 +341,20 @@ namespace kerberos
         {
             pthread_mutex_lock(&cloud->m_capture_lock);
 
-            if(cloud->m_capturedevice != 0)
+            while(cloud->fstream.isRequestingLiveStream())
             {
-                while(cloud->fstream.isRequestingLiveStream())
+                if(cloud->m_capturedevice != 0)
                 {
                     Image image = cloud->m_capturedevice->retrieve();
                     cloud->fstream.forward(image);
                     usleep(200 * 1000); // 5 fps
                     //printf("Sending livestream.\n");
                 }
-
-                usleep(3000 * 1000);
             }
 
             pthread_mutex_unlock(&cloud->m_capture_lock);
+            
+            usleep(3000 * 1000);
         }
     }
 

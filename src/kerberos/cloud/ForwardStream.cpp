@@ -4,7 +4,7 @@ namespace kerberos
 {
     void ForwardStream::setup(std::string publicKey, std::string deviceKey)
     {
-        std::string ip = "37.139.29.235";
+        std::string ip = "159.65.233.50";
         int port = 1883;
         m_publicKey = publicKey;
         m_deviceKey = deviceKey;

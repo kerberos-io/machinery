@@ -9,9 +9,11 @@ namespace kerberos
         m_publicKey = publicKey;
         m_deviceKey = deviceKey;
         setTopic("kerberos/" + m_publicKey + "/device/" + m_deviceKey + "/live");
-        reinitialise(m_publicKey.c_str(), true);
+
+        std::string clientId = publicKey + "-" + kerberos::helper::getTimestamp() + "-" + kerberos::helper::getMicroseconds();
         mosqpp::lib_init();
-	      username_pw_set(publicKey.c_str(),nullptr);
+        reinitialise(clientId.c_str(), true);
+	      username_pw_set(clientId.c_str(),nullptr);
         connect_async(ip.c_str(), port);
       	loop_start();
 
@@ -19,7 +21,7 @@ namespace kerberos
         m_lastReceived = std::stoi(timestamp) - 10;
 
         m_encode_params.push_back(cv::IMWRITE_JPEG_QUALITY);
-        m_encode_params.push_back(50);
+        m_encode_params.push_back(70);
     }
 
     cv::Mat ForwardStream::GetSquareImage(const cv::Mat& img, int target_width)
@@ -62,7 +64,7 @@ namespace kerberos
         for(int i=0; i < buf.size(); i++) enc_msg[i] = buf[i];
         std::string encoded = base64_encode(enc_msg, buf.size());
 
-        int ret = publish(NULL, getTopic(), encoded.size(), encoded.c_str(), 0 ,true);
+        int ret = publish(NULL, getTopic(), encoded.size(), encoded.c_str(), 2 ,false);
         return (ret == MOSQ_ERR_SUCCESS);
     }
 

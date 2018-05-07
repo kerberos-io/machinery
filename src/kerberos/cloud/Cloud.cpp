@@ -360,7 +360,7 @@ namespace kerberos
                     }
                 }
 
-                usleep(100 * 1000); // 10 fps
+                usleep(300 * 1000); // 3 fps
             }
 
             pthread_mutex_unlock(&cloud->m_capture_lock);

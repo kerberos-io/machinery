@@ -21,7 +21,7 @@ namespace kerberos
         m_lastReceived = std::stoi(timestamp) - 10;
 
         m_encode_params.push_back(cv::IMWRITE_JPEG_QUALITY);
-        m_encode_params.push_back(85);
+        m_encode_params.push_back(75);
     }
 
     cv::Mat ForwardStream::GetSquareImage(const cv::Mat& img, int target_width)

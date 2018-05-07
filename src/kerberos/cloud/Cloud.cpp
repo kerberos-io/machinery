@@ -348,19 +348,19 @@ namespace kerberos
             {
                 if(cloud->m_capturedevice != 0)
                 {
-                    if(cloud->m_capturedevice->m_hardwareMJPEGEncoding)
-                    {
-                        length = cloud->m_capturedevice->retrieveRAW(data);
-                        cloud->fstream.forwardRAW(data, length);
-                    }
-                    else
-                    {
+                    //if(cloud->m_capturedevice->m_hardwareMJPEGEncoding)
+                    //{
+                    //    length = cloud->m_capturedevice->retrieveRAW(data);
+                    //    cloud->fstream.forwardRAW(data, length);
+                    //}
+                    //else
+                    //{
                         Image image = cloud->m_capturedevice->retrieve();
                         cloud->fstream.forward(image);
-                    }
+                    //}
                 }
 
-                usleep(300 * 1000); // 3 fps
+                usleep(333 * 1000); // 3 fps
             }
 
             pthread_mutex_unlock(&cloud->m_capture_lock);

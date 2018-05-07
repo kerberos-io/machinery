@@ -4,7 +4,7 @@ namespace kerberos
 {
     void ForwardStream::setup(std::string publicKey, std::string deviceKey)
     {
-        std::string ip = "159.65.233.50";
+        std::string ip = "174.138.111.149";
         int port = 1883;
         m_publicKey = publicKey;
         m_deviceKey = deviceKey;
@@ -21,7 +21,7 @@ namespace kerberos
         m_lastReceived = std::stoi(timestamp) - 10;
 
         m_encode_params.push_back(cv::IMWRITE_JPEG_QUALITY);
-        m_encode_params.push_back(70);
+        m_encode_params.push_back(85);
     }
 
     cv::Mat ForwardStream::GetSquareImage(const cv::Mat& img, int target_width)
@@ -56,7 +56,7 @@ namespace kerberos
 
     bool ForwardStream::forward(Image & cleanImage)
     {
-        cv::Mat img = GetSquareImage(cleanImage.getImage(), 250);
+        cv::Mat img = GetSquareImage(cleanImage.getImage(), 400);
 
         std::vector<uchar> buf;
         cv::imencode(".jpg", img, buf, m_encode_params);
@@ -64,6 +64,13 @@ namespace kerberos
         for(int i=0; i < buf.size(); i++) enc_msg[i] = buf[i];
         std::string encoded = base64_encode(enc_msg, buf.size());
 
+        int ret = publish(NULL, getTopic(), encoded.size(), encoded.c_str(), 2 ,false);
+        return (ret == MOSQ_ERR_SUCCESS);
+    }
+
+    bool ForwardStream::forwardRAW(uint8_t * data, int32_t length)
+    {
+        std::string encoded = base64_encode((uchar *) data, length);
         int ret = publish(NULL, getTopic(), encoded.size(), encoded.c_str(), 2 ,false);
         return (ret == MOSQ_ERR_SUCCESS);
     }

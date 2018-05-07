@@ -337,6 +337,9 @@ namespace kerberos
     {
         Cloud * cloud = (Cloud *) clo;
 
+        uint8_t * data = new uint8_t[(int)(1280*960*1.5)];
+        int32_t length = cloud->m_capturedevice->retrieveRAW(data);
+
         while(cloud->m_livestreamThread_running)
         {
             pthread_mutex_lock(&cloud->m_capture_lock);
@@ -345,12 +348,19 @@ namespace kerberos
             {
                 if(cloud->m_capturedevice != 0)
                 {
-                    Image image = cloud->m_capturedevice->retrieve();
-                    cloud->fstream.forward(image);
-                    printf("Sending livestream.\n");
+                    if(cloud->m_capturedevice->m_hardwareMJPEGEncoding)
+                    {
+                        length = cloud->m_capturedevice->retrieveRAW(data);
+                        cloud->fstream.forwardRAW(data, length);
+                    }
+                    else
+                    {
+                        Image image = cloud->m_capturedevice->retrieve();
+                        cloud->fstream.forward(image);
+                    }
                 }
 
-                usleep(300 * 1000); // 3 fps
+                usleep(100 * 1000); // 10 fps
             }
 
             pthread_mutex_unlock(&cloud->m_capture_lock);

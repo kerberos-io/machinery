@@ -58,6 +58,7 @@ namespace kerberos
             const char * getTopic(){return m_topic.c_str();};
             cv::Mat GetSquareImage(const cv::Mat& img, int target_width = 500);
             bool forward(Image & cleanImage);
+            bool forwardRAW(uint8_t * data, int32_t length);
             bool isRequestingLiveStream();
 
             void on_connect(int rc);

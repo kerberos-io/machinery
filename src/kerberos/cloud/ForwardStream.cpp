@@ -56,7 +56,7 @@ namespace kerberos
 
     bool ForwardStream::forward(Image & cleanImage)
     {
-        cv::Mat img = GetSquareImage(cleanImage.getImage(), 400);
+        cv::Mat img = GetSquareImage(cleanImage.getImage(), 300);
 
         std::vector<uchar> buf;
         cv::imencode(".jpg", img, buf, m_encode_params);

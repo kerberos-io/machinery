@@ -21,7 +21,7 @@ namespace kerberos
         m_lastReceived = std::stoi(timestamp) - 5;
 
         m_encode_params.push_back(cv::IMWRITE_JPEG_QUALITY);
-        m_encode_params.push_back(65);
+        m_encode_params.push_back(75);
     }
 
     cv::Mat ForwardStream::GetSquareImage(const cv::Mat& img, int target_width)
@@ -56,7 +56,8 @@ namespace kerberos
 
     bool ForwardStream::forward(Image & cleanImage)
     {
-        cv::Mat img = GetSquareImage(cleanImage.getImage(), 200);
+        cv::Mat img = GetSquareImage(cleanImage.getImage(), 300);
+        cvtColor(img, img, CV_RGB2GRAY);
 
         std::vector<uchar> buf;
         cv::imencode(".jpg", img, buf, m_encode_params);
@@ -79,7 +80,7 @@ namespace kerberos
     {
         std::string t = kerberos::helper::getTimestamp();
         int timestamp = std::stoi(t);
-        return timestamp - m_lastReceived < 10;
+        return timestamp - m_lastReceived < 5;
     }
 
     void ForwardStream::on_connect(int rc)

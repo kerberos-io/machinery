@@ -9,6 +9,7 @@ namespace kerberos
         m_publicKey = publicKey;
         m_deviceKey = deviceKey;
         setTopic("kerberos/" + m_publicKey + "/device/" + m_deviceKey + "/live");
+        setMotionTopic("kerberos/" + m_publicKey + "/device/" + m_deviceKey + "/motion");
 
         std::string clientId = publicKey + "-" + kerberos::helper::getTimestamp() + "-" + kerberos::helper::getMicroseconds();
         mosqpp::lib_init();
@@ -111,6 +112,13 @@ namespace kerberos
         //printf("Receive succeeded %s.\n", message->topic);
         std::string timestamp = kerberos::helper::getTimestamp();
         m_lastReceived = std::stoi(timestamp);
+    }
+
+    bool ForwardStream::triggerMotion()
+    {
+        std::string motion = "motion";
+        int ret = publish(NULL, getMotionTopic(), motion.size(), motion.c_str(), 2 ,false);
+        return (ret == MOSQ_ERR_SUCCESS);
     }
 
     void ForwardStream::on_subscribe(int mid, int qos_count, const int *granted_qos)

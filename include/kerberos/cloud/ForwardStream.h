@@ -34,6 +34,7 @@ namespace kerberos
             std::string m_server_ip;
             unsigned short m_port;
             std::string m_topic;
+            std::string m_motion_topic;
             std::vector<int> m_encode_params;
 
         public:
@@ -56,9 +57,12 @@ namespace kerberos
             unsigned short getPort(){return m_port;};
             void setTopic(std::string topic){m_topic=topic;};
             const char * getTopic(){return m_topic.c_str();};
+            void setMotionTopic(std::string motion_topic){m_motion_topic=motion_topic;};
+            const char * getMotionTopic(){return m_motion_topic.c_str();};
             cv::Mat GetSquareImage(const cv::Mat& img, int target_width = 500);
             bool forward(Image & cleanImage);
             bool forwardRAW(uint8_t * data, int32_t length);
+            bool triggerMotion();
             bool isRequestingLiveStream();
 
             void on_connect(int rc);

@@ -78,6 +78,15 @@ namespace kerberos
                 Detection detection(toJSON(data), cleanImage);
                 m_detections.push_back(detection);
 
+                // -----------------------------------------------
+                // If we have a cloud account, send a notification
+                // to the cloud app.
+
+                if(cloud && cloud->m_publicKey != "")
+                {
+                    cloud->fstream.triggerMotion();
+                }
+
                 pthread_mutex_unlock(&m_ioLock);
             }
 

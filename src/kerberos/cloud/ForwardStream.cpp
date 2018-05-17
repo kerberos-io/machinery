@@ -8,6 +8,7 @@ namespace kerberos
         int port = 1883;
         m_publicKey = publicKey;
         m_deviceKey = deviceKey;
+        throttle.setRate(10);
         setTopic("kerberos/" + m_publicKey + "/device/" + m_deviceKey + "/live");
         setMotionTopic("kerberos/" + m_publicKey + "/device/" + m_deviceKey + "/motion");
 
@@ -116,9 +117,14 @@ namespace kerberos
 
     bool ForwardStream::triggerMotion()
     {
-        std::string motion = "motion";
-        int ret = publish(NULL, getMotionTopic(), motion.size(), motion.c_str(), 2 ,false);
-        return (ret == MOSQ_ERR_SUCCESS);
+        if(throttle.canExecute())
+        {
+            std::string motion = "motion";
+            int ret = publish(NULL, getMotionTopic(), motion.size(), motion.c_str(), 2 ,false);
+            return (ret == MOSQ_ERR_SUCCESS);
+        }
+
+        return false;
     }
 
     void ForwardStream::on_subscribe(int mid, int qos_count, const int *granted_qos)

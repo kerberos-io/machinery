@@ -25,6 +25,7 @@
 #include "writer.h"
 #include "base64.h"
 #include "Helper.h"
+#include "machinery/io/Throttler.h"
 
 namespace kerberos
 {
@@ -49,6 +50,7 @@ namespace kerberos
             std::string m_publicKey;
             std::string m_deviceKey;
             int m_lastReceived;
+            Throttler throttle;
 
             void setup(std::string publickey, std::string deviceKey);
             void setIp(const std::string server_ip){m_server_ip=server_ip;};

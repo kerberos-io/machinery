@@ -29,7 +29,6 @@ namespace kerberos
         std::string file = configuration.substr(configuration.rfind('/')+1);
         guard = new FW::Guard();
         guard->listenTo(directory, file);
-
         guard->onChange(&Kerberos::reconfigure);
         guard->start();
 

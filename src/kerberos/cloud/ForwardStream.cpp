@@ -23,7 +23,7 @@ namespace kerberos
         m_lastReceived = std::stoi(timestamp) - 5;
 
         m_encode_params.push_back(cv::IMWRITE_JPEG_QUALITY);
-        m_encode_params.push_back(55);
+        m_encode_params.push_back(75);
     }
 
     cv::Mat ForwardStream::GetSquareImage(const cv::Mat& img, int target_width)
@@ -71,11 +71,11 @@ namespace kerberos
         }
 
         cv::resize(img, img, cv::Size(newWidth,newHeight));
-        cv::Mat grayImg(img.cols, img.rows, CV_8UC1);
-        cvtColor(img, grayImg, cv::COLOR_RGB2GRAY);
+        //cv::Mat grayImg(img.cols, img.rows, CV_8UC1);
+        //cvtColor(img, grayImg, cv::COLOR_RGB2GRAY);
 
         std::vector<uchar> buf;
-        cv::imencode(".jpg", grayImg, buf, m_encode_params);
+        cv::imencode(".jpg", img, buf, m_encode_params);
         uchar *enc_msg = new uchar[buf.size()];
         for(int i=0; i < buf.size(); i++) enc_msg[i] = buf[i];
         std::string encoded = base64_encode(enc_msg, buf.size());

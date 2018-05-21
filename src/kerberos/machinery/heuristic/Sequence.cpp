@@ -9,7 +9,7 @@ namespace kerberos
         setSequenceDuration(std::atoi(settings.at("heuristics.Sequence.minimumDuration").c_str()));
         setNoMotionDelayTime(std::atoi(settings.at("heuristics.Sequence.noMotionDelayTime").c_str()));
     }
-    
+
     bool Sequence::isValid(const Image & evaluation, const ImageVector & images, JSON & data)
     {
         int numberOfChanges;
@@ -22,7 +22,7 @@ namespace kerberos
             duration++;
             if(duration >= m_sequenceDuration)
             {
-                BINFO << "Heuristic is valid; numberOfChanges: " + helper::to_string(numberOfChanges) + ", Sequence duration: " + helper::to_string(m_sequenceDuration);
+                VLOG(0) << "Heuristic is valid; numberOfChanges: " + helper::to_string(numberOfChanges) + ", Sequence duration: " + helper::to_string(m_sequenceDuration);
                 return true;
             }
         }
@@ -40,7 +40,7 @@ namespace kerberos
                 usleep(m_noMotionDelayTime*1000);
             }
         }
-        
+
         return false;
     }
 }

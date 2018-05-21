@@ -64,17 +64,16 @@ namespace kerberos
             // Create product key file
             std::string command = "touch " + m_keyFile;
             std::string createProductKeyFile = helper::GetStdoutFromCommand(command);
-            BINFO << "Cloud: create key file";
+            VLOG(1) << "Cloud: create key file";
 
             // Write product key
             command = "echo " + key + " > " + m_keyFile;
             std::string writeProductKey = helper::GetStdoutFromCommand(command);
-            BINFO << "Cloud: write key";
+            VLOG(1) <<  "Cloud: write key";
 
             // Reset key
             setProductKey(key);
-
-            BINFO << "Cloud: reset product key (" << key << ")";
+            VLOG(1) << "Cloud: reset product key (" << key << ")";
         }
 
         startPollThread();
@@ -286,9 +285,9 @@ namespace kerberos
                 health += "}";
 
                 RestClient::Response r = conn->post("/api/v1/health", health);
-                BINFO << "Cloud: data - " << health;
-                BINFO << "Cloud: send device health - " << r.code;
-                BINFO << "Cloud: send device health - " << r.body;
+                VLOG(1) << "Cloud: data - " << health;
+                VLOG(1) << "Cloud: send device health - " << r.code;
+                VLOG(1) << "Cloud: send device health - " << r.body;
 
                 usleep(15*1000*1000); // every 15s
             }

@@ -5,7 +5,7 @@ namespace kerberos
     void Enabled::setup(const StringMap & settings)
     {
         Condition::setup(settings);
-        
+
         bool enabled = false;
         if(settings.at("conditions.Enabled.active") == "true")
         {
@@ -20,10 +20,10 @@ namespace kerberos
     {
         if(!isEnabled())
         {
-            BINFO << "Condition: not enabled.";
+            VLOG(0) << "Condition: not enabled.";
             usleep(getDelay()*1000);
         }
-        
+
         return m_enabled;
     }
 }

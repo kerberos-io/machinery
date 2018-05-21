@@ -30,7 +30,7 @@ namespace kerberos
         }
         else
         {
-            LERROR << "Settings: can't use invalid port";
+            LOG(ERROR) << "Settings: can't use invalid port";
             //TODO: manage invalid port error
         }
     }
@@ -57,7 +57,7 @@ namespace kerberos
         }
         sock = (INVALID_SOCKET);
 
-        LINFO << "Stream: Succesfully closed streaming";
+        VLOG(0) << "Stream: Succesfully closed streaming";
 
         return false;
     }
@@ -83,7 +83,7 @@ namespace kerberos
 
             while(bind(sock, (SOCKADDR*) &address, sizeof(SOCKADDR_IN)) == SOCKET_ERROR)
             {
-                LERROR << "Stream: couldn't bind sock";
+                LOG(ERROR) << "Stream: couldn't bind sock";
                 release();
                 usleep(1000*10000);
                 sock = ::socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
@@ -91,14 +91,13 @@ namespace kerberos
 
             while(listen(sock, 2) == SOCKET_ERROR)
             {
-                LERROR << "Stream: couldn't listen on sock";
+                LOG(ERROR) << "Stream: couldn't listen on sock";
                 usleep(1000*10000);
             }
 
             FD_SET(sock, &master);
 
-
-            LINFO << "Stream: Configured stream on port " << helper::to_string(m_streamPort) << " with quality: " << helper::to_string(m_quality);
+            VLOG(0) << "Stream: Configured stream on port " << helper::to_string(m_streamPort) << " with quality: " << helper::to_string(m_quality);
 
             return true;
         }
@@ -174,12 +173,14 @@ namespace kerberos
 
                 if(!tokenFound)
                 {
-                    LERROR << "Stream: no token found in client request.";
+                    //LERROR << "Stream: no token found in client request.";
+                    LOG(ERROR) << "Stream: no token found in client request.";
                     return false;
                 }
                 else if(token != credentialsBase64)
                 {
-                    LERROR << "Stream: token found, but it's not correct.";
+                    //LERROR << "Stream: token found, but it's not correct.";
+                    LOG(ERROR) << "Stream: token found, but it's not correct.";
                     return false;
                 }
 
@@ -187,7 +188,8 @@ namespace kerberos
             }
             else
             {
-                LERROR << "Stream: no token found in client request.";
+                //LERROR << "Stream: no token found in client request.";
+                LOG(ERROR) << "Stream: no token found in client request.";
                 return false;
             }
 
@@ -212,8 +214,10 @@ namespace kerberos
 
         if (client == SOCKET_ERROR)
         {
-            LERROR << "Stream: couldn't accept connection on sock";
-            LERROR << "Stream: reopening master sock";
+            //LERROR << "Stream: couldn't accept connection on sock";
+            //LERROR << "Stream: reopening master sock";
+            LOG(ERROR) << "Stream: couldn't accept connection on sock";
+            LOG(ERROR) << "Stream: reopening master sock";
             release();
             open();
             return false;
@@ -251,9 +255,10 @@ namespace kerberos
                 "\r\n",0);
 
 
-            LINFO << "Stream: authentication success";
-            LINFO << "Stream: opening socket for new client.";
-
+            //LINFO << "Stream: authentication success";
+            //LINFO << "Stream: opening socket for new client.";
+            LOG(INFO) << "Stream: authentication success";
+            LOG(INFO) << "Stream: opening socket for new client.";
             clients.push_back(client);
             packetsSend[client] = 0;
 
@@ -271,7 +276,8 @@ namespace kerberos
             snprintf (response, sizeof (response), unauthorized, requestInfo["method"].c_str());
             _write (client, response, strlen(response));
 
-            LINFO << "Stream: authentication failed.";
+            //LINFO << "Stream: authentication failed.";
+            LOG(INFO) << "Stream: authentication failed.";
 
             FD_CLR(client, &master);
             shutdown(client, 2);

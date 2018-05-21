@@ -19,7 +19,7 @@ namespace kerberos
         m_x2 = x2;
         m_y2 = y2;
     }
-    
+
     void RectangleExpositor::calculate(Image & evaluation, JSON & data)
     {
         int numberOfChanges = 0;
@@ -42,20 +42,20 @@ namespace kerberos
                 }
             }
         }
-        
+
         // -------------------------
         //check if not out of bounds
-        
+
         if(rectangle.m_x1-10 > 0) rectangle.m_x1 -= 10;
         if(rectangle.m_y1-10 > 0) rectangle.m_y1 -= 10;
         if(rectangle.m_x2+10 < evaluation.getColumns()-1) rectangle.m_x2 += 10;
         if(rectangle.m_y2+10 < evaluation.getRows()-1) rectangle.m_y2 += 10;
-        
+
         // --------------------------
         // Add coordinates to object
-        
+
         JSON::AllocatorType& allocator = data.GetAllocator();
-        
+
         JSONValue region;
         region.SetArray();
         region.PushBack(rectangle.m_x1, allocator);
@@ -64,13 +64,13 @@ namespace kerberos
         region.PushBack(rectangle.m_y2, allocator);
 
         data.AddMember("regionCoordinates", region, allocator);
-        
+
         // --------------------------
         // Add number of changes
 
         if(numberOfChanges)
         {
-            BINFO << "RectangleExpositor: activity detected from (" +  helper::to_string(rectangle.m_x1) + "," + helper::to_string(rectangle.m_y1) + ") to (" +  helper::to_string(rectangle.m_x2) + "," + helper::to_string(rectangle.m_y2) + ")";
+            VLOG(0) << "RectangleExpositor: activity detected from (" +  helper::to_string(rectangle.m_x1) + "," + helper::to_string(rectangle.m_y1) + ") to (" +  helper::to_string(rectangle.m_x2) + "," + helper::to_string(rectangle.m_y2) + ")";
         }
 
         data.AddMember("numberOfChanges", numberOfChanges, allocator);

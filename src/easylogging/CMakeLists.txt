@@ -1,0 +1,7 @@
+# @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+# Build library
+add_library(EASYLOGGING_LIBRARY STATIC
+    easylogging++.cpp)
+
+set(KERBEROS_DEPENDENCIES ${KERBEROS_DEPENDENCIES} EASYLOGGING_LIBRARY PARENT_SCOPE)
+set(KERBEROS_LIBRARIES ${KERBEROS_LIBRARIES} EASYLOGGING_LIBRARY PARENT_SCOPE)

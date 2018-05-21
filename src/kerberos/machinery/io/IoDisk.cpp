@@ -271,7 +271,7 @@ namespace kerberos
             // -------------------------
             // Save original version
 
-            BINFO << "IoDisk: saving image " + pathToImage;
+            VLOG(0) << "IoDisk: saving image " + pathToImage;
 
             return m_fileManager.save(image, pathToImage, m_createSymbol);
         }

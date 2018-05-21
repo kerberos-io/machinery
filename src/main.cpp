@@ -21,8 +21,7 @@
 #include <fstream>
 #include <signal.h>
 #include "easylogging++.h"
-
-_INITIALIZE_EASYLOGGINGPP
+INITIALIZE_EASYLOGGINGPP
 
 using namespace kerberos;
 
@@ -54,16 +53,20 @@ int main(int argc, char** argv)
     // -----------------
     // Initialize logger
 
-    easyloggingpp::Configurations config;
+    el::Configurations config;
     config.setToDefault();
-    config.setAll(easyloggingpp::ConfigurationType::Enabled, "true");
-    config.setAll(easyloggingpp::ConfigurationType::ToFile, "true");
+    config.set(el::Level::Global, el::ConfigurationType::Enabled, "true");
+    config.set(el::Level::Global, el::ConfigurationType::ToFile, "true");
+    config.set(el::Level::Global, el::ConfigurationType::ToStandardOutput, "true");
+    config.set(el::Level::Global, el::ConfigurationType::LogFlushThreshold, "100");
+    config.set(el::Level::Global, el::ConfigurationType::MaxLogFileSize, "5000000"); // 5MB
     std::string logFile = (helper::getValueByKey(parameters, "log")) ?: LOG_PATH;
-    config.setAll(easyloggingpp::ConfigurationType::Filename, logFile);
-    config.setAll(easyloggingpp::ConfigurationType::RollOutSize, "2048"); // 2KB
-    easyloggingpp::Loggers::reconfigureAllLoggers(config);
+    config.set(el::Level::Global, el::ConfigurationType::Filename, logFile.c_str());
+    el::Loggers::addFlag(el::LoggingFlag::StrictLogFileSizeCheck);
+    el::Loggers::addFlag(el::LoggingFlag::ColoredTerminalOutput);
+    el::Loggers::reconfigureAllLoggers(config);
 
-    LINFO << "Logging is written to: " + logFile;
+    VLOG(0) << "Logging is written to: " + logFile;
 
     while(true)
     {
@@ -77,7 +80,7 @@ int main(int argc, char** argv)
         }
         catch(Exception & ex)
         {
-            LERROR << ex.what();
+            LOG(ERROR) << ex.what();
 
             // Try again in 3 seconds..
             usleep(3 * 1000000);

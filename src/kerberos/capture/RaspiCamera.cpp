@@ -48,7 +48,7 @@ void* preview_thread(void* self)
 		// a good solution is to implement frame skipping (measure time between to loops, if this time
 		// is too big, just skip image processing and MJPEG sendout)
 
-		BINFO << "RaspiCamera: Entering preview thread.";
+		VLOG(1) << "RaspiCamera: Entering preview thread.";
 		while (state.running)
 		{
 				capture->incrementHealth();
@@ -57,7 +57,7 @@ void* preview_thread(void* self)
 				// If zero-copy is activated, we don't pass any buffer
 				capture->data_length  = state.camera->getOutputData(70, nullptr);
 		}
-		BINFO << "RaspiCamera: Exiting preview thread.";
+		VLOG(1) << "RaspiCamera: Exiting preview thread.";
 
 		return nullptr;
 }
@@ -69,7 +69,7 @@ void* record_thread(void* self)
 
 		uint8_t* data = new uint8_t[65536*4];
 
-		BINFO << "RaspiCamera: Entering record thread.";
+		VLOG(1) << "RaspiCamera: Entering record thread.";
 		while(state.running)
 		{
 				// Consume h264 data, this is a blocking call
@@ -80,7 +80,7 @@ void* record_thread(void* self)
 						file.flush();
 				}
 		}
-		BINFO << "RaspiCamera: Exiting record thread.";
+		VLOG(1) << "RaspiCamera: Exiting record thread.";
 
 		return nullptr;
 }
@@ -200,9 +200,9 @@ namespace kerberos
 
     void RaspiCamera::open()
     {
-				LINFO << "Capture: Trying to open Raspberry Pi camera module.";
-				LINFO << "Capture: (Warning) If you see a OMX_GetHandle error, this means that you don't have a working RPi camera module attached.";
-				LINFO << "Capture: (Warning) You can change the capture device with the configuration files.";
+				VLOG(0) << "Capture: Trying to open Raspberry Pi camera module.";
+				VLOG(0) << "Capture: (Warning) If you see a OMX_GetHandle error, this means that you don't have a working RPi camera module attached.";
+				VLOG(0) << "Capture: (Warning) You can change the capture device with the configuration files.";
 
 				// Initialize hardware
 				bcm_host_init();
@@ -257,7 +257,7 @@ namespace kerberos
 				pthread_create(&state.record_thid, nullptr, &record_thread, this);
 				pthread_detach(state.record_thid);
 
-				LINFO << "Capture: Succesfully opened Raspberry Pi camera module.";
+				VLOG(0) << "Capture: Succesfully opened Raspberry Pi camera module.";
     }
 
 		void RaspiCamera::stopThreads()

@@ -11,6 +11,7 @@
   include_directories(${CMAKE_SOURCE_DIR}/include/encode)
   include_directories(${CMAKE_SOURCE_DIR}/include/easylogging)
 
+	add_subdirectory(easylogging)
 	add_subdirectory(tinyxml)
 	add_subdirectory(executor)
 	add_subdirectory(filewatcher)

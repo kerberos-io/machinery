@@ -15,7 +15,7 @@ namespace kerberos
         std::string clientId = publicKey + "-" + kerberos::helper::getTimestamp() + "-" + kerberos::helper::getMicroseconds();
         mosqpp::lib_init();
         reinitialise(clientId.c_str(), true);
-	      username_pw_set(clientId.c_str(),nullptr);
+	      username_pw_set(publicKey.c_str(),nullptr);
         connect_async(ip.c_str(), port);
       	loop_start();
 

@@ -114,7 +114,7 @@ namespace kerberos
         // ----------------------------------------------
         // Before send the headers, we need to sort them!
 
-        VLOG(1) << "S3: Sending new file to cloud.";
+        VLOG(0) << "S3: Sending new file to cloud.";
 
         std::sort(canonicalizedAmzHeaders.begin(), canonicalizedAmzHeaders.end());
 
@@ -254,7 +254,7 @@ namespace kerberos
               // Check if file really was uploaded.
               // We'll query the S3 bucket and check if it's there.
 
-              VLOG(1) << "S3: file succesfully uploaded.";
+              VLOG(0) << "S3: file uploaded.";
 
               return doesExist(pathToImage);
 
@@ -264,7 +264,7 @@ namespace kerberos
               // User is not allowed to push with these credentials.
               // We remove the symbol.
 
-              VLOG(1) << "S3: permission denied, your file wasn't uploaded.";
+              VLOG(0) << "S3: permission denied, your file wasn't uploaded.";
 
               return true;
 
@@ -272,7 +272,7 @@ namespace kerberos
 
             else {
 
-              VLOG(1) << "S3: file was not uploaded, something went wrong. Please check if you internet connectivity works.";
+              VLOG(0) << "S3: file was not uploaded, something went wrong. Please check if you internet connectivity works.";
 
             }
         }
@@ -359,11 +359,12 @@ namespace kerberos
 
             if(http_code == 200 && result != CURLE_ABORTED_BY_CALLBACK)
             {
-                VLOG(1) << "S3: file exists in bucket, succesfully uploaded.";
+                VLOG(0) << "S3: file exists in bucket, succesfully uploaded.";
                 return true;
             }
 
-            VLOG(1) << "S3: file wasn't uploaded, something went wrong.";
+            VLOG(0) << "S3: file wasn't uploaded, something went wrong.";
+            
             return false;
         }
 

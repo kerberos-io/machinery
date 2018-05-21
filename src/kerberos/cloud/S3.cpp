@@ -114,11 +114,13 @@ namespace kerberos
         // ----------------------------------------------
         // Before send the headers, we need to sort them!
 
+        BINFO << "S3: Sending new file to cloud.";
+
         std::sort(canonicalizedAmzHeaders.begin(), canonicalizedAmzHeaders.end());
 
         for(int i = 0; i < canonicalizedAmzHeaders.size(); i++)
         {
-            LINFO << canonicalizedAmzHeaders[i];
+            BINFO << "S3 - File info: " << canonicalizedAmzHeaders[i];
         }
 
         return canonicalizedAmzHeaders;
@@ -252,6 +254,8 @@ namespace kerberos
               // Check if file really was uploaded.
               // We'll query the S3 bucket and check if it's there.
 
+              BINFO << "S3: file succesfully uploaded.";
+
               return doesExist(pathToImage);
 
             }
@@ -260,7 +264,15 @@ namespace kerberos
               // User is not allowed to push with these credentials.
               // We remove the symbol.
 
+              BINFO << "S3: permission denied, your file wasn't uploaded.";
+
               return true;
+
+            }
+
+            else {
+
+              BINFO << "S3: file was not uploaded, something went wrong. Please check if you internet connectivity works.";
 
             }
         }
@@ -337,7 +349,7 @@ namespace kerberos
             curl_easy_setopt(curlHandle, CURLOPT_WRITEFUNCTION, write);
             curl_easy_setopt(curlHandle, CURLOPT_WRITEDATA, &output);
 
-            BINFO << "S3: checking is exists in bucket.";
+            BINFO << "S3: checking if file exists in bucket.";
 
             result = curl_easy_perform(curlHandle); //Perform
             long http_code = 0;
@@ -345,7 +357,14 @@ namespace kerberos
             curl_easy_cleanup(curlHandle);
             curl_slist_free_all(httpHeaders);
 
-            return (http_code == 200 && result != CURLE_ABORTED_BY_CALLBACK);
+            if(http_code == 200 && result != CURLE_ABORTED_BY_CALLBACK)
+            {
+                BINFO << "S3: file exists in bucket, succesfully uploaded.";
+                return true;
+            }
+
+            BINFO << "S3: file wasn't uploaded, something went wrong.";
+            return false;
         }
 
         return false;

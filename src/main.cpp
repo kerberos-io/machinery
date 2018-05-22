@@ -21,7 +21,6 @@
 #include <fstream>
 #include <signal.h>
 
-#define ELPP_THREAD_SAFE
 #include "easylogging++.h"
 INITIALIZE_EASYLOGGINGPP
 

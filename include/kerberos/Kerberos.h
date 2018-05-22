@@ -51,7 +51,7 @@ namespace kerberos
             void setCaptureDelayTime(int delay){m_captureDelayTime=delay;};
             void setParameters(StringMap & parameters)
             {
-                LOG(INFO) << helper::printStringMap("Parameters passed from commandline:", parameters);
+                VLOG(0) << helper::printStringMap("Parameters passed from commandline:", parameters);
                 m_parameters = parameters;
             };
             StringMap getParameters(){return m_parameters;}

@@ -254,11 +254,8 @@ namespace kerberos
                 "Content-Type: multipart/x-mixed-replace; boundary=mjpegstream\r\n"
                 "\r\n",0);
 
-
-            //LINFO << "Stream: authentication success";
-            //LINFO << "Stream: opening socket for new client.";
-            LOG(INFO) << "Stream: authentication success";
-            LOG(INFO) << "Stream: opening socket for new client.";
+            VLOG(0) << "Stream: authentication success";
+            VLOG(0) << "Stream: opening socket for new client.";
             clients.push_back(client);
             packetsSend[client] = 0;
 

@@ -20,8 +20,9 @@
 #include <iostream>
 #include <fstream>
 #include <signal.h>
-#include "easylogging++.h"
+
 #define ELPP_THREAD_SAFE
+#include "easylogging++.h"
 INITIALIZE_EASYLOGGINGPP
 
 using namespace kerberos;

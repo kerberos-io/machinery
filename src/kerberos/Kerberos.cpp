@@ -157,12 +157,12 @@ namespace kerberos
         if(settings.at("logging") == "false")
         {
             VLOG(0) << "Logging is set to info";
-            el::Loggers::setVerboseLevel(0);
+            el::Loggers::setVerboseLevel(1);
         }
         else
         {
             VLOG(0) << "Logging is set to verbose";
-            el::Loggers::setVerboseLevel(1);
+            el::Loggers::setVerboseLevel(2);
         }
 
         // ------------------

@@ -82,7 +82,7 @@ namespace kerberos
 			pbResp.Parse(r.body.c_str());
 			upUrl = pbResp["upload_url"].GetString();
 			fileUrl = pbResp["file_url"].GetString();
-			VLOG(0) << "IoPushbullet: response to upload request " + r.body;
+			VLOG(1) << "IoPushbullet: response to upload request " + r.body;
 
 			/*
 			* Step 3 : upload file to pushbullet
@@ -94,7 +94,7 @@ namespace kerberos
 			*/
 				r = pushbulletConnection->post("/v2/pushes", "{\"type\":\"file\",\"file_url\":\""+ fileUrl +"\"}");
 				if(r.code==200)
-					VLOG(0) << "IoPushbullet: response to push file request " + r.body ;
+					VLOG(1) << "IoPushbullet: response to push file request " + r.body ;
 		    	}
 
 	     	   }
@@ -106,7 +106,7 @@ namespace kerberos
 
             if(r.code == 200)
             {
-            	VLOG(0) << "IoPushbullet: response to post to pushbullet " + r.body;
+            	VLOG(1) << "IoPushbullet: response to post to pushbullet " + r.body;
                 return true;
             }
 

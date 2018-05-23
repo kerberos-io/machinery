@@ -57,7 +57,7 @@ namespace kerberos
         }
         sock = (INVALID_SOCKET);
 
-        VLOG(0) << "Stream: Succesfully closed streaming";
+        VLOG(1) << "Stream: Succesfully closed streaming";
 
         return false;
     }
@@ -97,7 +97,7 @@ namespace kerberos
 
             FD_SET(sock, &master);
 
-            VLOG(0) << "Stream: Configured stream on port " << helper::to_string(m_streamPort) << " with quality: " << helper::to_string(m_quality);
+            VLOG(1) << "Stream: Configured stream on port " << helper::to_string(m_streamPort) << " with quality: " << helper::to_string(m_quality);
 
             return true;
         }
@@ -254,8 +254,8 @@ namespace kerberos
                 "Content-Type: multipart/x-mixed-replace; boundary=mjpegstream\r\n"
                 "\r\n",0);
 
-            VLOG(0) << "Stream: authentication success";
-            VLOG(0) << "Stream: opening socket for new client.";
+            VLOG(1) << "Stream: authentication success";
+            VLOG(1) << "Stream: opening socket for new client.";
             clients.push_back(client);
             packetsSend[client] = 0;
 

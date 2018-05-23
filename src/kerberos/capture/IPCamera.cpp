@@ -190,8 +190,8 @@ namespace kerberos
     }
     void IPCamera::reopen()
     {
-        VLOG(0) << "Capture: Trying to open IP camera.";
-        VLOG(0) << "Capture: (Warning) You can change the capture device with the configuration files.";
+        VLOG(1) << "Capture: Trying to open IP camera.";
+        VLOG(1) << "Capture: (Warning) You can change the capture device with the configuration files.";
 
         m_camera->release();
         open(m_url.c_str());
@@ -208,7 +208,7 @@ namespace kerberos
             }
         }
 
-        VLOG(0) << "Capture: Succesfully opened IP camera.";
+        VLOG(1) << "Capture: Succesfully opened IP camera.";
     }
 
     void IPCamera::close()

@@ -136,11 +136,11 @@ namespace kerberos
             healthCounter = capture->healthCounter.load();
 
             usleep(5000*1000); // every 5s.
-            VLOG(1) << "Capture: checking health status of camera.";
+            VLOG(2) << "Capture: checking health status of camera.";
 
             if(healthCounter == capture->healthCounter.load())
             {
-                VLOG(0) << "Capture: devices is blocking, and not grabbing any more frames.";
+                VLOG(1) << "Capture: devices is blocking, and not grabbing any more frames.";
                 throw KerberosCouldNotGrabFromCamera("devices is blocking, and not grabbin any more frames.");
             }
         }

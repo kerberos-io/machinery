@@ -22,7 +22,7 @@ namespace kerberos
             duration++;
             if(duration >= m_sequenceDuration)
             {
-                VLOG(0) << "Heuristic is valid; numberOfChanges: " + helper::to_string(numberOfChanges) + ", Sequence duration: " + helper::to_string(m_sequenceDuration);
+                VLOG(1) << "Heuristic is valid; numberOfChanges: " + helper::to_string(numberOfChanges) + ", Sequence duration: " + helper::to_string(m_sequenceDuration);
                 return true;
             }
         }

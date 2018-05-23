@@ -20,7 +20,7 @@ namespace kerberos
     {
         if(!isEnabled())
         {
-            VLOG(0) << "Condition: not enabled.";
+            VLOG(1) << "Condition: not enabled.";
             usleep(getDelay()*1000);
         }
 

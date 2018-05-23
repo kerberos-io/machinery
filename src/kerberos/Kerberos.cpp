@@ -128,7 +128,7 @@ namespace kerberos
         // ---------------------------
     	// Get settings from XML file
 
-        VLOG(0) << "Reading configuration file: " << configuration;
+        VLOG(1) << "Reading configuration file: " << configuration;
         StringMap settings = kerberos::helper::getSettingsFromXML(configuration);
         settings["configuration"] = configuration;
 
@@ -144,7 +144,7 @@ namespace kerberos
             settings[begin->first] = begin->second;
         }
 
-        VLOG(0) << helper::printStringMap("Final configuration:", settings);
+        VLOG(1) << helper::printStringMap("Final configuration:", settings);
 
         // -----------------
         // Get instance name
@@ -156,12 +156,12 @@ namespace kerberos
 
         if(settings.at("logging") == "false")
         {
-            VLOG(0) << "Logging is set to info";
+            VLOG(1) << "Logging is set to info";
             el::Loggers::setVerboseLevel(1);
         }
         else
         {
-            VLOG(0) << "Logging is set to verbose";
+            VLOG(1) << "Logging is set to verbose";
             el::Loggers::setVerboseLevel(2);
         }
 
@@ -220,7 +220,7 @@ namespace kerberos
 
         if(stream != 0)
         {
-            VLOG(0) << "Stopping streaming";
+            VLOG(1) << "Stopping streaming";
             stopStreamThread();
             delete stream;
             stream = 0;
@@ -228,7 +228,7 @@ namespace kerberos
 
         if(capture != 0)
         {
-            VLOG(0) << "Stopping capture device";
+            VLOG(1) << "Stopping capture device";
             if(capture->isOpened())
             {
                 machinery->disableCapture();
@@ -245,7 +245,7 @@ namespace kerberos
         // ---------------------------
         // Initialize capture device
 
-        VLOG(0) << "Starting capture device: " + settings.at("capture");
+        VLOG(1) << "Starting capture device: " + settings.at("capture");
         capture = Factory<Capture>::getInstance()->create(settings.at("capture"));
         capture->setup(settings);
         capture->startGrabThread();
@@ -269,14 +269,14 @@ namespace kerberos
 
         if(cloud != 0)
         {
-            VLOG(0) << "Stopping cloud service";
+            VLOG(1) << "Stopping cloud service";
             cloud->stopUploadThread();
             cloud->stopPollThread();
             cloud->stopHealthThread();
             delete cloud;
         }
 
-        VLOG(0) << "Starting cloud service: " + settings.at("cloud");
+        VLOG(1) << "Starting cloud service: " + settings.at("cloud");
         cloud = Factory<Cloud>::getInstance()->create(settings.at("cloud"));
         cloud->setCapture(capture);
         cloud->setup(settings);

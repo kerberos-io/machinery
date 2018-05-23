@@ -124,8 +124,8 @@ namespace kerberos
 
     void USBCamera::open()
     {
-        VLOG(0) << "Capture: Trying to open USB camera.";
-        VLOG(0) << "Capture: (Warning) You can change the capture device with the configuration files.";
+        VLOG(1) << "Capture: Trying to open USB camera.";
+        VLOG(1) << "Capture: (Warning) You can change the capture device with the configuration files.";
 
         try
         {
@@ -146,7 +146,7 @@ namespace kerberos
             throw OpenCVException(ex.msg.c_str());
         }
 
-        VLOG(0) << "Capture: Succesfully opened USB camera.";
+        VLOG(1) << "Capture: Succesfully opened USB camera.";
     }
 
     void USBCamera::close()

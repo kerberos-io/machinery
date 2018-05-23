@@ -15,10 +15,9 @@
 //  http://muflihun.com
 //
 
-#define ELPP_THREAD_SAFE
-
 #ifndef EASYLOGGINGPP_H
 #define EASYLOGGINGPP_H
+#define ELPP_THREAD_SAFE 1
 // Compilers and C++0x/C++11 Evaluation
 #if __cplusplus >= 201103L
 #  define ELPP_CXX11 1

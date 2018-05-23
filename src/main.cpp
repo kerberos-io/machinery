@@ -66,6 +66,7 @@ int main(int argc, char** argv)
     el::Loggers::addFlag(el::LoggingFlag::StrictLogFileSizeCheck);
     el::Loggers::addFlag(el::LoggingFlag::ColoredTerminalOutput);
     el::Loggers::reconfigureAllLoggers(config);
+    el::Loggers::setVerboseLevel(1);
 
     VLOG(0) << "Logging is written to: " + logFile;
 

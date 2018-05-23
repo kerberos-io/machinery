@@ -254,7 +254,6 @@ namespace kerberos
         // ------------------
         // Initialize stream
 
-        usleep(1000*5000);
         stream = new Stream();
         stream->configureStream(settings);
         startStreamThread();

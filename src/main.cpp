@@ -59,7 +59,6 @@ int main(int argc, char** argv)
     config.set(el::Level::Global, el::ConfigurationType::Enabled, "true");
     config.set(el::Level::Global, el::ConfigurationType::ToFile, "true");
     config.set(el::Level::Global, el::ConfigurationType::ToStandardOutput, "true");
-    config.set(el::Level::Global, el::ConfigurationType::LogFlushThreshold, "100");
     config.set(el::Level::Global, el::ConfigurationType::MaxLogFileSize, "5000000"); // 5MB
     std::string logFile = (helper::getValueByKey(parameters, "log")) ?: LOG_PATH;
     config.set(el::Level::Global, el::ConfigurationType::Filename, logFile.c_str());
@@ -68,7 +67,7 @@ int main(int argc, char** argv)
     el::Loggers::reconfigureAllLoggers(config);
     el::Loggers::setVerboseLevel(1);
 
-    VLOG(0) << "Logging is written to: " + logFile;
+    VLOG(1) << "Logging is written to: " + logFile;
 
     while(true)
     {

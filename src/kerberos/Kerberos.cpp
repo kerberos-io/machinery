@@ -29,7 +29,6 @@ namespace kerberos
         std::string file = configuration.substr(configuration.rfind('/')+1);
         guard = new FW::Guard();
         guard->listenTo(directory, file);
-
         guard->onChange(&Kerberos::reconfigure);
         guard->start();
 
@@ -56,7 +55,7 @@ namespace kerberos
 
             if(!machinery->allowed(m_images))
             {
-                BINFO << "Machinery on hold, conditions failed.";
+                VLOG(1) << "Machinery on hold, conditions failed.";
                 continue;
             }
 
@@ -77,6 +76,15 @@ namespace kerberos
 
                 Detection detection(toJSON(data), cleanImage);
                 m_detections.push_back(detection);
+
+                // -----------------------------------------------
+                // If we have a cloud account, send a notification
+                // to the cloud app.
+
+                if(cloud && cloud->m_publicKey != "")
+                {
+                    cloud->fstream.triggerMotion();
+                }
 
                 pthread_mutex_unlock(&m_ioLock);
             }
@@ -120,7 +128,7 @@ namespace kerberos
         // ---------------------------
     	// Get settings from XML file
 
-        LINFO << "Reading configuration file: " << configuration;
+        VLOG(1) << "Reading configuration file: " << configuration;
         StringMap settings = kerberos::helper::getSettingsFromXML(configuration);
         settings["configuration"] = configuration;
 
@@ -136,7 +144,7 @@ namespace kerberos
             settings[begin->first] = begin->second;
         }
 
-        LINFO << helper::printStringMap("Final configuration:", settings);
+        VLOG(1) << helper::printStringMap("Final configuration:", settings);
 
         // -----------------
         // Get instance name
@@ -146,19 +154,16 @@ namespace kerberos
         // -------------------------------------------
         // Check if we need to disable verbose logging
 
-        easyloggingpp::Logger * logger = easyloggingpp::Loggers::getLogger("business");
-        easyloggingpp::Configurations & config = logger->configurations();
         if(settings.at("logging") == "false")
         {
-            LINFO << "Logging is set to info";
-            config.set(easyloggingpp::Level::Info, easyloggingpp::ConfigurationType::Enabled, "false");
+            VLOG(1) << "Logging is set to info";
+            el::Loggers::setVerboseLevel(1);
         }
         else
         {
-            LINFO << "Logging is set to verbose";
-            config.set(easyloggingpp::Level::Info, easyloggingpp::ConfigurationType::Enabled, "true");
+            VLOG(1) << "Logging is set to verbose";
+            el::Loggers::setVerboseLevel(2);
         }
-        logger->reconfigure();
 
         // ------------------
         // Configure capture
@@ -215,7 +220,7 @@ namespace kerberos
 
         if(stream != 0)
         {
-            LINFO << "Stopping streaming";
+            VLOG(1) << "Stopping streaming";
             stopStreamThread();
             delete stream;
             stream = 0;
@@ -223,10 +228,12 @@ namespace kerberos
 
         if(capture != 0)
         {
-            LINFO << "Stopping capture device";
+            VLOG(1) << "Stopping capture device";
             if(capture->isOpened())
             {
                 machinery->disableCapture();
+                cloud->disableCapture();
+                cloud->stopLivestreamThread();
                 capture->stopGrabThread();
                 capture->stopHealthThread();
                 capture->close();
@@ -238,7 +245,7 @@ namespace kerberos
         // ---------------------------
         // Initialize capture device
 
-        LINFO << "Starting capture device: " + settings.at("capture");
+        VLOG(1) << "Starting capture device: " + settings.at("capture");
         capture = Factory<Capture>::getInstance()->create(settings.at("capture"));
         capture->setup(settings);
         capture->startGrabThread();
@@ -263,15 +270,16 @@ namespace kerberos
 
         if(cloud != 0)
         {
-            LINFO << "Stopping cloud service";
+            VLOG(1) << "Stopping cloud service";
             cloud->stopUploadThread();
             cloud->stopPollThread();
             cloud->stopHealthThread();
             delete cloud;
         }
 
-        LINFO << "Starting cloud service: " + settings.at("cloud");
+        VLOG(1) << "Starting cloud service: " + settings.at("cloud");
         cloud = Factory<Cloud>::getInstance()->create(settings.at("cloud"));
+        cloud->setCapture(capture);
         cloud->setup(settings);
     }
 
@@ -376,7 +384,7 @@ namespace kerberos
                 // If no new detections are found, we will run the IO devices (or max 30 images in memory)
                 if((currentCount > 0 && timesEqual > 4) || currentCount >= 30)
                 {
-                    BINFO << "Executing IO devices for " + helper::to_string(currentCount)  + " detection(s)";
+                    VLOG(1) << "Executing IO devices for " + helper::to_string(currentCount)  + " detection(s)";
 
                     for (int i = 0; i < currentCount; i++)
                     {
@@ -391,7 +399,7 @@ namespace kerberos
                         }
                         else
                         {
-                            LERROR << "IO: can't execute";
+                            LOG(ERROR) << "IO: can't execute";
                         }
                         pthread_mutex_unlock(&kerberos->m_ioLock);
                         usleep(500*1000);

@@ -54,7 +54,7 @@ namespace kerberos
             // ------------------------
             // Trigger the GPIO pin
 
-            BINFO << "IoGPIO: triggering GPIO pin " + helper::to_string(m_pin);
+            VLOG(1) << "IoGPIO: triggering GPIO pin " + helper::to_string(m_pin);
 
             for(int i = 0; i < m_periods; i++)
             {

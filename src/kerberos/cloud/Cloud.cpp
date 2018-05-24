@@ -5,6 +5,8 @@ namespace kerberos
 {
     void Cloud::setup(kerberos::StringMap & settings)
     {
+        pthread_mutex_init(&m_capture_lock, NULL);
+
         // -------------------------------
         // Upload interval [1.5sec;4.2min]
 
@@ -50,6 +52,30 @@ namespace kerberos
             setProductKey("");
         }
 
+        // -----------------------------------
+        // Check if we need to generate a
+        // new product key (first time running)
+
+        if(m_productKey == "")
+        {
+            // Generate random key
+            std::string key = helper::random_string(26);
+
+            // Create product key file
+            std::string command = "touch " + m_keyFile;
+            std::string createProductKeyFile = helper::GetStdoutFromCommand(command);
+            VLOG(2) << "Cloud: create key file";
+
+            // Write product key
+            command = "echo " + key + " > " + m_keyFile;
+            std::string writeProductKey = helper::GetStdoutFromCommand(command);
+            VLOG(2) <<  "Cloud: write key";
+
+            // Reset key
+            setProductKey(key);
+            VLOG(2) << "Cloud: reset product key (" << key << ")";
+        }
+
         startPollThread();
         startUploadThread();
 
@@ -61,6 +87,19 @@ namespace kerberos
         std::string privateKey = settings.at("clouds.S3.privateKey");
         setCloudCredentials(user, publicKey, privateKey);
         startHealthThread();
+
+        // -------------------
+        // Start livestreaming
+
+        fstream.setup(m_publicKey, m_productKey);
+        startLivestreamThread();
+    }
+
+    void Cloud::disableCapture()
+    {
+        pthread_mutex_lock(&m_capture_lock);
+        m_capturedevice = 0;
+        pthread_mutex_unlock(&m_capture_lock);
     }
 
     void Cloud::scan()
@@ -198,30 +237,12 @@ namespace kerberos
             headers["Content-Type"] = "application/json";
             conn->SetHeaders(headers);
 
-            // -----------------------------------
-            // Check if we need to generate a
-            // new product key (first time running)
-
-            if(cloud->m_productKey == "")
-            {
-                // Generate random key
-                std::string key = helper::random_string(26);
-
-                // Create product key file
-                std::string command = "touch " + cloud->m_keyFile;
-                std::string createProductKeyFile = helper::GetStdoutFromCommand(command);
-                BINFO << "Cloud: create key file";
-
-                // Write product key
-                command = "echo " + key + " > " + cloud->m_keyFile;
-                std::string writeProductKey = helper::GetStdoutFromCommand(command);
-                BINFO << "Cloud: write key";
-
-                // Reset key
-                cloud->setProductKey(key);
-
-                BINFO << "Cloud: reset product key (" << key << ")";
-            }
+            // --------------------------------------------
+            // Start livestreaming
+            /*std::cout << cloud->m_publicKey << std::endl;
+            std::cout << cloud->m_productKey << std::endl;
+            cloud->fstream.setup(cloud->m_publicKey, cloud->m_productKey);
+            cloud->startLivestreamThread();*/
 
             // --------------------------------------------
             // Generate fixed JSON data which will be send,
@@ -264,9 +285,9 @@ namespace kerberos
                 health += "}";
 
                 RestClient::Response r = conn->post("/api/v1/health", health);
-                BINFO << "Cloud: data - " << health;
-                BINFO << "Cloud: send device health - " << r.code;
-                BINFO << "Cloud: send device health - " << r.body;
+                VLOG(2) << "Cloud: data - " << health;
+                VLOG(2) << "Cloud: send device health - " << r.code;
+                VLOG(2) << "Cloud: send device health - " << r.body;
 
                 usleep(15*1000*1000); // every 15s
             }
@@ -305,5 +326,58 @@ namespace kerberos
         pthread_cancel(m_healthThread);
         pthread_join(m_healthThread, NULL);
         delete cloudConnection;
+    }
+
+    // ------------------------------------
+    // Send live stream to cloud, if
+    // subscribed to our cloud plan.
+
+    void * livestream (void * clo)
+    {
+        Cloud * cloud = (Cloud *) clo;
+
+        uint8_t * data = new uint8_t[(int)(1280*960*1.5)];
+        int32_t length = cloud->m_capturedevice->retrieveRAW(data);
+
+        while(cloud->m_livestreamThread_running)
+        {
+            pthread_mutex_lock(&cloud->m_capture_lock);
+
+            while(cloud->fstream.isRequestingLiveStream())
+            {
+                if(cloud->m_capturedevice != 0)
+                {
+                    //if(cloud->m_capturedevice->m_hardwareMJPEGEncoding)
+                    //{
+                    //    length = cloud->m_capturedevice->retrieveRAW(data);
+                    //    cloud->fstream.forwardRAW(data, length);
+                    //}
+                    //else
+                    //{
+                        Image image = cloud->m_capturedevice->retrieve();
+                        cloud->fstream.forward(image);
+                    //}
+                }
+
+                usleep(1000 * 1000); // 1 fps
+            }
+
+            pthread_mutex_unlock(&cloud->m_capture_lock);
+
+            usleep(1000 * 1000);
+        }
+    }
+
+    void Cloud::startLivestreamThread()
+    {
+        m_livestreamThread_running = true;
+        pthread_create(&m_livestreamThread, NULL, livestream, this);
+    }
+
+    void Cloud::stopLivestreamThread()
+    {
+        m_livestreamThread_running = false;
+        pthread_cancel(m_livestreamThread);
+        pthread_join(m_livestreamThread, NULL);
     }
 }

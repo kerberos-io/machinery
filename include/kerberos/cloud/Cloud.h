@@ -26,6 +26,8 @@
 #include "restclient-cpp/restclient.h"
 #include <iostream>
 #include <fstream>
+#include "capture/Capture.h"
+#include "cloud/ForwardStream.h"
 
 namespace kerberos
 {
@@ -49,6 +51,10 @@ namespace kerberos
             pthread_t m_healthThread;
             bool m_healthThread_running;
 
+            pthread_t m_livestreamThread;
+            pthread_mutex_t m_capture_lock;
+            bool m_livestreamThread_running;
+
             std::string m_keyFile;
             std::string m_productKey;
             std::string m_name;
@@ -62,6 +68,8 @@ namespace kerberos
             StringMap m_parameters;
             RestClient::Connection * cloudConnection;
             RestClient::Connection * pollConnection;
+            Capture * m_capturedevice;
+            ForwardStream fstream;
 
             Cloud(){};
             virtual ~Cloud(){};
@@ -69,12 +77,16 @@ namespace kerberos
             virtual bool upload(std::string pathToImage) = 0;
             virtual bool doesExist(std::string pathToImage) = 0;
 
+            void setCapture(Capture * capture){m_capturedevice = capture;};
+            void disableCapture();
             void startUploadThread();
             void stopUploadThread();
             void startPollThread();
             void stopPollThread();
             void startHealthThread();
             void stopHealthThread();
+            void startLivestreamThread();
+            void stopLivestreamThread();
 
             void scan();
             void generateHash(kerberos::StringMap & settings);

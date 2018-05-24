@@ -5,7 +5,7 @@ namespace kerberos
     void Counter::setup(const StringMap & settings)
     {
         std::vector<std::string> coordinates;
-        
+
         // Set incoming coordinates
         helper::tokenize(settings.at("heuristics.Counter.markers"), coordinates, "|");
         for(int i = 0; i < 2; i++)
@@ -17,7 +17,7 @@ namespace kerberos
             cv::Point p(from ,to);
             m_in.push_back(p);
         }
-        
+
         // Set outgoing coordinates
 
         for(int i = 2; i < 4; i++)
@@ -43,23 +43,23 @@ namespace kerberos
         cv::Point2f x = o2 - o1;
         cv::Point2f d1 = p1 - o1;
         cv::Point2f d2 = p2 - o2;
-        
+
         float cross = d1.x * d2.y - d1.y * d2.x;
-        
+
         if (std::abs(cross) < 1e-8)
         {
             return false;
         }
-        
+
         double t1 = (x.x * d2.y - x.y * d2.x)/cross;
         r = o1 + d1 * t1;
-        
+
         if((r.x <= MAX(o1.x, p1.x) && r.x >= MIN(o1.x, p1.x) && r.y <= MAX(o1.y, p1.y) && r.y >= MIN(o1.y, p1.y)) &&
            (r.x <= MAX(o2.x, p2.x) && r.x >= MIN(o2.x, p2.x) && r.y <= MAX(o2.y, p2.y) && r.y >= MIN(o2.y, p2.y)))
         {
             return true;
         }
-            
+
         return false;
     }
 
@@ -71,7 +71,7 @@ namespace kerberos
 
         int incoming = 0;
         int outgoing = 0;
-        
+
         kerberos::Image image = evaluation;
         cv::Mat img = image.getImage();
         cv::dilate(img, img, cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(25,25)));
@@ -79,21 +79,21 @@ namespace kerberos
 
         cv::Point & outTop = m_out[0];
         cv::Point & outBottom = m_out[1];
- 
+
         cv::Point & inTop = m_in[0];
         cv::Point & inBottom = m_in[1];
-        
+
         std::vector<std::vector<cv::Point> > contours;
         std::vector<cv::Vec4i> hierarchy;
         cv::findContours(image.getImage(), contours, hierarchy, CV_RETR_TREE, CV_CHAIN_APPROX_NONE);
-        
+
         int numberOfContours= 0;
         for(int i = 0; i < m_features.size(); i++)
         {
             int mostRecent = m_features[i].size() - 1;
             m_features[i][mostRecent].decreaseAppearance();
         }
-        
+
         // Find new tracks
         if(contours.size() > 0)
         {
@@ -103,20 +103,20 @@ namespace kerberos
                 int x = moments.m10/moments.m00;
                 int y = moments.m01/moments.m00;
                 int area = cv::contourArea(contours[i]);
-                
+
                 if(area < m_minArea) continue;
-            
+
                 Feature current(x, y, area, m_appearance);
                 int best = -1;
                 double bestValue = 99999999;
                 double bestArea = 99999999;
-            
+
                 for(int j = 0; j < m_features.size(); j++)
                 {
                     int mostRecent = m_features[j].size() - 1;
                     double distance = current.distance(m_features[j][mostRecent]);
                     double areaDistance = current.areaDistance(m_features[j][mostRecent]);
-                
+
                     if(distance < m_maxDistance && distance < bestValue + m_maxDistance/2)
                     {
                         if(areaDistance < bestArea)
@@ -126,7 +126,7 @@ namespace kerberos
                         }
                     }
                 }
-            
+
                 if(best == -1)
                 {
                     std::vector<Feature> tracking;
@@ -137,18 +137,18 @@ namespace kerberos
                 {
                     m_features[best].push_back(current);
                 }
-            
+
                 numberOfContours++;
             }
         }
-        
+
         // Remove old tracks
         std::vector<std::vector<Feature> >::iterator it = m_features.begin();
         while(it != m_features.end())
         {
             Feature & back = it->back();
             back.decreaseAppearance();
-            
+
             if(back.getAppearance() < 0)
             {
                 it = m_features.erase(it);
@@ -158,7 +158,7 @@ namespace kerberos
                 it++;
             }
         }
-        
+
         // Check existing tracks if they crossed the line
         it = m_features.begin();
         while(it != m_features.end())
@@ -170,11 +170,11 @@ namespace kerberos
                     cv::Point2f prev((*it)[j-1].getX(),(*it)[j-1].getY());
                     cv::Point2f curr((*it)[j].getX(),(*it)[j].getY());
                 }
-                
+
                 // Check if cross line
                 cv::Point2f start((*it)[0].getX(),(*it)[0].getY());
                 cv::Point2f end((*it)[it->size()-1].getX(),(*it)[it->size()-1].getY());
-                
+
                 // Check if interset in line
                 cv::Point2f intersectionPointOutgoing;
                 bool inLine = false;
@@ -189,11 +189,11 @@ namespace kerberos
                 {
                     outLine = true;
                 }
-                
+
                 // Check if interesected both
                 Direction xDirection = parallell;
                 Direction yDirection = parallell;
-                
+
                 if(inLine && outLine)
                 {
                     // What is the direction (incoming our outgoing?)
@@ -213,7 +213,7 @@ namespace kerberos
                     {
                         yDirection = top;
                     }
-                    
+
                     // Check which intersection point comes first
                     if(xDirection != parallell)
                     {
@@ -244,9 +244,9 @@ namespace kerberos
                     }
                     else
                     {
-                        
+
                     }
-                    
+
                     it = m_features.erase(it);
                 }
                 else
@@ -265,12 +265,12 @@ namespace kerberos
             JSON::AllocatorType& allocator = data.GetAllocator();
             data.AddMember("incoming", incoming, allocator);
             data.AddMember("outgoing", outgoing, allocator);
-            
+
             if(m_onlyTrueWhenCounted)
             {
                 if(incoming > 0 || outgoing > 0)
                 {
-                    BINFO << "Counter: in (" << helper::to_string(incoming) << "), out (" << helper::to_string(outgoing) << ")";
+                    VLOG(1) << "Counter: in (" << helper::to_string(incoming) << "), out (" << helper::to_string(outgoing) << ")";
                     return true;
                 }
             }
@@ -283,7 +283,7 @@ namespace kerberos
         {
             usleep(m_noMotionDelayTime*1000);
         }
-        
+
         return false;
     }
 }

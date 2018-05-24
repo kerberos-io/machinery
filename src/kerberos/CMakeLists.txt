@@ -5,6 +5,7 @@
 
     set(KERBEROS_SRC
         cloud/Cloud.cpp
+        cloud/ForwardStream.cpp
         capture/Capture.cpp
         capture/Stream.cpp
         capture/Image.cpp

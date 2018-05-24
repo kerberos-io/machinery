@@ -19,7 +19,7 @@ namespace kerberos
 
 	//------
 	//set pushbullet token
-	
+
 	setToken((settings.at("ios.Pushbullet.token").c_str()));
 
         // -------------
@@ -64,7 +64,7 @@ namespace kerberos
 	    std::string upUrl ;
 	    std::string fileUrl ;
 	    RestClient::Response r;
-	    
+
 	    /*
 	     * Step 1 : save file to tmp and provide  path in a string var
 	     */
@@ -77,36 +77,36 @@ namespace kerberos
 		     */
 
 		    r = pushbulletConnection->post("/v2/upload-request", "{\"file_name\":\"detection.jpg\",\"file_type\":\"image/jpeg\"}");
-		
+
 		    if(r.code == 200){
 			pbResp.Parse(r.body.c_str());
 			upUrl = pbResp["upload_url"].GetString();
 			fileUrl = pbResp["file_url"].GetString();
-			BINFO << "IoPushbullet: response to upload request " + r.body;
+			VLOG(1) << "IoPushbullet: response to upload request " + r.body;
 
 			/*
 			* Step 3 : upload file to pushbullet
 			*/
-			if (pbUploadImage(tmpFile, upUrl)) {	
+			if (pbUploadImage(tmpFile, upUrl)) {
 
 			/*
 			* Step 4 : create text push for detection
 			*/
 				r = pushbulletConnection->post("/v2/pushes", "{\"type\":\"file\",\"file_url\":\""+ fileUrl +"\"}");
-				if(r.code==200)	
-					BINFO << "IoPushbullet: response to push file request " + r.body ;
+				if(r.code==200)
+					VLOG(1) << "IoPushbullet: response to push file request " + r.body ;
 		    	}
 
-	     	   }		
+	     	   }
 		}
             // -------------------
             // Send a message  to pushbullet
 
             r = pushbulletConnection->post("/v2/pushes", "{\"body\":\"Motion detected\",\"title\":\"Kios\",\"type\":\"note\"}");
-	    
+
             if(r.code == 200)
             {
-            	BINFO << "IoPushbullet: response to post to pushbullet " + r.body;
+            	VLOG(1) << "IoPushbullet: response to post to pushbullet " + r.body;
                 return true;
             }
 
@@ -116,7 +116,7 @@ namespace kerberos
     }
 
 	bool IoPushbullet::pbUploadImage(std::string tmpFile, std::string upUrl) {
-		
+
 		CURL *curl;
 		CURLcode res;
 
@@ -124,11 +124,11 @@ namespace kerberos
 		struct curl_httppost *lastptr = NULL;
 
 		curl_global_init(CURL_GLOBAL_ALL);
-		curl_formadd(&formpost, &lastptr, 
+		curl_formadd(&formpost, &lastptr,
 				CURLFORM_COPYNAME, "file",
 				CURLFORM_FILENAME, "detection.jpg",
 				CURLFORM_FILE, tmpFile.c_str(),
-				CURLFORM_CONTENTTYPE, "image/jpeg", 
+				CURLFORM_CONTENTTYPE, "image/jpeg",
 				CURLFORM_END);
 
 		curl = curl_easy_init();
@@ -141,10 +141,10 @@ namespace kerberos
 		    curl_easy_setopt(curl, CURLOPT_HTTPPOST, formpost);
 
 		    res = curl_easy_perform(curl);
-		    
+
 		    curl_easy_cleanup(curl);
 		    curl_formfree(formpost);
-			
+
 		    if (res != CURLE_OK){
 			fprintf(stderr, "curl_easy_perform() failed: %s\n",curl_easy_strerror(res));
 		    	return false;

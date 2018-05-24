@@ -71,7 +71,7 @@ namespace kerberos
         	  std::string message { buffer.GetString() };
 
             bool sendSuccessfully = send_message(message);
-        	  BINFO << "IoMQTT: sending message..." << ((sendSuccessfully) ? "sent" : "error");
+        	  VLOG(1) << "IoMQTT: sending message..." << ((sendSuccessfully) ? "sent" : "error");
 
             return sendSuccessfully;
         }

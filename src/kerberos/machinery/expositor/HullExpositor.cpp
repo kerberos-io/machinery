@@ -97,7 +97,7 @@ namespace kerberos
 
         if(numberOfChanges)
         {
-            BINFO << "HullExpositor: activity detected from (" +  helper::to_string(rectangle.m_x1) + "," + helper::to_string(rectangle.m_y1) + ") to (" +  helper::to_string(rectangle.m_x2) + "," + helper::to_string(rectangle.m_y2) + ")";
+            VLOG(1) << "HullExpositor: activity detected from (" +  helper::to_string(rectangle.m_x1) + "," + helper::to_string(rectangle.m_y1) + ") to (" +  helper::to_string(rectangle.m_x2) + "," + helper::to_string(rectangle.m_y2) + ")";
         }
 
         data.AddMember("numberOfChanges", numberOfChanges, allocator);

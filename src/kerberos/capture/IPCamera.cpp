@@ -80,7 +80,7 @@ namespace kerberos
             }
 
             // resize if needed.
-            if(image.getRows() !== m_frameHeight || image.getColumns() !== m_frameWidth) {
+            if(image.getRows() != m_frameHeight || image.getColumns() != m_frameWidth) {
                 cv::resize(image.getImage(), image.getImage(), cv::Size(m_frameWidth, m_frameHeight));
             }
 

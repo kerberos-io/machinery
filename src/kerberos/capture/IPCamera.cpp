@@ -141,9 +141,9 @@ namespace kerberos
                 // ---------------------------------
                 // Resize if needed.
 
-                if(image.getRows() != m_frameHeight || image.getColumns() != m_frameWidth)
+                if(image->getRows() != m_frameHeight || image->getColumns() != m_frameWidth)
                 {
-                    cv::resize(image.getImage(), image.getImage(), cv::Size(m_frameWidth, m_frameHeight));
+                    cv::resize(image->getImage(), image->getImage(), cv::Size(m_frameWidth, m_frameHeight));
                 }
 
                 pthread_mutex_unlock(&m_lock);

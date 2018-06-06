@@ -220,7 +220,7 @@ namespace kerberos
 
         if(stream != 0)
         {
-            VLOG(1) << "Steam: Stopping streaming";
+            VLOG(1) << "Steam: Stopping streaming thread";
             stopStreamThread();
             delete stream;
             stream = 0;
@@ -228,7 +228,7 @@ namespace kerberos
 
         if(capture != 0)
         {
-            VLOG(1) << "Capture: Stopping capture device";
+            VLOG(1) << "Capture: Stop capture device";
             if(capture->isOpened())
             {
                 VLOG(2) << "Capture: Disable capture device in machinery";
@@ -241,7 +241,7 @@ namespace kerberos
                 capture->stopGrabThread();
                 VLOG(2) << "Capture: Stop capture health thread";
                 capture->stopHealthThread();
-                VLOG(2) << "Capture: Closing capture device";
+                VLOG(2) << "Capture: Close capture device";
                 capture->close();
             }
             delete capture;
@@ -251,10 +251,12 @@ namespace kerberos
         // ---------------------------
         // Initialize capture device
 
-        VLOG(1) << "Starting capture device: " + settings.at("capture");
+        VLOG(1) << "Capture: Start capture device: " + settings.at("capture");
         capture = Factory<Capture>::getInstance()->create(settings.at("capture"));
         capture->setup(settings);
+        VLOG(2) << "Capture: Start capture grab thread";
         capture->startGrabThread();
+        VLOG(2) << "Capture: Start capture health thread";
         capture->startHealthThread();
 
         // ------------------
@@ -263,6 +265,7 @@ namespace kerberos
         usleep(1000*5000);
         stream = new Stream();
         stream->configureStream(settings);
+        VLOG(1) << "Capture: Start streaming thread";
         startStreamThread();
     }
 
@@ -276,9 +279,12 @@ namespace kerberos
 
         if(cloud != 0)
         {
-            VLOG(1) << "Stopping cloud service";
+            VLOG(1) << "Cloud: Stop cloud service";
+            VLOG(2) << "Cloud: Stop upload thread";
             cloud->stopUploadThread();
+            VLOG(2) << "Cloud: Stop polling thread";
             cloud->stopPollThread();
+            VLOG(2) << "Cloud: Stop health thread";
             cloud->stopHealthThread();
             delete cloud;
         }

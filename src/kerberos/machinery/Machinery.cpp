@@ -8,7 +8,7 @@ namespace kerberos
         // -----------------------------------------------------------
         // Creates condition, algorithms, expositors, heuristics and io handlers.
 
-        VLOG(1) << "Starting conditions: " + settings.at("condition");
+        LINFO << "Starting conditions: " + settings.at("condition");
         std::vector<Condition *> conditions = Factory<Condition>::getInstance()->createMultiple(settings.at("condition"));
         for(int i = 0; i < conditions.size(); i++)
         {
@@ -16,22 +16,22 @@ namespace kerberos
         }
         setCondition(conditions);
 
-        VLOG(1) << "Starting algorithm: " + settings.at("algorithm");
+        LINFO << "Starting algorithm: " + settings.at("algorithm");
         Algorithm * algorithm = Factory<Algorithm>::getInstance()->create(settings.at("algorithm"));
         algorithm->setup(settings);
         setAlgorithm(algorithm);
 
-        VLOG(1) << "Starting expositor: " + settings.at("expositor");
+        LINFO << "Starting expositor: " + settings.at("expositor");
         Expositor * expositor = Factory<Expositor>::getInstance()->create(settings.at("expositor"));
         expositor->setup(settings);
         setExpositor(expositor);
 
-        VLOG(1) << "Starting heuristic: " + settings.at("heuristic");
+        LINFO << "Starting heuristic: " + settings.at("heuristic");
         Heuristic * heuristic = Factory<Heuristic>::getInstance()->create(settings.at("heuristic"));
         heuristic->setup(settings);
         setHeuristic(heuristic);
 
-        VLOG(1) << "Starting io devices: " + settings.at("io");
+        LINFO << "Starting io devices: " + settings.at("io");
         std::vector<Io *> ios = Factory<Io>::getInstance()->createMultiple(settings.at("io"));
         for(int i = 0; i < ios.size(); i++)
         {

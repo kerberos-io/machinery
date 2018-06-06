@@ -54,20 +54,16 @@ int main(int argc, char** argv)
     // -----------------
     // Initialize logger
 
-    el::Configurations config;
+    easyloggingpp::Configurations config;
     config.setToDefault();
-    config.set(el::Level::Global, el::ConfigurationType::Enabled, "true");
-    config.set(el::Level::Global, el::ConfigurationType::ToFile, "true");
-    config.set(el::Level::Global, el::ConfigurationType::ToStandardOutput, "true");
-    config.set(el::Level::Global, el::ConfigurationType::MaxLogFileSize, "5000000"); // 5MB
+    config.setAll(easyloggingpp::ConfigurationType::Enabled, "true");
+    config.setAll(easyloggingpp::ConfigurationType::ToFile, "true");
     std::string logFile = (helper::getValueByKey(parameters, "log")) ?: LOG_PATH;
-    config.set(el::Level::Global, el::ConfigurationType::Filename, logFile.c_str());
-    el::Loggers::addFlag(el::LoggingFlag::StrictLogFileSizeCheck);
-    el::Loggers::addFlag(el::LoggingFlag::ColoredTerminalOutput);
-    el::Loggers::reconfigureAllLoggers(config);
-    el::Loggers::setVerboseLevel(1);
+    config.setAll(easyloggingpp::ConfigurationType::Filename, logFile);
+    config.setAll(easyloggingpp::ConfigurationType::RollOutSize, "10000000"); // 10MB
+    easyloggingpp::Loggers::reconfigureAllLoggers(config);
 
-    VLOG(1) << "Logging is written to: " + logFile;
+    LINFO << "Logging is written to: " + logFile;
 
     while(true)
     {
@@ -81,7 +77,7 @@ int main(int argc, char** argv)
         }
         catch(Exception & ex)
         {
-            LOG(ERROR) << ex.what();
+            LERROR << ex.what();
 
             // Try again in 3 seconds..
             usleep(3 * 1000000);

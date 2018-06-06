@@ -270,7 +270,7 @@ namespace kerberos
             {
                 if(incoming > 0 || outgoing > 0)
                 {
-                    VLOG(1) << "Counter: in (" << helper::to_string(incoming) << "), out (" << helper::to_string(outgoing) << ")";
+                    LINFO << "Counter: in (" << helper::to_string(incoming) << "), out (" << helper::to_string(outgoing) << ")";
                     return true;
                 }
             }

@@ -30,7 +30,7 @@ namespace kerberos
         }
         else
         {
-            LOG(ERROR) << "Settings: can't use invalid port";
+            LERROR << "Settings: can't use invalid port";
             //TODO: manage invalid port error
         }
     }
@@ -57,7 +57,7 @@ namespace kerberos
         }
         sock = (INVALID_SOCKET);
 
-        VLOG(1) << "Stream: Succesfully closed streaming";
+        LINFO << "Stream: Succesfully closed streaming";
 
         return false;
     }
@@ -83,7 +83,7 @@ namespace kerberos
 
             while(bind(sock, (SOCKADDR*) &address, sizeof(SOCKADDR_IN)) == SOCKET_ERROR)
             {
-                LOG(ERROR) << "Stream: couldn't bind sock";
+                LERROR << "Stream: couldn't bind sock";
                 release();
                 usleep(1000*10000);
                 sock = ::socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
@@ -91,13 +91,13 @@ namespace kerberos
 
             while(listen(sock, 2) == SOCKET_ERROR)
             {
-                LOG(ERROR) << "Stream: couldn't listen on sock";
+                LERROR << "Stream: couldn't listen on sock";
                 usleep(1000*10000);
             }
 
             FD_SET(sock, &master);
 
-            VLOG(1) << "Stream: Configured stream on port " << helper::to_string(m_streamPort) << " with quality: " << helper::to_string(m_quality);
+            LINFO << "Stream: Configured stream on port " << helper::to_string(m_streamPort) << " with quality: " << helper::to_string(m_quality);
 
             return true;
         }
@@ -174,13 +174,13 @@ namespace kerberos
                 if(!tokenFound)
                 {
                     //LERROR << "Stream: no token found in client request.";
-                    LOG(ERROR) << "Stream: no token found in client request.";
+                    LERROR << "Stream: no token found in client request.";
                     return false;
                 }
                 else if(token != credentialsBase64)
                 {
                     //LERROR << "Stream: token found, but it's not correct.";
-                    LOG(ERROR) << "Stream: token found, but it's not correct.";
+                    LERROR << "Stream: token found, but it's not correct.";
                     return false;
                 }
 
@@ -189,7 +189,7 @@ namespace kerberos
             else
             {
                 //LERROR << "Stream: no token found in client request.";
-                LOG(ERROR) << "Stream: no token found in client request.";
+                LERROR << "Stream: no token found in client request.";
                 return false;
             }
 
@@ -216,8 +216,8 @@ namespace kerberos
         {
             //LERROR << "Stream: couldn't accept connection on sock";
             //LERROR << "Stream: reopening master sock";
-            LOG(ERROR) << "Stream: couldn't accept connection on sock";
-            LOG(ERROR) << "Stream: reopening master sock";
+            LERROR << "Stream: couldn't accept connection on sock";
+            LERROR << "Stream: reopening master sock";
             release();
             open();
             return false;
@@ -254,8 +254,8 @@ namespace kerberos
                 "Content-Type: multipart/x-mixed-replace; boundary=mjpegstream\r\n"
                 "\r\n",0);
 
-            VLOG(1) << "Stream: authentication success";
-            VLOG(1) << "Stream: opening socket for new client.";
+            LINFO << "Stream: authentication success";
+            LINFO << "Stream: opening socket for new client.";
             clients.push_back(client);
             packetsSend[client] = 0;
 

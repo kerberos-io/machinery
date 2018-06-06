@@ -10,7 +10,7 @@ namespace kerberos
         setErodeKernel(erode, erode);
         setThreshold(threshold);
     }
-    
+
     // ---------------------------------------------
     // Convert all images (except last one) to gray
 
@@ -41,12 +41,12 @@ namespace kerberos
 
         return evaluation;
     }
-    
+
     void DifferentialCollins::setErodeKernel(int width, int height)
     {
         m_erodeKernel.setImage(Image::createKernel(width, height));
     }
-    
+
     void DifferentialCollins::setThreshold(int threshold)
     {
         m_threshold = threshold;

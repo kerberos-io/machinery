@@ -17,10 +17,10 @@ namespace kerberos
 
         setUrl(settings.at("ios.Pushbullet.url").c_str());
 
-	//------
-	//set pushbullet token
+      	//------
+      	//set pushbullet token
 
-	setToken((settings.at("ios.Pushbullet.token").c_str()));
+      	setToken((settings.at("ios.Pushbullet.token").c_str()));
 
         // -------------
         // Set throttler
@@ -35,7 +35,7 @@ namespace kerberos
         RestClient::HeaderFields headers;
         headers["Content-Type"] = "application/json";
         pushbulletConnection->SetHeaders(headers);
-	pushbulletConnection->AppendHeader("Access-Token",m_pbToken);
+        pushbulletConnection->AppendHeader("Access-Token",m_pbToken);
     }
 
     bool IoPushbullet::save(Image & image, JSON & data)
@@ -61,9 +61,9 @@ namespace kerberos
             dataCopy.Accept(writer);
 
 
-	    std::string upUrl ;
-	    std::string fileUrl ;
-	    RestClient::Response r;
+      	    std::string upUrl;
+      	    std::string fileUrl;
+      	    RestClient::Response r;
 
 	    /*
 	     * Step 1 : save file to tmp and provide  path in a string var
@@ -82,7 +82,7 @@ namespace kerberos
 			pbResp.Parse(r.body.c_str());
 			upUrl = pbResp["upload_url"].GetString();
 			fileUrl = pbResp["file_url"].GetString();
-			VLOG(1) << "IoPushbullet: response to upload request " + r.body;
+			LINFO << "IoPushbullet: response to upload request " + r.body;
 
 			/*
 			* Step 3 : upload file to pushbullet
@@ -94,7 +94,7 @@ namespace kerberos
 			*/
 				r = pushbulletConnection->post("/v2/pushes", "{\"type\":\"file\",\"file_url\":\""+ fileUrl +"\"}");
 				if(r.code==200)
-					VLOG(1) << "IoPushbullet: response to push file request " + r.body ;
+					LINFO << "IoPushbullet: response to push file request " + r.body ;
 		    	}
 
 	     	   }
@@ -106,7 +106,7 @@ namespace kerberos
 
             if(r.code == 200)
             {
-            	VLOG(1) << "IoPushbullet: response to post to pushbullet " + r.body;
+            	LINFO << "IoPushbullet: response to post to pushbullet " + r.body;
                 return true;
             }
 

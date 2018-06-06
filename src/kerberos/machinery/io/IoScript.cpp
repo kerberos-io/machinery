@@ -49,7 +49,7 @@ namespace kerberos
             // Send a post to URL
 
             std::string path = (std::string) getPath();
-            VLOG(1) << "IoScript: calling script at " + path;
+            LINFO << "IoScript: calling script at " + path;
 
             if(path != "")
             {

@@ -11,7 +11,7 @@ namespace kerberos
         setDilateKernel(dilate, dilate);
 
         m_subtractor = cv::createBackgroundSubtractorMOG2();
-        
+
         std::string shadows = settings.at("algorithms.BackgroundSubtraction.shadows");
         int history = std::atoi(settings.at("algorithms.BackgroundSubtraction.history").c_str());
         int nmixtures = std::atoi(settings.at("algorithms.BackgroundSubtraction.nmixtures").c_str());
@@ -24,7 +24,7 @@ namespace kerberos
         m_subtractor->setVarThreshold(threshold);
         m_subtractor->setVarThresholdGen(threshold);
     }
-    
+
     // ---------------------------------------------
     // Convert all images (except last one) to gray
 
@@ -42,25 +42,25 @@ namespace kerberos
         // Calculate
 
         m_subtractor->apply(images[2]->getImage(), m_backgroud.getImage());
-        
+
         cv::Mat brackgroundmodel;
         m_subtractor->getBackgroundImage(brackgroundmodel);
         m_backgroud.erode(m_erodeKernel);
         m_backgroud.dilate(m_dilateKernel);
-        
+
         return m_backgroud;
     }
-    
+
     void BackgroundSubtraction::setErodeKernel(int width, int height)
     {
         m_erodeKernel.setImage(Image::createKernel(width, height));
     }
-    
+
     void BackgroundSubtraction::setDilateKernel(int width, int height)
     {
         m_dilateKernel.setImage(Image::createKernel(width, height));
     }
-    
+
     void BackgroundSubtraction::setThreshold(int threshold)
     {
         m_threshold = threshold;

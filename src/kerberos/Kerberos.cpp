@@ -55,7 +55,7 @@ namespace kerberos
 
             if(!machinery->allowed(m_images))
             {
-                VLOG(1) << "Machinery on hold, conditions failed.";
+                LINFO << "Machinery on hold, conditions failed.";
                 continue;
             }
 
@@ -128,7 +128,7 @@ namespace kerberos
         // ---------------------------
     	// Get settings from XML file
 
-        VLOG(1) << "Reading configuration file: " << configuration;
+        LINFO << "Reading configuration file: " << configuration;
         StringMap settings = kerberos::helper::getSettingsFromXML(configuration);
         settings["configuration"] = configuration;
 
@@ -144,7 +144,7 @@ namespace kerberos
             settings[begin->first] = begin->second;
         }
 
-        VLOG(1) << helper::printStringMap("Final configuration:", settings);
+        LINFO << helper::printStringMap("Final configuration:", settings);
 
         // -----------------
         // Get instance name
@@ -154,16 +154,19 @@ namespace kerberos
         // -------------------------------------------
         // Check if we need to disable verbose logging
 
+        easyloggingpp::Logger * logger = easyloggingpp::Loggers::getLogger("business");
+        easyloggingpp::Configurations & config = logger->configurations();
         if(settings.at("logging") == "false")
         {
-            VLOG(1) << "Logging is set to info";
-            el::Loggers::setVerboseLevel(1);
+            LINFO << "Logging is set to info";
+            config.set(easyloggingpp::Level::Info, easyloggingpp::ConfigurationType::Enabled, "false");
         }
         else
         {
-            VLOG(1) << "Logging is set to verbose";
-            el::Loggers::setVerboseLevel(2);
+            LINFO << "Logging is set to verbose";
+            config.set(easyloggingpp::Level::Info, easyloggingpp::ConfigurationType::Enabled, "true");
         }
+        logger->reconfigure();
 
         // ------------------
         // Configure capture
@@ -220,7 +223,7 @@ namespace kerberos
 
         if(stream != 0)
         {
-            VLOG(1) << "Steam: Stopping streaming thread";
+            LINFO << "Steam: Stopping streaming thread";
             stopStreamThread();
             delete stream;
             stream = 0;
@@ -228,20 +231,20 @@ namespace kerberos
 
         if(capture != 0)
         {
-            VLOG(1) << "Capture: Stop capture device";
+            LINFO << "Capture: Stop capture device";
             if(capture->isOpened())
             {
-                VLOG(2) << "Capture: Disable capture device in machinery";
+                BINFO << "Capture: Disable capture device in machinery";
                 machinery->disableCapture();
-                VLOG(2) << "Capture: Stop cloud live streaming";
+                BINFO << "Capture: Stop cloud live streaming";
                 cloud->stopLivestreamThread();
-                VLOG(2) << "Capture: Disable capture device in cloud";
+                BINFO << "Capture: Disable capture device in cloud";
                 cloud->disableCapture();
-                VLOG(2) << "Capture: Stop capture grab thread";
+                BINFO << "Capture: Stop capture grab thread";
                 capture->stopGrabThread();
-                VLOG(2) << "Capture: Stop capture health thread";
+                BINFO << "Capture: Stop capture health thread";
                 capture->stopHealthThread();
-                VLOG(2) << "Capture: Close capture device";
+                BINFO << "Capture: Close capture device";
                 capture->close();
             }
             delete capture;
@@ -251,12 +254,12 @@ namespace kerberos
         // ---------------------------
         // Initialize capture device
 
-        VLOG(1) << "Capture: Start capture device: " + settings.at("capture");
+        LINFO << "Capture: Start capture device: " + settings.at("capture");
         capture = Factory<Capture>::getInstance()->create(settings.at("capture"));
         capture->setup(settings);
-        VLOG(2) << "Capture: Start capture grab thread";
+        BINFO << "Capture: Start capture grab thread";
         capture->startGrabThread();
-        VLOG(2) << "Capture: Start capture health thread";
+        BINFO << "Capture: Start capture health thread";
         capture->startHealthThread();
 
         // ------------------
@@ -265,7 +268,7 @@ namespace kerberos
         usleep(1000*5000);
         stream = new Stream();
         stream->configureStream(settings);
-        VLOG(1) << "Capture: Start streaming thread";
+        LINFO << "Capture: Start streaming thread";
         startStreamThread();
     }
 
@@ -279,17 +282,17 @@ namespace kerberos
 
         if(cloud != 0)
         {
-            VLOG(1) << "Cloud: Stop cloud service";
-            VLOG(2) << "Cloud: Stop upload thread";
+            LINFO << "Cloud: Stop cloud service";
+            BINFO << "Cloud: Stop upload thread";
             cloud->stopUploadThread();
-            VLOG(2) << "Cloud: Stop polling thread";
+            BINFO << "Cloud: Stop polling thread";
             cloud->stopPollThread();
-            VLOG(2) << "Cloud: Stop health thread";
+            BINFO << "Cloud: Stop health thread";
             cloud->stopHealthThread();
             delete cloud;
         }
 
-        VLOG(1) << "Starting cloud service: " + settings.at("cloud");
+        LINFO << "Starting cloud service: " + settings.at("cloud");
         cloud = Factory<Cloud>::getInstance()->create(settings.at("cloud"));
         cloud->setCapture(capture);
         cloud->setup(settings);
@@ -396,7 +399,7 @@ namespace kerberos
                 // If no new detections are found, we will run the IO devices (or max 30 images in memory)
                 if((currentCount > 0 && timesEqual > 4) || currentCount >= 30)
                 {
-                    VLOG(1) << "Executing IO devices for " + helper::to_string(currentCount)  + " detection(s)";
+                    LINFO << "Executing IO devices for " + helper::to_string(currentCount)  + " detection(s)";
 
                     for (int i = 0; i < currentCount; i++)
                     {

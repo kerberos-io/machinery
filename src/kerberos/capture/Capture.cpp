@@ -95,7 +95,7 @@ namespace kerberos
                 catch(cv::Exception & ex)
                 {
                     //LERROR << ex.what();
-                    LOG(ERROR) << "Capture: devices is blocking, and not grabbing any more frames.";
+                    LERROR << "Capture: devices is blocking, and not grabbing any more frames.";
                 }
             }
             usleep(333*100);
@@ -136,11 +136,11 @@ namespace kerberos
             healthCounter = capture->healthCounter.load();
 
             usleep(5000*1000); // every 5s.
-            VLOG(2) << "Capture: checking health status of camera.";
+            BINFO << "Capture: checking health status of camera.";
 
             if(healthCounter == capture->healthCounter.load())
             {
-                VLOG(1) << "Capture: devices is blocking, and not grabbing any more frames.";
+                LINFO << "Capture: devices is blocking, and not grabbing any more frames.";
                 throw KerberosCouldNotGrabFromCamera("devices is blocking, and not grabbin any more frames.");
             }
         }

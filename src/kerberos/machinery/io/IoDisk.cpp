@@ -271,7 +271,7 @@ namespace kerberos
             // -------------------------
             // Save original version
 
-            VLOG(1) << "IoDisk: saving image " + pathToImage;
+            LINFO << "IoDisk: saving image " + pathToImage;
 
             return m_fileManager.save(image, pathToImage, m_createSymbol);
         }

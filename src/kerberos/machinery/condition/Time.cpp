@@ -49,7 +49,7 @@ namespace kerberos
 
         if(!isAllowed)
         {
-            VLOG(1) << "Condition: not in time interval.";
+            LINFO << "Condition: not in time interval.";
             usleep(getDelay()*1000);
         }
 

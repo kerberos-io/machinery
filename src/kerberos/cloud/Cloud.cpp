@@ -377,7 +377,6 @@ namespace kerberos
     void Cloud::stopLivestreamThread()
     {
         m_livestreamThread_running = false;
-        pthread_cancel(m_livestreamThread);
         pthread_join(m_livestreamThread, NULL);
     }
 }

@@ -220,7 +220,7 @@ namespace kerberos
 
         if(stream != 0)
         {
-            VLOG(1) << "Stopping streaming";
+            VLOG(1) << "Steam: Stopping streaming";
             stopStreamThread();
             delete stream;
             stream = 0;
@@ -228,14 +228,20 @@ namespace kerberos
 
         if(capture != 0)
         {
-            VLOG(1) << "Stopping capture device";
+            VLOG(1) << "Capture: Stopping capture device";
             if(capture->isOpened())
             {
+                VLOG(2) << "Capture: Disable capture device in machinery";
                 machinery->disableCapture();
-                cloud->disableCapture();
+                VLOG(2) << "Capture: Stop cloud live streaming";
                 cloud->stopLivestreamThread();
+                VLOG(2) << "Capture: Disable capture device in cloud";
+                cloud->disableCapture();
+                VLOG(2) << "Capture: Stop capture grab thread";
                 capture->stopGrabThread();
+                VLOG(2) << "Capture: Stop capture health thread";
                 capture->stopHealthThread();
+                VLOG(2) << "Capture: Closing capture device";
                 capture->close();
             }
             delete capture;

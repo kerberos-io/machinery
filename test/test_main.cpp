@@ -6,10 +6,9 @@ _INITIALIZE_EASYLOGGINGPP
 
 int main(int argc, char** argv)
 {
-    el::Configurations config;
-    config.setToDefault();
-    config.set(el::Level::Info, el::ConfigurationType::Enabled, "false");
-    el::Loggers::reconfigureAllLoggers(config);
+    easyloggingpp::Configurations config;
+    config.setAll(easyloggingpp::ConfigurationType::Enabled , "false");
+    easyloggingpp::Loggers::reconfigureAllLoggers(config);
 
 	  ::testing::InitGoogleMock(&argc, argv);
     return RUN_ALL_TESTS();

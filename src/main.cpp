@@ -22,7 +22,7 @@
 #include <signal.h>
 
 #include "easylogging++.h"
-INITIALIZE_EASYLOGGINGPP
+_INITIALIZE_EASYLOGGINGPP
 
 using namespace kerberos;
 

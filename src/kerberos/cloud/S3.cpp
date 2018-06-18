@@ -81,6 +81,11 @@ namespace kerberos
         canonicalizedAmzHeaders.push_back("x-amz-meta-publickey:" + m_publicKey);
         canonicalizedAmzHeaders.push_back("x-amz-meta-uploadtime:" + getDate());
 
+        // -----------------------------
+        // Set storage type
+        
+        canonicalizedAmzHeaders.push_back("x-amz-storage-class:ONEZONE_IA");
+
         // ------------------------------------------------
         // Get event info from filename (using fileFormat) and convert it
         // to x-amz-meta headers which are stored in the S3 object.

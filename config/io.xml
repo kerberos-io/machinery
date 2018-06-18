@@ -1,13 +1,13 @@
 <?xml version="1.0"?>
 <ios>
 
-	<Disk>
+    <Disk>
         <fileFormat type="text">timestamp_microseconds_instanceName_regionCoordinates_numberOfChanges_token.jpg</fileFormat>
         <directory type="text">/etc/opt/kerberosio/capture/</directory>
         <markWithTimestamp type="bool">false</markWithTimestamp>
         <timestampColor type="text">white</timestampColor>
         <privacy type="bool">false</privacy>
-				<throttler type="number">0</throttler>
+        <throttler type="number">0</throttler>
     </Disk>
     <Video>
         <fps type="number">30</fps>
@@ -17,47 +17,48 @@
         <codec type="number">h264</codec>
         <fileFormat type="text">timestamp_microseconds_instanceName_regionCoordinates_numberOfChanges_token</fileFormat>
         <directory type="text">/etc/opt/kerberosio/capture/</directory>
-				<hardwareDirectory type="text">/etc/opt/kerberosio/h264/</hardwareDirectory>
-				<enableHardwareEncoding type="bool">true</enableHardwareEncoding>
+        <hardwareDirectory type="text">/etc/opt/kerberosio/h264/</hardwareDirectory>
+        <enableHardwareEncoding type="bool">true</enableHardwareEncoding>
         <markWithTimestamp type="bool">false</markWithTimestamp>
         <timestampColor type="text">white</timestampColor>
         <privacy type="bool">false</privacy>
-				<throttler type="number">0</throttler>
+        <throttler type="number">0</throttler>
     </Video>
     <GPIO>
         <pin type="number">17</pin>
         <periods type="number">1</periods>
         <periodTime type="number">100000</periodTime>
-				<throttler type="number">0</throttler>
+        <throttler type="number">0</throttler>
     </GPIO>
     <TCPSocket>
         <server type="number">127.0.0.1</server>
         <port type="number">1337</port>
         <message type="text">motion-detected</message>
-				<throttler type="number">0</throttler>
+        <throttler type="number">0</throttler>
     </TCPSocket>
     <Webhook>
         <url type="text">http://localhost/api/v1/webhook</url>
-				<throttler type="number">0</throttler>
+        <throttler type="number">0</throttler>
     </Webhook>
     <Script>
         <path type="text">/etc/opt/kerberosio/scripts/run.sh</path>
-				<throttler type="number">0</throttler>
+        <throttler type="number">0</throttler>
     </Script>
     <MQTT>
         <secure type="bool">false</secure>
         <verifycn type="bool">false</verifycn>
-				<server type="number">127.0.0.1</server>
+        <server type="number">127.0.0.1</server>
         <port type="number">1883</port>
-				<topic type="text">kios/mqtt</topic>
+        <clientId type="text"></clientId>
+        <topic type="text">kios/mqtt</topic>
         <username type="text"></username>
         <password type="text"></password>
-				<throttler type="number">0</throttler>
+        <throttler type="number">0</throttler>
     </MQTT>
     <Pushbullet>
-	 <url type="text">https://api.pushbullet.com</url>
+        <url type="text">https://api.pushbullet.com</url>
         <token type="text">o.mC5LPVCvPCphtSsEgWZQpFM86w9ciWQ3</token>
-	<throttler type="number">10</throttler> 
+        <throttler type="number">10</throttler> 
     </Pushbullet>
 
 </ios>

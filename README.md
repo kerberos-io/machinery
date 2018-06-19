@@ -75,31 +75,17 @@ Kerberos.io can also be installed on other boards, which run the Armbian OS.
 
 [Read more](https://doc.kerberos.io/2.0/installation/Armbian)
 
+### Docker (for x86, AMD64, ARMv7, ARMv8)
+
+Kerberos.io can also be installed as a Docker container.
+
+[Read more](https://doc.kerberos.io/2.0/installation/Docker)
+
 ### Generic
 
 If you want to install the machinery on your working station, than you'll need to compile the source code yourself; it's a little bit more work.
 
-Update the packages and kernel.
-
-    sudo apt-get update && sudo apt-get upgrade
-
-Install development tools (c++, cmake) and V4L utils.
-
-    sudo apt-get install git libav-tools cmake subversion dh-autoreconf libcurl4-openssl-dev
-
-Go to home directory and pull the machinery from github.
-
-    cd && sudo git clone https://github.com/kerberos-io/machinery
-
-Compile the machinery; this can take some time.
-
-    cd machinery && mkdir build && cd build
-    cmake .. && make && make check && sudo make install
-
-Start the machinery on start-up, and reboot the system.
-
-     sudo systemctl enable kerberosio
-     sudo reboot
+[Read more](https://doc.kerberos.io/2.0/installation/Generic)
 
 ## Configure
 

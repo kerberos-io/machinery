@@ -30,12 +30,13 @@ namespace kerberos
     {
         private:
             std::string m_server_ip;
-  		      unsigned short m_port;
+            unsigned short m_port;
   	        std::string m_topic;
             std::string m_username;
             std::string m_password;
+            std::string m_client_id;
             bool m_secure;
-  		      bool m_verifycn;
+  		    bool m_verifycn;
             Throttler throttle;
 
         public:
@@ -61,6 +62,9 @@ namespace kerberos
             std::string getPassword(){return m_password;};
             void setSecure(bool secure){m_secure=secure;};
             void setVerifycn(bool verifycn){m_verifycn=verifycn;};
+            void setClientId(std::string clientId){m_client_id=clientId;};
+            std::string getClientId(){return m_client_id;};
+
             bool send_message(std::string &message);
 
             bool save(Image & image);

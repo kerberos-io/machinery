@@ -14,8 +14,14 @@ namespace kerberos
         setPassword(settings.at("ios.MQTT.password"));
         setSecure(settings.at("ios.MQTT.secure")=="true");
         setVerifycn(settings.at("ios.MQTT.verifycn")=="true");
+        setClientId(settings.at("ios.MQTT.clientId"));
 
-	      reinitialise(settings.at("name").c_str(),true);
+        std::string cid = settings.at("ios.MQTT.clientId");
+        if (cid.empty()) {
+            cid = settings.at("name");
+        }
+
+	    reinitialise(cid.c_str(),true);
 
         mosqpp::lib_init();
 	      if(m_username.length()==0)

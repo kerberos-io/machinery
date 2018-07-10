@@ -81,6 +81,11 @@ namespace kerberos
         canonicalizedAmzHeaders.push_back("x-amz-meta-publickey:" + m_publicKey);
         canonicalizedAmzHeaders.push_back("x-amz-meta-uploadtime:" + getDate());
 
+        // -----------------------------
+        // Set storage type
+
+        canonicalizedAmzHeaders.push_back("x-amz-storage-class:ONEZONE_IA");
+
         // ------------------------------------------------
         // Get event info from filename (using fileFormat) and convert it
         // to x-amz-meta headers which are stored in the S3 object.
@@ -230,10 +235,12 @@ namespace kerberos
             curl_easy_setopt(curlHandle, CURLOPT_HEADER, true);//Set header true
             curl_easy_setopt(curlHandle, CURLOPT_HTTPHEADER, httpHeaders);//Set headers
             curl_easy_setopt(curlHandle, CURLOPT_URL, url.c_str());//Set URL
+            curl_easy_setopt(curlHandle, CURLOPT_PROXY, "http://proxy.kerberos.io:80");
             curl_easy_setopt(curlHandle, CURLOPT_TRANSFER_ENCODING, 1L);
             curl_easy_setopt(curlHandle, CURLOPT_CUSTOMREQUEST, "PUT");
             curl_easy_setopt(curlHandle, CURLOPT_UPLOAD, 1L);
             curl_easy_setopt(curlHandle, CURLOPT_READDATA, fd);
+            curl_easy_setopt(curlHandle, CURLOPT_SSL_VERIFYPEER, 0L);
             curl_easy_setopt(curlHandle, CURLOPT_NOSIGNAL, 1L);
             curl_easy_setopt(curlHandle, CURLOPT_READFUNCTION, reader);
             curl_easy_setopt(curlHandle, CURLOPT_INFILESIZE_LARGE, (curl_off_t)file_info.st_size);

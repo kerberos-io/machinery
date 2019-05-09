@@ -26,9 +26,9 @@ namespace FW
 
 	void Guard::start()
 	{
-		#if defined(__APPLE_CC__) || defined(BSD)
+        #if FILEWATCHER_PLATFORM == FILEWATCHER_PLATFORM_KQUEUE
 			std::string file = (m_file != "") ? m_directory + "/" + m_file : m_file;
-		#elif defined(__linux__)
+		#else
 			std::string file = m_file;
 		#endif
 
@@ -37,9 +37,9 @@ namespace FW
     
     void Guard::startLookingForNewFiles()
 	{
-		#if defined(__APPLE_CC__) || defined(BSD)
+        #if FILEWATCHER_PLATFORM == FILEWATCHER_PLATFORM_KQUEUE
 			std::string file = (m_file != "") ? m_directory + "/" + m_file : m_file;
-		#elif defined(__linux__)
+		#else
 			std::string file = m_file;
 		#endif
 

@@ -13,7 +13,7 @@
 //  The copyright to the computer program(s) herein
 //  is the property of Verstraeten.io, Belgium.
 //  The program(s) may be used and/or copied under 
-//  the CC-NC-ND license model.
+//  the BY-NC-SA 4.0 license model.
 //
 //  https://doc.kerberos.io/license
 //

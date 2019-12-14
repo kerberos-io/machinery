@@ -12,7 +12,7 @@ More information [**about this license**](https://doc.kerberos.io/opensource/lic
 
 ## Vote for features
 
-[**Report features**](https://feathub.com/kerberos-io/machinery) if you think something is missing, and should be added to Kerberos.io, we love to hear about your ideas.
+[**Report features**](https://feathub.com/kerberos-io/machinery) if you think something is missing, and should be added to Kerberos Open Source, we love to hear about your ideas.
 
 ## Supported cameras
 

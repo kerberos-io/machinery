@@ -91,8 +91,11 @@ namespace kerberos
         // -------------------
         // Start livestreaming
 
-        fstream.setup(m_publicKey, m_productKey);
-        startLivestreamThread();
+        m_livestreamThread_running = false;
+        if(m_publicKey != "" && m_productKey != "") {
+          fstream.setup(m_publicKey, m_productKey);
+          startLivestreamThread();
+        }
     }
 
     void Cloud::disableCapture()
@@ -238,13 +241,6 @@ namespace kerberos
             conn->SetHeaders(headers);
 
             // --------------------------------------------
-            // Start livestreaming
-            /*std::cout << cloud->m_publicKey << std::endl;
-            std::cout << cloud->m_productKey << std::endl;
-            cloud->fstream.setup(cloud->m_publicKey, cloud->m_productKey);
-            cloud->startLivestreamThread();*/
-
-            // --------------------------------------------
             // Generate fixed JSON data which will be send,
             // over and over again.
 
@@ -376,7 +372,9 @@ namespace kerberos
 
     void Cloud::stopLivestreamThread()
     {
-        m_livestreamThread_running = false;
-        pthread_join(m_livestreamThread, NULL);
+        if(m_livestreamThread_running == true) {
+          m_livestreamThread_running = false;
+          pthread_join(m_livestreamThread, NULL);
+        }
     }
 }

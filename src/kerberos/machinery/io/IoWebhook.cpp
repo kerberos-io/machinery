@@ -65,6 +65,8 @@ namespace kerberos
                 return true;
             }
 
+            LERROR << r.body;
+            
             return false;
       }
 

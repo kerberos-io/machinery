@@ -21,7 +21,7 @@ namespace kerberos
             cid = settings.at("name");
         }
 
-	    reinitialise(cid.c_str(),true);
+        reinitialise(cid.c_str(),true);
 
         mosqpp::lib_init();
 	      if(m_username.length()==0)

@@ -1,8 +1,8 @@
 message("External project: Restclient")
 
 ExternalProject_Add(restclient
-  GIT_REPOSITORY ${git_protocol}://github.com/mrtazz/restclient-cpp
-  GIT_TAG master
+  GIT_REPOSITORY ${git_protocol}://github.com/shawkinsl/restclient-cpp
+  GIT_TAG user/shawkins/improve_curl_errors
   SOURCE_DIR restclient
   BUILD_IN_SOURCE 1
   UPDATE_COMMAND ""

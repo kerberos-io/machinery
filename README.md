@@ -34,7 +34,7 @@ If you want to manage more than 10 Kerberos agents, it's recommended to use [**K
 
 ## Machinery
 
-[**The machinery**](https://doc.kerberos.io/opensource/introduction) is the processing engine of Kerberos Open Source. It's an image processing framework, written in C++, who benefits from other third party libraries (OpenCV, etc). It takes images from the type of camera (USB-, IP- or RPi-camera) you've configured in the configuration files and executes one ore more algorithms and post-processes (e.g. save a snapshot). The configuration files allow you to define the type of camera, post-processes, conditions and much more; it's highly configurable. It's important to note that the machinery, out-of-the-box, can handle only one camera at a time.
+[**The machinery**](https://doc.kerberos.io/opensource/introduction) is the processing engine of Kerberos Open Source. It's an image processing framework, written in C++, who benefits from other third party libraries (OpenCV, etc). It takes images from the type of camera (USB-, IP- or RPi-camera) you've configured in the configuration files and executes one or more algorithms and post-processes (e.g. save a snapshot). The configuration files allow you to define the type of camera, post-processes, conditions and much more; it's highly configurable. It's important to note that the machinery, out-of-the-box, can handle only one camera at a time.
 
 ## How does it work?
 

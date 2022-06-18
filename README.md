@@ -1,8 +1,8 @@
-# Kerberos Open Source - Machinery
+# Kerberos Open Source - Machinery (Archived)
 
-[![Build Status](https://travis-ci.org/kerberos-io/machinery.svg)](https://travis-ci.org/kerberos-io/machinery) [![Join the chat](https://img.shields.io/gitter/room/TechnologyAdvice/Stardust.svg?style=flat)](https://gitter.im/kerberos-io/hades?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+This project is archived, and move to the new agent repository: [Kerberos Agent](https://github.com/kerberos-io/agent).
 
-[![Kerberos.io - video surveillance](https://kerberos.io/images/kerberos.png)](https://kerberos.io)
+---
 
 ## License
 
